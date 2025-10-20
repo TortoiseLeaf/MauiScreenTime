@@ -47,7 +47,7 @@ namespace MauiScreenTime.Data
             });
         }
 
-        public async Task RevokeConsent()
+        public async Task RevokeConsent(string version = "1.0")
         {
             var consent = await _database.Table<UserConsentDb>()
                 .OrderByDescending(c => c.GrantedAt)
@@ -55,8 +55,12 @@ namespace MauiScreenTime.Data
 
             if (consent != null)
             {
-                consent.RevokedAt = DateTime.UtcNow;
-                await _database.UpdateAsync(consent);
+                await _database.InsertAsync(new UserConsentDb
+                {
+                    IsGranted = false,
+                    RevokedAt = DateTime.UtcNow,
+                    Version = version
+                });
             }
         }
 
