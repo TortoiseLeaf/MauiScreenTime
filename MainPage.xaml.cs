@@ -1,4 +1,6 @@
-﻿namespace MauiScreenTime
+﻿using MauiScreenTime.Pages;
+
+namespace MauiScreenTime
 {
     public partial class MainPage : ContentPage
     {
@@ -8,7 +10,10 @@
         {
             InitializeComponent();
         }
-
+        private async void OnConsentClicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync(nameof(ConsentPage));
+        }
         private void OnCounterClicked(object? sender, EventArgs e)
         {
             count++;
