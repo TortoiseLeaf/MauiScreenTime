@@ -22,7 +22,7 @@ namespace MauiScreenTime.ViewModels
 
             // commands for xaml/.cs
             GrantConsentCommand = new Command(async () => await GrantConsent());
-            RevokeConsentCommand = new Command(async () => await RevokeAnalytics());
+            RevokeConsentCommand = new Command(async () => await RevokeConsent());
             DeleteAllCommand = new Command(async () => await DeleteAll());
 
             _ = LoadConsents();
@@ -57,7 +57,9 @@ namespace MauiScreenTime.ViewModels
             //Application.Current.MainPage = new AppShell();
         }
 
-        private async Task RevokeAnalytics()
+        //Add this into user account settings page?
+
+        private async Task RevokeConsent()
         {
             await _db.RevokeConsent();
             HasConsent = false;
