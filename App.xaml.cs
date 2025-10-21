@@ -1,15 +1,19 @@
-﻿namespace MauiScreenTime
-{
-    public partial class App : Application
+﻿  using MauiScreenTime.Pages;
+    using MauiScreenTime.Data;
+
+    namespace MauiScreenTime
     {
-        public App()
+        public partial class App : Application
         {
-            InitializeComponent();
+            public App()
+            {
+                InitializeComponent();
+            MainPage = new AppShell();
         }
 
-        protected override Window CreateWindow(IActivationState? activationState)
-        {
-            return new Window(new AppShell());
-        }
+        //protected override Window CreateWindow(IActivationState? activationState)
+        //{
+        //    return new Window(new MainPage()) { Title = "MauiScreenTime" };
+        //}
     }
-}
+    }
