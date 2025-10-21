@@ -30,7 +30,11 @@
                 SemanticProperties.Hint="Counts the number of times you click"
                 Clicked="OnCounterClicked"
                 HorizontalOptions="Fill" />
+            <Button 
+    Text="Go to Consent Settings"
+    Clicked="OnConsentClicked" />
         </VerticalStackLayout>
     </ScrollView>
+    
 
 </ContentPage>
