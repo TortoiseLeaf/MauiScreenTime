@@ -15,7 +15,6 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
-    
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -30,22 +29,23 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-nuget-
   
-    - name: Cache MAUI workloads
-      uses: actions/cache@v4
-      id: maui-cache
-      with:
-        path: |
-          C:\Program Files\dotnet\sdk-manifests
-          C:\Program Files\dotnet\packs
-          C:\Program Files\dotnet\library-packs
-          C:\Program Files\dotnet\template-packs
-        key: ${{ runner.os }}-maui-9.0-${{ hashFiles('**/*.csproj') }}
-        restore-keys: |
-          ${{ runner.os }}-maui-9.0-
+    # - name: Cache MAUI workloads
+    #   uses: actions/cache@v4
+    #   id: maui-cache
+    #   with:
+    #     path: |
+    #       C:\Program Files\dotnet\sdk-manifests
+    #       C:\Program Files\dotnet\packs
+    #       C:\Program Files\dotnet\library-packs
+    #       C:\Program Files\dotnet\template-packs
+    #     key: ${{ runner.os }}-maui-9.0-${{ hashFiles('**/*.csproj') }}
+    #     restore-keys: |
+    #       ${{ runner.os }}-maui-9.0-
     
     - name: Install .NET MAUI
+    # check cache
       if: steps.maui-cache.outputs.cache-hit != 'true'
-      run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
+      run: dotnet workload install maui
     
     - name: Restore dependencies
       run: dotnet restore
