@@ -28,19 +28,6 @@ jobs:
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/packages.lock.json') }}
         restore-keys: |
           ${{ runner.os }}-nuget-
-  
-    # - name: Cache MAUI workloads
-    #   uses: actions/cache@v4
-    #   id: maui-cache
-    #   with:
-    #     path: |
-    #       C:\Program Files\dotnet\sdk-manifests
-    #       C:\Program Files\dotnet\packs
-    #       C:\Program Files\dotnet\library-packs
-    #       C:\Program Files\dotnet\template-packs
-    #     key: ${{ runner.os }}-maui-9.0-${{ hashFiles('**/*.csproj') }}
-    #     restore-keys: |
-    #       ${{ runner.os }}-maui-9.0-
     
     - name: Install .NET MAUI
     # check cache
