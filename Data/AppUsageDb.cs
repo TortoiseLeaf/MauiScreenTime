@@ -11,6 +11,7 @@ namespace MauiScreenTime.Data
     {
         public int Id {  get; set; }
         public string PackageName { get; set; }
+        public string AppName { get; set; }
         public DateTime Date {  get; set; }
         public long UsageTimeMilliseconds { get; set; }
     }
