@@ -21,18 +21,17 @@ jobs:
       with:
         dotnet-version: 9.0.x
         
-    # Cache NuGet packages (major speedup)
+    # Cache NuGet packages 
     - name: Cache NuGet packages
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.nuget/packages
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/packages.lock.json') }}
-        restore-path: |
-          ~/.nuget/packages
-    
-    # Cache MAUI workloads (avoids reinstalling every time)
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+  
     - name: Cache MAUI workloads
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: maui-cache
       with:
         path: |
@@ -41,6 +40,8 @@ jobs:
           C:\Program Files\dotnet\library-packs
           C:\Program Files\dotnet\template-packs
         key: ${{ runner.os }}-maui-9.0-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-maui-9.0-
     
     - name: Install .NET MAUI
       if: steps.maui-cache.outputs.cache-hit != 'true'
@@ -52,7 +53,6 @@ jobs:
     - name: Build
       run: dotnet build MauiScreenTime.csproj -c Release -f net9.0-android --no-restore
     
-    # Only run tests if you have them (remove if no tests)
     - name: Test
       if: hashFiles('**/*Tests.csproj') != ''
       run: dotnet test --no-build --verbosity normal -c Release
