@@ -11,7 +11,7 @@ namespace MauiScreenTime.Data
     {
         public bool IsGranted { get; set; }
         public DateTime GrantedAt { get; set; }
-        public string Version { get; set; } // Track consent version for GDPR compliance
+        public string? Version { get; set; } // Track consent version for GDPR compliance
         public DateTime? RevokedAt { get; set; }
 
         public int DataRetentionDays = 60;
