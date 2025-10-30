@@ -8,20 +8,21 @@
 
 
 
-        <VerticalStackLayout Padding="20" Spacing="20">
+    <Grid Padding="20"
+              RowSpacing="20"
+              RowDefinitions="Auto, *, Auto, Auto, Auto" >
 
-            <Label Text="Privacy Consent Settings" 
+        <Label  Grid.Row="0"   Text="Privacy Consent Settings" 
                    FontSize="24" 
                    FontAttributes="Bold" />
 
             <!-- Analytics Consent -->
-            <Border 
-    Stroke="Gray"
-    StrokeThickness="1"
-    MaximumHeightRequest="200"
-   HorizontalOptions="Center" 
-                >
-            <ScrollView>
+            <Border Grid.Row="1"
+                    Stroke="Gray"
+                    StrokeThickness="1"                    
+                    
+                    >
+            <ScrollView >
                 <VerticalStackLayout Spacing="10">
 
                     <Label Text="Terms and Conditions" FontSize="18" FontAttributes="Bold" />
@@ -99,14 +100,14 @@ Performance of a Contract. We may process your personal information when we beli
             </ScrollView>
         </Border>
 
-            <HorizontalStackLayout Spacing="10">
+            <HorizontalStackLayout Grid.Row="2" Spacing="10">
                 <Label Text="Status:" VerticalOptions="Center" />
                 <Label Text="{Binding HasConsent, StringFormat='Granted: {0}'}" 
             VerticalOptions="Center"
             FontAttributes="Bold" />
             </HorizontalStackLayout>
 
-            <HorizontalStackLayout Spacing="10">
+            <HorizontalStackLayout Grid.Row="3" Spacing="10">
                 <Button Text="Grant" 
              Command="{Binding GrantConsentCommand}"
              BackgroundColor="ForestGreen" />
@@ -117,11 +118,13 @@ Performance of a Contract. We may process your personal information when we beli
 
 
             <!-- Delete All -->
-            <Button Text="Delete All Consent Data" 
+            <Button Grid.Row="4"
+                    Text="Delete All Consent Data" 
                     Command="{Binding DeleteAllCommand}"
                     BackgroundColor="DarkRed"
                     TextColor="White" />
-
-        </VerticalStackLayout>
+        
+    </Grid>
     
+
 </ContentPage>
