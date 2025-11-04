@@ -20,11 +20,12 @@ namespace MauiScreenTime
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
-            string dbPath = Path.Combine(FileSystem.AppDataDirectory, "consent.db3");
-            builder.Services.AddSingleton(s => new ConsentDatabase(dbPath));
+            //string dbPath = Path.Combine(FileSystem.AppDataDirectory, "consent.db3");
+            //builder.Services.AddSingleton(s => new ConsentDatabase(dbPath));
 
-            
+
             //builder.Services.AddSingleton<App>();
+            builder.Services.AddTransient<ConsentDatabase>();
 
             builder.Services.AddTransient<ConsentViewModel>();
             builder.Services.AddTransient<ConsentPage>();

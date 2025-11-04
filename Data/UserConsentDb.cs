@@ -7,30 +7,49 @@ using SQLite;
 
 namespace MauiScreenTime.Data
 {
-    public class UserConsentDb
+    [Table("user_consent")]
+
+    public class UserConsentModel
     {
+        [Column("is_granted")]
         public bool IsGranted { get; set; }
+
+        [Column("granted_at")]
         public DateTime GrantedAt { get; set; }
+
+        [Column("version")]
         public string Version { get; set; } // Track consent version for GDPR compliance
+
+        [Column("revoked_at")]
         public DateTime? RevokedAt { get; set; }
 
         public int DataRetentionDays = 60;
+
     }
 
     public class ConsentDatabase
     {
-        private readonly SQLiteAsyncConnection _database;
 
-        public ConsentDatabase(string dbPath)
+        private const string DB_NAME = "user_consent.db3";
+        private readonly SQLiteAsyncConnection _connection;
+
+
+        public ConsentDatabase()
         {
-            _database = new SQLiteAsyncConnection(dbPath);
-            _database.CreateTableAsync<UserConsentDb>().Wait();
+            _connection = new SQLiteAsyncConnection(Path.Combine(FileSystem.AppDataDirectory, DB_NAME));
+            _connection.CreateTableAsync<UserConsentModel>();
+        }
+
+        public async Task<List<UserConsentModel>> GetAllData()
+        {
+            var allData = await _connection.Table<UserConsentModel>().ToListAsync();
+            return allData;
         }
 
         // Revisit this because idk
         public async Task<bool> HasConsent()
         {
-            var consent = await _database.Table<UserConsentDb>()
+            var consent = await _connection.Table<UserConsentModel>()
                 .OrderByDescending(c => c.GrantedAt)
                 .FirstOrDefaultAsync();
 
@@ -39,7 +58,7 @@ namespace MauiScreenTime.Data
 
         public async Task GrantConsent(string version = "1.0")
         {
-            await _database.InsertAsync(new UserConsentDb
+            await _connection.InsertAsync(new UserConsentModel
             {
                 IsGranted = true,
                 GrantedAt = DateTime.UtcNow,
@@ -49,13 +68,13 @@ namespace MauiScreenTime.Data
 
         public async Task RevokeConsent(string version = "1.0")
         {
-            var consent = await _database.Table<UserConsentDb>()
+            var consent = await _connection.Table<UserConsentModel>()
                 .OrderByDescending(c => c.GrantedAt)
                 .FirstOrDefaultAsync();
 
             if (consent != null)
             {
-                await _database.InsertAsync(new UserConsentDb
+                await _connection.InsertAsync(new UserConsentModel
                 {
                     IsGranted = false,
                     RevokedAt = DateTime.UtcNow,
@@ -64,14 +83,14 @@ namespace MauiScreenTime.Data
             }
         }
 
-        public async Task<List<UserConsentDb>> GetConsentHistory()
+        public async Task<List<UserConsentModel>> GetConsentHistory()
         {
-            return await _database.Table<UserConsentDb>().ToListAsync();
+            return await _connection.Table<UserConsentModel>().ToListAsync();
         }
 
         public async Task DeleteAllConsents()
         {
-            await _database.DeleteAllAsync<UserConsentDb>();
+            await _connection.DeleteAllAsync<UserConsentModel>();
         }
     }
 }
