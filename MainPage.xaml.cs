@@ -1,29 +1,36 @@
 ﻿using MauiScreenTime.Pages;
+using MauiScreenTime.Data;
 
 namespace MauiScreenTime
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
+        private readonly ConsentDatabase _consentDatabase;
 
-        public MainPage()
+        public MainPage(ConsentDatabase consentDatabase)
         {
             InitializeComponent();
+            _consentDatabase = consentDatabase;
+            CheckConsent();
         }
-        private async void OnConsentClicked(object sender, EventArgs e)
+
+        // CALL A FUCNTION THAT IF BOOL HASCONSENT DOES BELOW, ELSE NAVIGATE TO MAINPAGE
+
+        private async void CheckConsent()
+        {
+           bool hasConsent = await _consentDatabase.HasConsent();
+
+            if (!hasConsent) 
+            {
+                NavigateToConsentPage();
+
+            }
+
+        }
+        private async void NavigateToConsentPage()
         {
             await Shell.Current.GoToAsync(nameof(ConsentPage));
         }
-        private void OnCounterClicked(object? sender, EventArgs e)
-        {
-            count++;
-
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
-
-            SemanticScreenReader.Announce(CounterBtn.Text);
-        }
+        
     }
 }
