@@ -10,8 +10,8 @@ namespace MauiScreenTime
         public MainPage(ConsentDatabase consentDatabase)
         {
             InitializeComponent();
-            _consentDatabase = consentDatabase;
             CheckDbExists();
+            _consentDatabase = consentDatabase;
             CheckConsent();
         }
 
@@ -25,11 +25,6 @@ namespace MauiScreenTime
         }
         private async void CheckConsent()
         {
-            //if (_consentDatabase == null)
-            //{
-            //    NavigateToConsentPage();
-
-            //}
             bool hasConsent = await _consentDatabase.HasConsent();
 
             if (hasConsent)
