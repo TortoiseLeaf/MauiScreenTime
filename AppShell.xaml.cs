@@ -7,7 +7,11 @@ namespace MauiScreenTime
         public AppShell()
         {
             InitializeComponent();
+
+            // define routes here
             Routing.RegisterRoute(nameof(ConsentPage), typeof(ConsentPage));
+            Routing.RegisterRoute(nameof(DashboardPage), typeof(DashboardPage));
+
         }
     }
 }
