@@ -7,6 +7,8 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using MauiScreenTime.Data;
+using MauiScreenTime.Pages;
+
 
 namespace MauiScreenTime.ViewModels
 {
@@ -25,7 +27,6 @@ namespace MauiScreenTime.ViewModels
             RevokeConsentCommand = new Command(async () => await RevokeConsent());
             DeleteAllCommand = new Command(async () => await DeleteAll());
 
-            _ = LoadConsents();
         }
 
         public bool HasConsent
@@ -43,10 +44,6 @@ namespace MauiScreenTime.ViewModels
         public ICommand RevokeConsentCommand { get; }
         public ICommand DeleteAllCommand { get; }
 
-        private async Task LoadConsents()
-        {
-            HasConsent = await _db.HasConsent();
-        }
 
         private async Task GrantConsent()
         {
@@ -54,7 +51,8 @@ namespace MauiScreenTime.ViewModels
             HasConsent = true;
 
             // redirect to next page
-            //Application.Current.MainPage = new AppShell();
+            await Shell.Current.GoToAsync(nameof(DashboardPage));
+
         }
 
         //Add this into user account settings page?
@@ -69,7 +67,6 @@ namespace MauiScreenTime.ViewModels
         private async Task DeleteAll()
         {
             await _db.DeleteAllConsents();
-            await LoadConsents();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
