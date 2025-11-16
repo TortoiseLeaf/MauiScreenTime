@@ -11,16 +11,33 @@ namespace MauiScreenTime
         {
             InitializeComponent();
             _consentDatabase = consentDatabase;
+            CheckDbExists();
             CheckConsent();
         }
 
-        // CALL A FUCNTION THAT IF BOOL HASCONSENT DOES BELOW, ELSE NAVIGATE TO MAINPAGE
+        private void CheckDbExists()
+        {
+            if (_consentDatabase == null)
+            {
+                NavigateToConsentPage();
 
+            }
+        }
         private async void CheckConsent()
         {
-           bool hasConsent = await _consentDatabase.HasConsent();
+            //if (_consentDatabase == null)
+            //{
+            //    NavigateToConsentPage();
 
-            if (!hasConsent) 
+            //}
+            bool hasConsent = await _consentDatabase.HasConsent();
+
+            if (hasConsent)
+            {
+                NavigateToDashboardPage();
+            }
+            
+            else if (!hasConsent) 
             {
                 NavigateToConsentPage();
 
@@ -31,6 +48,10 @@ namespace MauiScreenTime
         {
             await Shell.Current.GoToAsync(nameof(ConsentPage));
         }
-        
+        private async void NavigateToDashboardPage()
+        {
+            await Shell.Current.GoToAsync(nameof(DashboardPage));
+        }
+
     }
 }
