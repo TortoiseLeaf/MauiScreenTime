@@ -94,3 +94,8 @@ Remember when opening a Pull Request (PR) to rebase `dev` into your branch befor
 Protections are in place for these branches so that builds must succeed before merging, you can see the [github workflow yaml](https://github.com/TortoiseLeaf/MauiScreenTime/blob/dev/.github/workflows/dotnet.yml) to have a look if you're interested. As tests are added to the project they will also run automatically as part of this process when you create a PR, and will need to pass before you can merge.
 
 PRs will require a review from at least 1 other person, once they're approved you can merge and delete your feature branch.
+
+### DoD
+
+At the moment the Definiton of Done for jira tickets is if the Pull Request is reviewed and accepted, and the branch check builds successfully.
+When these conditions are satisfied, close the ticket
