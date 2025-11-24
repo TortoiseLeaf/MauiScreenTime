@@ -13,19 +13,24 @@ namespace MauiScreenTime.ViewModels
     public class ConsentViewModel : INotifyPropertyChanged
     {
         private readonly ConsentDatabase _db;
+        private readonly ConversionTableDatabase _dbT;
         private bool _hasConsent;
+        private List<ConversionTableModel> mydata;
     
 
-        public ConsentViewModel(ConsentDatabase db)
+        public ConsentViewModel(ConsentDatabase db, ConversionTableDatabase dbT)
         {
             _db = db;
+            _dbT = dbT;
 
             // commands for xaml/.cs
             GrantConsentCommand = new Command(async () => await GrantConsent());
             RevokeConsentCommand = new Command(async () => await RevokeConsent());
             DeleteAllCommand = new Command(async () => await DeleteAll());
+            CheckDbCommand = new Command(async () => await CheckDb());
 
             _ = LoadConsents();
+            
         }
 
         public bool HasConsent
@@ -42,10 +47,15 @@ namespace MauiScreenTime.ViewModels
         public ICommand GrantConsentCommand { get; }
         public ICommand RevokeConsentCommand { get; }
         public ICommand DeleteAllCommand { get; }
+        public ICommand CheckDbCommand { get; }
 
         private async Task LoadConsents()
         {
             HasConsent = await _db.HasConsent();
+        }
+        private async Task CheckDb()
+        {
+            mydata = await _dbT.GetData();
         }
 
         private async Task GrantConsent()

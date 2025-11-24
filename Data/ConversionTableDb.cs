@@ -21,18 +21,24 @@ namespace MauiScreenTime.Data
 
         public ConversionTableDatabase()
         {
-            var dbPath = Path.Combine(FileSystem.AppDataDirectory, "co2_conversion_table.db");
-            _database = new SQLiteAsyncConnection(dbPath);
-            _database.CreateTableAsync<ConversionTableModel>().Wait();
+            try
+            {
+                var dbPath = Path.Combine(FileSystem.AppDataDirectory, "co2_conversion_table.db");
+                _database = new SQLiteAsyncConnection(dbPath);
+                _database.CreateTableAsync<ConversionTableModel>().Wait();
 
-            SeedDataIfEmpty();
-            //GetData();
+                SeedDataIfEmpty();
+            } catch (SQLiteException ex) 
+            {
+                Console.WriteLine("Error creating Co2Conversion Table: ", ex.Message);
+            }
+            GetData();
         }
 
         public async Task<List<ConversionTableModel>> GetData()
         {
             List<ConversionTableModel> mydata = await _database.Table<ConversionTableModel>().ToListAsync();
-            //Console.WriteLine("MY DATA: " + JsonSerializer.Serialize(mydata));   
+            Console.WriteLine("MY DATA: " + JsonSerializer.Serialize(mydata));   
             return mydata;
         }
 

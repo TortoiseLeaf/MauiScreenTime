@@ -123,7 +123,12 @@ Performance of a Contract. We may process your personal information when we beli
                     Command="{Binding DeleteAllCommand}"
                     BackgroundColor="DarkRed"
                     TextColor="White" />
-        
+        <Button Grid.Row="4"
+         Text="PrintDb" 
+         Command="{Binding CheckDbCommand}"
+         BackgroundColor="DarkRed"
+         TextColor="White" />
+
     </Grid>
     
 
