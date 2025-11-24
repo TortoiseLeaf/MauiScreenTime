@@ -18,16 +18,14 @@ namespace MauiScreenTime.ViewModels
         private List<ConversionTableModel> mydata;
     
 
-        public ConsentViewModel(ConsentDatabase db, ConversionTableDatabase dbT)
+        public ConsentViewModel(ConsentDatabase db)
         {
             _db = db;
-            _dbT = dbT;
 
             // commands for xaml/.cs
             GrantConsentCommand = new Command(async () => await GrantConsent());
             RevokeConsentCommand = new Command(async () => await RevokeConsent());
             DeleteAllCommand = new Command(async () => await DeleteAll());
-            CheckDbCommand = new Command(async () => await CheckDb());
 
             _ = LoadConsents();
             
@@ -47,15 +45,10 @@ namespace MauiScreenTime.ViewModels
         public ICommand GrantConsentCommand { get; }
         public ICommand RevokeConsentCommand { get; }
         public ICommand DeleteAllCommand { get; }
-        public ICommand CheckDbCommand { get; }
 
         private async Task LoadConsents()
         {
             HasConsent = await _db.HasConsent();
-        }
-        private async Task CheckDb()
-        {
-            mydata = await _dbT.GetData();
         }
 
         private async Task GrantConsent()

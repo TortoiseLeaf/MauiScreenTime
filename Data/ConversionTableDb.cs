@@ -32,15 +32,9 @@ namespace MauiScreenTime.Data
             {
                 Console.WriteLine("Error creating Co2Conversion Table: ", ex.Message);
             }
-            GetData();
+            
         }
 
-        public async Task<List<ConversionTableModel>> GetData()
-        {
-            List<ConversionTableModel> mydata = await _database.Table<ConversionTableModel>().ToListAsync();
-            Console.WriteLine("MY DATA: " + JsonSerializer.Serialize(mydata));   
-            return mydata;
-        }
 
         private async void SeedDataIfEmpty()
         {
