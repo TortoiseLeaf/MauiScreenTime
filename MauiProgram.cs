@@ -22,8 +22,9 @@ namespace MauiScreenTime
 
             string dbPath = Path.Combine(FileSystem.AppDataDirectory, "consent.db3");
             builder.Services.AddSingleton(s => new ConsentDatabase(dbPath));
+            builder.Services.AddSingleton(s => new ConversionTableDatabase());
 
-            
+
             //builder.Services.AddSingleton<App>();
 
             builder.Services.AddTransient<ConsentViewModel>();

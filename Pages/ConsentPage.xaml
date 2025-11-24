@@ -56,12 +56,12 @@
 
 
             <!-- Delete All -->
-            <Button Grid.Row="4"
+        <Button Grid.Row="4"
                     Text="Delete All Consent Data" 
                     Command="{Binding DeleteAllCommand}"
                     BackgroundColor="DarkRed"
                     TextColor="White" />
-        
+
     </Grid>
     
 

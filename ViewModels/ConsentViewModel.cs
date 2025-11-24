@@ -13,6 +13,7 @@ namespace MauiScreenTime.ViewModels
     public class ConsentViewModel : INotifyPropertyChanged
     {
         private readonly ConsentDatabase _db;
+        private readonly ConversionTableDatabase _dbT;
         private bool _hasConsent;
 
         public string TermsText { get; set; }
