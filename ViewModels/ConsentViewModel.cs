@@ -15,8 +15,10 @@ namespace MauiScreenTime.ViewModels
     public class ConsentViewModel : INotifyPropertyChanged
     {
         private readonly ConsentDatabase _db;
+        private readonly ConversionTableDatabase _dbT;
         private bool _hasConsent;
-    
+
+        public string TermsText { get; set; }
 
         public ConsentViewModel(ConsentDatabase db)
         {
@@ -27,6 +29,8 @@ namespace MauiScreenTime.ViewModels
             RevokeConsentCommand = new Command(async () => await RevokeConsent());
             DeleteAllCommand = new Command(async () => await DeleteAll());
 
+            _ = LoadConsents();
+            _ = LoadTermsAndConditions();
         }
 
         public bool HasConsent
@@ -75,5 +79,22 @@ namespace MauiScreenTime.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        private async Task LoadTermsAndConditions()
+        {
+            try
+            {
+                var stream = await FileSystem.OpenAppPackageFileAsync("TermsAndConditions.txt");
+                var reader = new StreamReader(stream);
+                TermsText = await reader.ReadToEndAsync();
+                OnPropertyChanged(nameof(TermsText));
+
+            } catch (Exception e)
+            {
+                Console.WriteLine("Could not load Terms and Conditions");
+                Console.WriteLine(e.Message);
+            }
+        }
+
     }
 }
