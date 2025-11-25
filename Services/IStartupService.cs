@@ -8,8 +8,7 @@ namespace MauiScreenTime.Services
 {
     public interface IStartupService
     {
-        Task InitializeAsync();
-        //Task NavigateToAsync(string Route);
+        Task InitializeConsentCheckAsync();
 
     }
 }

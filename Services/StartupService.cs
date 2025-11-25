@@ -13,21 +13,22 @@ namespace MauiScreenTime.Services
     {
         private readonly ConsentDatabase _consentDatabase;
 
-        public async Task InitializeAsync()
+        public async Task InitializeConsentCheckAsync()
         {
-            var hasConsent = await _consentDatabase.HasConsent();
-
             if (_consentDatabase == null)
             {
-                await Shell.Current.GoToAsync("//ConsentPage");
+                await Shell.Current.GoToAsync(nameof(ConsentPage));
             }
+
+            var hasConsent = await _consentDatabase.HasConsent();
+
             if (hasConsent)
             {
-                await Shell.Current.GoToAsync("//DashboardPage");
+                await Shell.Current.GoToAsync(nameof(DashboardPage));
             }
             else
             {
-                await Shell.Current.GoToAsync("//ConsentPage");
+                await Shell.Current.GoToAsync(nameof(ConsentPage));
             }
         }
     }
