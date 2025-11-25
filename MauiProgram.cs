@@ -3,6 +3,8 @@ using Microsoft.Maui.Controls;
 using MauiScreenTime.Data;
 using MauiScreenTime.ViewModels;
 using MauiScreenTime.Pages;
+using MauiScreenTime.Services;
+
 
 
 namespace MauiScreenTime
@@ -22,6 +24,7 @@ namespace MauiScreenTime
 
             builder.Services.AddSingleton(s => new ConsentDatabase());
             builder.Services.AddSingleton(s => new ConversionTableDatabase());
+            builder.Services.AddSingleton<IStartupService, StartupService>();
 
 
             //builder.Services.AddSingleton<App>();
@@ -29,9 +32,13 @@ namespace MauiScreenTime
 
             builder.Services.AddTransient<DashboardViewModel>();
             builder.Services.AddTransient<ConsentViewModel>();
+            builder.Services.AddTransient<MainViewModel>();
+
 
             builder.Services.AddTransient<DashboardPage>();
             builder.Services.AddTransient<ConsentPage>();
+            builder.Services.AddTransient<MainPage>();
+
 
 
 

@@ -1,52 +1,25 @@
-﻿using MauiScreenTime.Pages;
-using MauiScreenTime.Data;
+﻿using MauiScreenTime.Data;
+using MauiScreenTime.Pages;
+using MauiScreenTime.ViewModels;
 
 namespace MauiScreenTime
 {
     public partial class MainPage : ContentPage
     {
-        private readonly ConsentDatabase _consentDatabase;
+        private readonly MainViewModel _viewModel;
 
-        public MainPage(ConsentDatabase consentDatabase)
+        public MainPage(MainViewModel viewModel)
         {
             InitializeComponent();
-            CheckDbExists();
-            _consentDatabase = consentDatabase;
-            CheckConsent();
+            _viewModel = viewModel;
+            BindingContext = viewModel;
         }
-
-        private void CheckDbExists()
+       
+        protected override async void OnAppearing()
         {
-            if (_consentDatabase == null)
-            {
-                NavigateToConsentPage();
-
-            }
-        }
-        private async void CheckConsent()
-        {
-            bool hasConsent = await _consentDatabase.HasConsent();
-
-            if (hasConsent)
-            {
-                NavigateToDashboardPage();
-            }
+            base.OnAppearing();
+            await _viewModel.InitializeAsync();
             
-            else if (!hasConsent) 
-            {
-                NavigateToConsentPage();
-
-            }
-
         }
-        private async void NavigateToConsentPage()
-        {
-            await Shell.Current.GoToAsync(nameof(ConsentPage));
-        }
-        private async void NavigateToDashboardPage()
-        {
-            await Shell.Current.GoToAsync(nameof(DashboardPage));
-        }
-
     }
 }
