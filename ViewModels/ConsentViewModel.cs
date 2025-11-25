@@ -15,7 +15,6 @@ namespace MauiScreenTime.ViewModels
     public class ConsentViewModel : INotifyPropertyChanged
     {
         private readonly ConsentDatabase _db;
-        private readonly ConversionTableDatabase _dbT;
         private bool _hasConsent;
 
         public string TermsText { get; set; }
@@ -29,7 +28,6 @@ namespace MauiScreenTime.ViewModels
             RevokeConsentCommand = new Command(async () => await RevokeConsent());
             DeleteAllCommand = new Command(async () => await DeleteAll());
 
-            _ = LoadConsents();
             _ = LoadTermsAndConditions();
         }
 
