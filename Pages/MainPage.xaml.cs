@@ -18,7 +18,7 @@ namespace MauiScreenTime
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            await _viewModel.InitializeAsync();
+            await _viewModel.InitializeConsentCheckAsync();
             
         }
     }

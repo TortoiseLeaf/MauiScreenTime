@@ -18,15 +18,9 @@ namespace MauiScreenTime.ViewModels
 
         public async Task InitializeConsentCheckAsync()
         {
-            try
-            {
-                await _startupService.InitializeConsentCheckAsync();
-            } catch (Exception ex) 
-            {   
-                Console.WriteLine("Error initializing consent check from mainviewmodel");
-                Console.WriteLine(ex.ToString());
-                // alternative?
-            } 
+            
+            await _startupService.InitializeConsentCheckAsync();
+            
         }
     }
 }
