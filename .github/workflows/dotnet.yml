@@ -18,30 +18,18 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 9.0.x
-        cache: true
-    - run: dotnet restore --locked-mode
-        
-    # Cache NuGet packages 
-    # - name: Cache NuGet packages
-    #   uses: actions/cache@v4
-    #   with:
-    #     path: ~/.nuget/packages
-    #     key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/packages.lock.json') }}
-    #     restore-keys: |
-    #       ${{ runner.os }}-nuget-
-    
-    - name: Install .NET MAUI
-    # check cache
-      if: steps.maui-cache.outputs.cache-hit != 'true'
-      run: dotnet workload install maui-android
-    
+        dotnet-version: 9.0.x    
+    - name: Install .NET MAUI Workload
+      run: dotnet workload install maui
+      
     - name: Restore dependencies
+      working-directory: ./MauiScreenTime
       run: dotnet restore
     
     - name: Build
-      run: dotnet build MauiScreenTime.csproj -c Release -f net9.0-android --no-restore
+      working-directory: ./MauiScreenTime
+      run: dotnet build net9.0-android --no-restore
     
     - name: Test
-      if: hashFiles('**/*Tests.csproj') != ''
-      run: dotnet test --no-build --verbosity normal -c Release
+      working-directory: ./MauiScreenTime
+      run: dotnet test --no-build --verbosity normal
