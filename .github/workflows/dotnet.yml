@@ -32,7 +32,7 @@ jobs:
     - name: Install .NET MAUI
     # check cache
       if: steps.maui-cache.outputs.cache-hit != 'true'
-      run: dotnet workload install android
+      run: dotnet workload install maui-android
     
     - name: Restore dependencies
       run: dotnet restore
