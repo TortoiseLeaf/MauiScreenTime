@@ -19,15 +19,17 @@ jobs:
       uses: actions/setup-dotnet@v5
       with:
         dotnet-version: 9.0.x
+        cache: true
+    - run: dotnet restore --locked-mode
         
     # Cache NuGet packages 
-    - name: Cache NuGet packages
-      uses: actions/cache@v5
-      with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/packages.lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
+    # - name: Cache NuGet packages
+    #   uses: actions/cache@v4
+    #   with:
+    #     path: ~/.nuget/packages
+    #     key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/packages.lock.json') }}
+    #     restore-keys: |
+    #       ${{ runner.os }}-nuget-
     
     - name: Install .NET MAUI
     # check cache
