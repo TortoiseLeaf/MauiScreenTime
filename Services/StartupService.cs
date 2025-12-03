@@ -17,18 +17,21 @@ namespace MauiScreenTime.Services
         {
             if (_consentDatabase == null)
             {
-                await Shell.Current.GoToAsync(nameof(ConsentPage));
+                if (Shell.Current != null)
+                    await Shell.Current.GoToAsync(nameof(ConsentPage));
             }
 
             var hasConsent = await _consentDatabase.HasConsent();
 
             if (hasConsent)
             {
-                await Shell.Current.GoToAsync(nameof(DashboardPage));
+                if (Shell.Current != null)
+                    await Shell.Current.GoToAsync(nameof(DashboardPage));
             }
             else
             {
-                await Shell.Current.GoToAsync(nameof(ConsentPage));
+                if (Shell.Current != null)
+                    await Shell.Current.GoToAsync(nameof(ConsentPage));
             }
         }
     }
