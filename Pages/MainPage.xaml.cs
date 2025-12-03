@@ -13,13 +13,16 @@ namespace MauiScreenTime
             InitializeComponent();
             _viewModel = viewModel;
             BindingContext = viewModel;
+
+            InitConsentCheck();
+
         }
        
-        protected override async void OnAppearing()
+        private async void InitConsentCheck()
         {
-            base.OnAppearing();
             await _viewModel.InitializeConsentCheckAsync();
-            
+
         }
+        
     }
 }
