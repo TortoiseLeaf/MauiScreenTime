@@ -27,8 +27,9 @@ namespace MauiScreenTime
             builder.Services.AddSingleton<IStartupService, StartupService>();
 
 
-            //builder.Services.AddSingleton<App>();
-            builder.Services.AddTransient<ConsentDatabase>();
+            builder.Services.AddSingleton<App>();
+            
+            //builder.Services.AddTransient<ConsentDatabase>();
 
             builder.Services.AddTransient<DashboardViewModel>();
             builder.Services.AddTransient<ConsentViewModel>();
