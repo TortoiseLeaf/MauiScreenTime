@@ -29,6 +29,7 @@ namespace MauiScreenTime.ViewModels
 
             _ = LoadConsents();
             _ = LoadTermsAndConditions();
+            _ = RequestUsageStatsPermissions();
         }
 
         public bool HasConsent
@@ -98,5 +99,46 @@ namespace MauiScreenTime.ViewModels
             }
         }
 
+        async Task RequestUsageStatsPermissions()
+        {
+            if (DeviceInfo.Platform != DevicePlatform.Android)
+                return;
+
+            var status = PermissionStatus.Unknown;
+
+            if (DeviceInfo.Version.Major >= 12)
+            {
+                status = await Permissions.CheckStatusAsync<StatsUsagePermission>();
+
+                if (status == PermissionStatus.Granted)
+                    return;
+
+                if (Permissions.ShouldShowRationale<StatsUsagePermission>())
+                {
+                    await Shell.Current.DisplayAlert("Needs permissions", "BECAUSE!!", "OKAY");
+                }
+
+                status = await Permissions.RequestAsync<StatsUsagePermission>();
+            }
+            //else
+            //{
+            //    status = await Permissions.CheckStatusAsync<StatsUsagePermission>();
+
+            //    if (status == PermissionStatus.Granted)
+            //        return;
+
+            //    if (Permissions.ShouldShowRationale<StatsUsagePermission>())
+            //    {
+            //        await Shell.Current.DisplayAlert("Needs permissions", "BECAUSE", "OKAY");
+            //    }
+
+            //    status = await Permissions.RequestAsync<StatsUsagePermission>();
+            //}
+
+            if (status != PermissionStatus.Granted)
+            {
+                await Shell.Current.DisplayAlert("Permission required to track app data from socials", "UsageStats permissions required", "OKAY");
+            }
+        }
     }
 }
