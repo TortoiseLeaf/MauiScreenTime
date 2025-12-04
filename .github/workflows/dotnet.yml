@@ -38,8 +38,8 @@ jobs:
       run: dotnet restore
     
     - name: Build
-      run: dotnet build MauiScreenTime.csproj -c Release -f net9.0-android --no-restore
+      run: dotnet build src/MauiScreenTime/MauiScreenTime.csproj -c Release -f net9.0-android --no-restore
     
     - name: Test
-      if: hashFiles('**/*Tests.csproj') != ''
+      if: hashFiles('test/MauiScreenTimeTests/MauiScreenTimeTests.csproj') != ''
       run: dotnet test --no-build --verbosity normal -c Release
