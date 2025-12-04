@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net9.0-android;</TargetFrameworks>
+		<TargetFrameworks>net9.0;net9.0-android;</TargetFrameworks>
 		<!--Uncomment below to include ios and maccatalyst in build-->
 		<!--<TargetFrameworks>net9.0-android;net9.0-ios;net9.0-maccatalyst</TargetFrameworks>-->
 		
