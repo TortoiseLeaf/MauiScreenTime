@@ -45,4 +45,5 @@ jobs:
 
     - name: Test 
       # if: hashFiles('**test/MauiScreenTimeTests/MauiScreenTimeTests.csproj') != ''
-      run: dotnet --no-build --verbosity normal -c Release
+      run: dotnet test src/MauiScreenTime/test/MauiScreenTimeTests/MauiScreenTimeTests.csproj --no-build --configuration Release --verbosity normal
+      # run: dotnet --no-build --verbosity normal -c Release
