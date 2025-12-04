@@ -16,7 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\MauiScreenTime\MauiScreenTime.csproj" />
+    <ProjectReference Include="..\..\src\MauiScreenTime\MauiScreenTime.csproj">
+	  <AdditionalProperty>TargetFrameWork=net9.0</AdditionalProperty>
+	</ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
