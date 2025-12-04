@@ -41,5 +41,5 @@ jobs:
       run: dotnet build src/MauiScreenTime/MauiScreenTime.csproj -c Release -f net9.0-android --no-restore
     
     - name: Test
-      if: hashFiles('test/MauiScreenTimeTests/MauiScreenTimeTests.csproj') != ''
-      run: dotnet test test/MauiScreenTimeTests/MauiScreenTimeTests.csproj --no-build --verbosity normal -c Release
+      if: hashFiles('**/*Tests.csproj') != ''
+      run: dotnet --no-build --verbosity normal -c Release
