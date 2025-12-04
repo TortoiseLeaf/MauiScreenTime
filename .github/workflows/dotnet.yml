@@ -39,7 +39,10 @@ jobs:
     
     - name: Build
       run: dotnet build src/MauiScreenTime/MauiScreenTime.csproj -c Release -f net9.0-android --no-restore
-    
-    - name: Test
-      if: hashFiles('**/MauiScreenTimeTests/MauiScreenTimeTests.csproj') != ''
-      run: dotnet --no-build --verbosity normal -c Release
+
+    - name: Run unit tests with report
+      run: dotnet test ./src/MauiScreenTimeTests/MauiScreenTimeTests.csproj --configuration Release --no-build --logger "trx;LogFileName=TestResults.trx"
+
+    # - name: Test
+    #   if: hashFiles('**/MauiScreenTimeTests/MauiScreenTimeTests.csproj') != ''
+    #   run: dotnet --no-build --verbosity normal -c Release
