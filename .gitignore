@@ -45,10 +45,14 @@ Generated\ Files/
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 
+
+bin/ 
+obj/ 
+
 # NUnit
-*.VisualState.xml
-TestResult.xml
-nunit-*.xml
+#*.VisualState.xml
+#TestResult.xml
+#nunit-*.xml
 
 # Build Results of an ATL Project
 [Dd]ebugPS/
