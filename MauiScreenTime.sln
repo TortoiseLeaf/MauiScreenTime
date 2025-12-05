@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36202.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MauiScreenTime", "MauiScreenTime.csproj", "{063E9292-BCB5-4D56-8172-66BC4B499723}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MauiScreenTime", "src\MauiScreenTime\MauiScreenTime.csproj", "{063E9292-BCB5-4D56-8172-66BC4B499723}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MauiScreenTimeTests", "test\MauiScreenTimeTests\MauiScreenTimeTests.csproj", "{7ACAF70A-1E32-48B8-B92D-841181CF9338}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,6 +18,10 @@ Global
 		{063E9292-BCB5-4D56-8172-66BC4B499723}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{063E9292-BCB5-4D56-8172-66BC4B499723}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{063E9292-BCB5-4D56-8172-66BC4B499723}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7ACAF70A-1E32-48B8-B92D-841181CF9338}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7ACAF70A-1E32-48B8-B92D-841181CF9338}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7ACAF70A-1E32-48B8-B92D-841181CF9338}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7ACAF70A-1E32-48B8-B92D-841181CF9338}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

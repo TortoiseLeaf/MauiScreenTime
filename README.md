@@ -112,18 +112,23 @@ If you have a questions about anything, just put it in Teams.
 
 ## How Can I Contribute?
 
-### Git workflow:
+### Git and JIRA workflow:
 
-We'll be working from the `dev` branch only. Only full releases will be pushed to `master` once release criteria is achieved, so just pull and branch from `dev` when working on a ticket. 
-
-You can name the branch the ticket name of the task you will work on and add a small descriptor, so for example Mauis-13-nature-db.
-
-Remember when opening a Pull Request (PR) to rebase `dev` into your branch before merging your PR. This will ensure you have the latest version of dev on your branch before merging.
+**NOTE We are working from the `dev` branch only. Only full releases will be pushed to `master` once release criteria is achieved, so just pull and branch from `dev` when working on a ticket.**
 
 
-Protections are in place for these branches so that builds must succeed before merging, you can see the [github workflow yaml](https://github.com/TortoiseLeaf/MauiScreenTime/blob/dev/.github/workflows/dotnet.yml) to have a look if you're interested. As tests are added to the project they will also run automatically as part of this process when you create a PR, and will need to pass before you can merge.
+- When creating a branch from the repo to work on a JIRA ticket, try to name it with the ticket number & a small descriptor. e.g. `Mauis-13-nature-db`.
+- When the work on the ticket is done, create a Pull Request (PR) pointing to `dev` and move your ticket into the "Review" Column in JIRA. This allows others to know your code is waiting for review in a PR.
+<img width="1513" height="389" alt="Screenshot 2025-11-25 124631" src="https://github.com/user-attachments/assets/104b0ca3-1713-4c51-8eea-c2ee26a2636f" />
 
-PRs will require a review from at least 1 other person, once they're approved you can merge and delete your feature branch.
+
+
+- Remember when opening a PR to rebase `dev` into your feature branch before closing and merging your PR. This ensures your branch is up to date with the `dev` branch before you merge your changes, and reduces the risk of conflicts.
+
+
+- Branch protections automatically run a check on your branch to ensure builds succeed before merging, you can see the [github workflow yaml](https://github.com/TortoiseLeaf/MauiScreenTime/blob/dev/.github/workflows/dotnet.yml) to have a look if you're interested. As tests are added to the project they will also run automatically as part of this process when you create a PR, and will also need to pass before you can merge.
+
+- PRs also require a review from at least 1 other person, once they're approved you can merge and delete your feature branch and close the ticket in JIRA.
 
 ### DoD
 
