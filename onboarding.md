@@ -4,6 +4,10 @@ Hi everyone, thanks for contributing. This will behave probably as a living docu
 
 The following is a set of guidelines for contributing to the MauiScreenTime app usage tracker. These are mostly guidelines, not steadfast rules. Use your best judgment, and feel free to propose changes and updates to this document in a pull request.
 
+### Dev environment
+
+Due to issues from using different IDE's on the project, the preferred IDE to develop this project is Visual Studio.
+
 #### Table Of Contents
 
 [Code of Conduct](#code-of-conduct)
@@ -84,11 +88,15 @@ If you have a questions about anything, just put it in Teams.
 
 ### Git workflow:
 
+
+
 We'll be working from the `dev` branch only. Only full releases will be pushed to `master` once release criteria is achieved, so just pull and branch from `dev` when working on a ticket. 
 
 You can name the branch the ticket name of the task you will work on and add a small descriptor, so for example Mauis-13-nature-db.
 
 Remember when opening a Pull Request (PR) to rebase `dev` into your branch before merging your PR. This will ensure you have the latest version of dev on your branch before merging.
+
+[example video here](https://vimeo.com/1143790483?share=copy&fl=sv&fe=ci)
 
 
 Protections are in place for these branches so that builds must succeed before merging, you can see the [github workflow yaml](https://github.com/TortoiseLeaf/MauiScreenTime/blob/dev/.github/workflows/dotnet.yml) to have a look if you're interested. As tests are added to the project they will also run automatically as part of this process when you create a PR, and will need to pass before you can merge.
