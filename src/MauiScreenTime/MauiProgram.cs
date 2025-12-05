@@ -7,6 +7,7 @@ using MauiScreenTime.Pages;
 
 namespace MauiScreenTime
 {
+    // Hi this is code
     public static class MauiProgram
     {
         public static MauiApp CreateMauiApp()
