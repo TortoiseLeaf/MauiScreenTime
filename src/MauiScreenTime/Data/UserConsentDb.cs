@@ -1,4 +1,5 @@
 ﻿//using Android.AdServices.Common;
+using MauiScreenTime.Services;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -33,18 +34,39 @@ namespace MauiScreenTime.Data
     {
 
         private const string DB_NAME = "user_consent.db3";
-        private readonly SQLiteAsyncConnection _connection;
+        private readonly DatabaseService _databaseService;
+        private SQLiteAsyncConnection _connection;
 
 
         public ConsentDatabase()
         {
-            _connection = new SQLiteAsyncConnection(Path.Combine(FileSystem.AppDataDirectory, DB_NAME));
-            _connection.CreateTableAsync<UserConsentModel>();
+            // _connection = new SQLiteAsyncConnection(Path.Combine(FileSystem.AppDataDirectory, DB_NAME));
+            //_connection.CreateTableAsync<UserConsentModel>();
+
+            _databaseService = new DatabaseService();
+
+            //_connection = GetDbFile();
+            //var _connection = GetConnectionAsync();
         }
+
+        private async Task<SQLiteAsyncConnection> GetConnectionAsync()
+        {
+            if (_connection == null)
+
+            {
+                //var databaseService = new DatabaseService();
+                string dbPath = await _databaseService.GetDatabasePathAsync();
+
+                _connection = new SQLiteAsyncConnection(dbPath);
+            }
+            return _connection;
+        }
+        
 
         // Revisit this because idk
         public async Task<bool> HasConsent()
         {
+            var _connection = await GetConnectionAsync();
             var consent = await _connection.Table<UserConsentModel>()
                 .OrderByDescending(c => c.GrantedAt)
                 .FirstOrDefaultAsync();
@@ -54,6 +76,8 @@ namespace MauiScreenTime.Data
 
         public async Task GrantConsent(string version = "1.0")
         {
+            var _connection = await GetConnectionAsync();
+
             await _connection.InsertAsync(new UserConsentModel
             {
                 IsGranted = true,
@@ -64,6 +88,8 @@ namespace MauiScreenTime.Data
 
         public async Task RevokeConsent(string version = "1.0")
         {
+            var _connection = await GetConnectionAsync();
+
             var consent = await _connection.Table<UserConsentModel>()
                 .OrderByDescending(c => c.GrantedAt)
                 .FirstOrDefaultAsync();
@@ -81,11 +107,15 @@ namespace MauiScreenTime.Data
 
         public async Task<List<UserConsentModel>> GetConsentHistory()
         {
+            var _connection = await GetConnectionAsync();
+
             return await _connection.Table<UserConsentModel>().ToListAsync();
         }
 
         public async Task DeleteAllConsents()
         {
+            var _connection = await GetConnectionAsync();
+
             await _connection.DeleteAllAsync<UserConsentModel>();
         }
     }
