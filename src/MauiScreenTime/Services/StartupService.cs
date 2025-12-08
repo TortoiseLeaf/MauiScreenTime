@@ -12,25 +12,27 @@ namespace MauiScreenTime.Services
     public class StartupService : IStartupService
     {
         private readonly ConsentDatabase _consentDatabase;
+        private bool _hasConsent;
 
+        public StartupService(ConsentDatabase consentDatabase)
+        {
+            _consentDatabase = consentDatabase;
+        }
         public async Task InitializeConsentCheckAsync()
         {
             if (_consentDatabase == null)
             {
-                if (Shell.Current != null)
                     await Shell.Current.GoToAsync(nameof(ConsentPage));
             }
 
-            var hasConsent = await _consentDatabase.HasConsent();
+            _hasConsent = await _consentDatabase.HasConsent();
 
-            if (hasConsent)
+            if (_hasConsent)
             {
-                if (Shell.Current != null)
                     await Shell.Current.GoToAsync(nameof(DashboardPage));
             }
             else
             {
-                if (Shell.Current != null)
                     await Shell.Current.GoToAsync(nameof(ConsentPage));
             }
         }
