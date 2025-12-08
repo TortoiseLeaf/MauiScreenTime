@@ -1,13 +1,15 @@
-﻿using System;
+﻿using MauiScreenTime.Data;
+using MauiScreenTime.Pages;
+using SQLite;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using MauiScreenTime.Data;
-using MauiScreenTime.Pages;
 
 
 namespace MauiScreenTime.ViewModels
@@ -16,6 +18,7 @@ namespace MauiScreenTime.ViewModels
     {
         private readonly ConsentDatabase _db;
         private bool _hasConsent;
+        private List<UserConsentModel> mydata;
 
         public string TermsText { get; set; }
 
@@ -27,10 +30,16 @@ namespace MauiScreenTime.ViewModels
             GrantConsentCommand = new Command(async () => await GrantConsent());
             RevokeConsentCommand = new Command(async () => await RevokeConsent());
             DeleteAllCommand = new Command(async () => await DeleteAll());
+            //CheckDbCommand = new Command(async () => await CheckDb());
 
             _ = LoadTermsAndConditions();
+            _ = CheckDb();
         }
 
+        private async Task CheckDb()
+        {
+            mydata = await _db.GetAllData();
+        }
         public bool HasConsent
         {
             get => _hasConsent;
@@ -45,6 +54,7 @@ namespace MauiScreenTime.ViewModels
         public ICommand GrantConsentCommand { get; }
         public ICommand RevokeConsentCommand { get; }
         public ICommand DeleteAllCommand { get; }
+        //public ICommand CheckDbCommand { get; }
 
 
         private async Task GrantConsent()
@@ -87,7 +97,8 @@ namespace MauiScreenTime.ViewModels
                 TermsText = await reader.ReadToEndAsync();
                 OnPropertyChanged(nameof(TermsText));
 
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Console.WriteLine("Could not load Terms and Conditions");
                 Console.WriteLine(e.Message);

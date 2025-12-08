@@ -22,7 +22,7 @@ namespace MauiScreenTime
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
-            builder.Services.AddSingleton(s => new ConsentDatabase());
+            builder.Services.AddSingleton<ConsentDatabase>();
             builder.Services.AddSingleton(s => new ConversionTableDatabase());
             builder.Services.AddSingleton<IStartupService, StartupService>();
 

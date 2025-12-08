@@ -6,8 +6,6 @@
              x:DataType="vm:ConsentViewModel"
              Title="Consent Settings">
 
-
-
     <Grid Padding="20"
               RowSpacing="20"
               RowDefinitions="Auto, *, Auto, Auto, Auto" >
@@ -19,9 +17,9 @@
             <!-- Analytics Consent -->
             <Border Grid.Row="1"
                     Stroke="Gray"
-                    StrokeThickness="1"                    
-                    
+                    StrokeThickness="1"                      
                     >
+                
             <ScrollView >
                 <VerticalStackLayout Spacing="10">
 
@@ -52,7 +50,13 @@
                 <Button Text="Revoke" 
              Command="{Binding RevokeConsentCommand}"
              BackgroundColor="PaleVioletRed" />
-            </HorizontalStackLayout>
+                
+            <Button Grid.Row="4"
+         Text="PrintDb" 
+         Command="{Binding CheckDbCommand}"
+         BackgroundColor="DarkRed"
+         TextColor="White" />
+        </HorizontalStackLayout>
 
 
             <!-- Delete All -->

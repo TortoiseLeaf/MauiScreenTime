@@ -17,12 +17,12 @@ namespace MauiScreenTime
             InitConsentCheck();
 
         }
-       
+
         private async void InitConsentCheck()
         {
             await _viewModel.InitializeConsentCheckAsync();
 
         }
-        
+
     }
 }
