@@ -1,4 +1,5 @@
-﻿using MauiScreenTime.Data;
+﻿//using Android.Media;
+using MauiScreenTime.Data;
 using MauiScreenTime.Pages;
 using System;
 using System.Collections.Generic;
@@ -16,14 +17,18 @@ namespace MauiScreenTime.Services
 
         public StartupService(ConsentDatabase consentDatabase)
         {
-            _consentDatabase = consentDatabase;
+            if (consentDatabase != null)
+            {
+                _consentDatabase = consentDatabase;
+            }
+            else
+            {
+                Shell.Current.GoToAsync(nameof(ConsentPage));
+
+            }
         }
         public async Task InitializeConsentCheckAsync()
         {
-            if (_consentDatabase == null)
-            {
-                    await Shell.Current.GoToAsync(nameof(ConsentPage));
-            }
 
             _hasConsent = await _consentDatabase.HasConsent();
 
