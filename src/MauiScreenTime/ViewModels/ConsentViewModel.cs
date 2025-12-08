@@ -18,7 +18,6 @@ namespace MauiScreenTime.ViewModels
     {
         private readonly ConsentDatabase _db;
         private bool _hasConsent;
-        private List<UserConsentModel> mydata;
 
         public string TermsText { get; set; }
 
@@ -30,16 +29,10 @@ namespace MauiScreenTime.ViewModels
             GrantConsentCommand = new Command(async () => await GrantConsent());
             RevokeConsentCommand = new Command(async () => await RevokeConsent());
             DeleteAllCommand = new Command(async () => await DeleteAll());
-            //CheckDbCommand = new Command(async () => await CheckDb());
 
             _ = LoadTermsAndConditions();
-            _ = CheckDb();
         }
 
-        private async Task CheckDb()
-        {
-            mydata = await _db.GetAllData();
-        }
         public bool HasConsent
         {
             get => _hasConsent;
@@ -54,7 +47,6 @@ namespace MauiScreenTime.ViewModels
         public ICommand GrantConsentCommand { get; }
         public ICommand RevokeConsentCommand { get; }
         public ICommand DeleteAllCommand { get; }
-        //public ICommand CheckDbCommand { get; }
 
 
         private async Task GrantConsent()
@@ -62,7 +54,6 @@ namespace MauiScreenTime.ViewModels
             await _db.GrantConsent("1.0");
             HasConsent = true;
 
-            // redirect to next page
             await Shell.Current.GoToAsync(nameof(DashboardPage));
 
         }

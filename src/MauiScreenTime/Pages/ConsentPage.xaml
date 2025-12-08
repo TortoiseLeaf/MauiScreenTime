@@ -51,11 +51,6 @@
              Command="{Binding RevokeConsentCommand}"
              BackgroundColor="PaleVioletRed" />
                 
-            <Button Grid.Row="4"
-         Text="PrintDb" 
-         Command="{Binding CheckDbCommand}"
-         BackgroundColor="DarkRed"
-         TextColor="White" />
         </HorizontalStackLayout>
 
 

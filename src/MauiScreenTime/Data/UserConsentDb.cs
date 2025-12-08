@@ -1,4 +1,5 @@
-﻿using SQLite;
+﻿//using Android.AdServices.Common;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,14 +40,6 @@ namespace MauiScreenTime.Data
         {
             _connection = new SQLiteAsyncConnection(Path.Combine(FileSystem.AppDataDirectory, DB_NAME));
             _connection.CreateTableAsync<UserConsentModel>();
-        }
-        //public Task<List<UserConsentModel>> GetDataAsync() =>
-        //    _connection.Table<UserConsentModel>().ToListAsync();
-        public async Task<List<UserConsentModel>> GetAllData()
-        {
-            var allData = await _connection.Table<UserConsentModel>().ToListAsync();
-            Console.WriteLine("MY DATA: " + JsonSerializer.Serialize(allData));
-            return allData;
         }
 
         // Revisit this because idk
