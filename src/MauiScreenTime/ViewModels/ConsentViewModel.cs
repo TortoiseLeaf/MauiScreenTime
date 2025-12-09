@@ -1,5 +1,6 @@
 ﻿using MauiScreenTime.Data;
 using MauiScreenTime.Pages;
+using MauiScreenTime.Services;
 using SQLite;
 using System;
 using System.Collections.Generic;
