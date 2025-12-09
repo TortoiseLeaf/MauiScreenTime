@@ -1,4 +1,5 @@
-﻿using MauiScreenTime.Data;
+﻿using CommunityToolkit.Mvvm.Input;
+using MauiScreenTime.Data;
 using MauiScreenTime.Pages;
 using MauiScreenTime.Services;
 using SQLite;
@@ -11,11 +12,12 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using static Microsoft.Maui.ApplicationModel.Permissions;
 
 
 namespace MauiScreenTime.ViewModels
 {
-    public class ConsentViewModel : INotifyPropertyChanged
+    public partial class ConsentViewModel : INotifyPropertyChanged
     {
         private readonly ConsentDatabase _db;
         private readonly IUsageStatsService _usageStatsService;
@@ -35,19 +37,43 @@ namespace MauiScreenTime.ViewModels
             DeleteAllCommand = new Command(async () => await DeleteAll());
 
             _ = LoadTermsAndConditions();
-            CheckAndroidPermissions();
+            //Task<bool> hasPermission = CheckAndroidPermissions();
+            PageAppearing();
         }
 
-        public async void CheckAndroidPermissions()
+        [RelayCommand]
+        private async Task PageAppearing()
+        {
+            // this needs to refire when the settings page closes. I think doesn't navigate away from the page and that's why.
+            await CheckAndroidPermissions();
+        }
+
+
+
+        public async Task<bool> CheckAndroidPermissions()
         {
 
-            bool hasPermission = await _usageStatsService.CheckAndRequestPermissionsAsync();
-            Console.WriteLine("CHECKANDROID FIRING: ", hasPermission);
+            bool hasPermission = await _usageStatsService.HasPermissionAsync();
+            
+
+            if (!hasPermission)
+            {
+                Console.WriteLine("fires has not permission");
+                // retry logic
+                // remove this alert it is too many
+                await Shell.Current.DisplayAlert("Permission Required",
+            "The app cannot function without usage stats permission.",
+            "OK");
+                _usageStatsService.CheckAndRequestPermissionsAsync();
+
+            }
             if (hasPermission)
             {
+                System.Diagnostics.Debug.WriteLine("fires has permission");
+                //await Shell.Current.DisplayAlert("Permission Granted", "You have granted permissions", "OK");
                 // collect usage stats
             }
-            
+            return hasPermission;
         }
 
         public bool HasConsent
