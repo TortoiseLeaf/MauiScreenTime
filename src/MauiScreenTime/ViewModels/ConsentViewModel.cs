@@ -17,13 +17,16 @@ namespace MauiScreenTime.ViewModels
     public class ConsentViewModel : INotifyPropertyChanged
     {
         private readonly ConsentDatabase _db;
+        private readonly IUsageStatsService _usageStatsService;
         private bool _hasConsent;
 
         public string TermsText { get; set; }
 
-        public ConsentViewModel(ConsentDatabase db)
+        public ConsentViewModel(ConsentDatabase db, IUsageStatsService usageStatsService)
         {
             _db = db;
+
+            _usageStatsService = usageStatsService;
 
             // commands for xaml/.cs
             GrantConsentCommand = new Command(async () => await GrantConsent());
@@ -31,6 +34,19 @@ namespace MauiScreenTime.ViewModels
             DeleteAllCommand = new Command(async () => await DeleteAll());
 
             _ = LoadTermsAndConditions();
+            CheckAndroidPermissions();
+        }
+
+        public async void CheckAndroidPermissions()
+        {
+
+            bool hasPermission = await _usageStatsService.CheckAndRequestPermissionsAsync();
+            Console.WriteLine("CHECKANDROID FIRING: ", hasPermission);
+            if (hasPermission)
+            {
+                // collect usage stats
+            }
+            
         }
 
         public bool HasConsent
