@@ -3,6 +3,8 @@ using Microsoft.Maui.Controls;
 using MauiScreenTime.Data;
 using MauiScreenTime.ViewModels;
 using MauiScreenTime.Pages;
+using MauiScreenTime.Services;
+
 
 
 namespace MauiScreenTime
@@ -20,15 +22,26 @@ namespace MauiScreenTime
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
-            string dbPath = Path.Combine(FileSystem.AppDataDirectory, "consent.db3");
-            builder.Services.AddSingleton(s => new ConsentDatabase(dbPath));
+            builder.Services.AddSingleton<ConsentDatabase>();
             builder.Services.AddSingleton(s => new ConversionTableDatabase());
+            builder.Services.AddSingleton<IStartupService, StartupService>();
 
 
-            //builder.Services.AddSingleton<App>();
+            builder.Services.AddSingleton<App>();
+            
+            //builder.Services.AddTransient<ConsentDatabase>();
 
+            builder.Services.AddTransient<DashboardViewModel>();
             builder.Services.AddTransient<ConsentViewModel>();
+            builder.Services.AddTransient<MainViewModel>();
+
+
+            builder.Services.AddTransient<DashboardPage>();
             builder.Services.AddTransient<ConsentPage>();
+            builder.Services.AddTransient<MainPage>();
+
+
+
 
 #if DEBUG
             builder.Logging.AddDebug();

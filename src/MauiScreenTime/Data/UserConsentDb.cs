@@ -1,36 +1,73 @@
-﻿using System;
+﻿//using Android.AdServices.Common;
+using MauiScreenTime.Services;
+using SQLite;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
-using SQLite;
 
 namespace MauiScreenTime.Data
 {
-    public class UserConsentDb
+    [Table("user_consent")]
+
+    public class UserConsentModel
     {
+        [Column("is_granted")]
         public bool IsGranted { get; set; }
+
+        [Column("granted_at")]
         public DateTime GrantedAt { get; set; }
+
+        [Column("version")]
         public string Version { get; set; } // Track consent version for GDPR compliance
+
+        [Column("revoked_at")]
         public DateTime? RevokedAt { get; set; }
 
         public int DataRetentionDays = 60;
+
     }
 
     public class ConsentDatabase
     {
-        private readonly SQLiteAsyncConnection _database;
 
-        public ConsentDatabase(string dbPath)
+        private const string DB_NAME = "user_consent.db3";
+        private readonly DatabaseService _databaseService;
+        private SQLiteAsyncConnection _connection;
+
+
+        public ConsentDatabase()
         {
-            _database = new SQLiteAsyncConnection(dbPath);
-            _database.CreateTableAsync<UserConsentDb>().Wait();
+            // _connection = new SQLiteAsyncConnection(Path.Combine(FileSystem.AppDataDirectory, DB_NAME));
+            //_connection.CreateTableAsync<UserConsentModel>();
+
+            _databaseService = new DatabaseService();
+
+            //_connection = GetDbFile();
+            //var _connection = GetConnectionAsync();
         }
+
+        private async Task<SQLiteAsyncConnection> GetConnectionAsync()
+        {
+            if (_connection == null)
+
+            {
+                //var databaseService = new DatabaseService();
+                string dbPath = await _databaseService.GetDatabasePathAsync();
+
+                _connection = new SQLiteAsyncConnection(dbPath);
+            }
+            return _connection;
+        }
+        
 
         // Revisit this because idk
         public async Task<bool> HasConsent()
         {
-            var consent = await _database.Table<UserConsentDb>()
+            var _connection = await GetConnectionAsync();
+            var consent = await _connection.Table<UserConsentModel>()
                 .OrderByDescending(c => c.GrantedAt)
                 .FirstOrDefaultAsync();
 
@@ -39,7 +76,9 @@ namespace MauiScreenTime.Data
 
         public async Task GrantConsent(string version = "1.0")
         {
-            await _database.InsertAsync(new UserConsentDb
+            var _connection = await GetConnectionAsync();
+
+            await _connection.InsertAsync(new UserConsentModel
             {
                 IsGranted = true,
                 GrantedAt = DateTime.UtcNow,
@@ -49,13 +88,15 @@ namespace MauiScreenTime.Data
 
         public async Task RevokeConsent(string version = "1.0")
         {
-            var consent = await _database.Table<UserConsentDb>()
+            var _connection = await GetConnectionAsync();
+
+            var consent = await _connection.Table<UserConsentModel>()
                 .OrderByDescending(c => c.GrantedAt)
                 .FirstOrDefaultAsync();
 
             if (consent != null)
             {
-                await _database.InsertAsync(new UserConsentDb
+                await _connection.InsertAsync(new UserConsentModel
                 {
                     IsGranted = false,
                     RevokedAt = DateTime.UtcNow,
@@ -64,14 +105,18 @@ namespace MauiScreenTime.Data
             }
         }
 
-        public async Task<List<UserConsentDb>> GetConsentHistory()
+        public async Task<List<UserConsentModel>> GetConsentHistory()
         {
-            return await _database.Table<UserConsentDb>().ToListAsync();
+            var _connection = await GetConnectionAsync();
+
+            return await _connection.Table<UserConsentModel>().ToListAsync();
         }
 
         public async Task DeleteAllConsents()
         {
-            await _database.DeleteAllAsync<UserConsentDb>();
+            var _connection = await GetConnectionAsync();
+
+            await _connection.DeleteAllAsync<UserConsentModel>();
         }
     }
 }

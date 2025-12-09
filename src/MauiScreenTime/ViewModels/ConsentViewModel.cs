@@ -1,19 +1,22 @@
-﻿using System;
+﻿using MauiScreenTime.Data;
+using MauiScreenTime.Pages;
+using SQLite;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using MauiScreenTime.Data;
+
 
 namespace MauiScreenTime.ViewModels
 {
     public class ConsentViewModel : INotifyPropertyChanged
     {
         private readonly ConsentDatabase _db;
-        private readonly ConversionTableDatabase _dbT;
         private bool _hasConsent;
 
         public string TermsText { get; set; }
@@ -27,7 +30,6 @@ namespace MauiScreenTime.ViewModels
             RevokeConsentCommand = new Command(async () => await RevokeConsent());
             DeleteAllCommand = new Command(async () => await DeleteAll());
 
-            _ = LoadConsents();
             _ = LoadTermsAndConditions();
         }
 
@@ -46,18 +48,14 @@ namespace MauiScreenTime.ViewModels
         public ICommand RevokeConsentCommand { get; }
         public ICommand DeleteAllCommand { get; }
 
-        private async Task LoadConsents()
-        {
-            HasConsent = await _db.HasConsent();
-        }
 
         private async Task GrantConsent()
         {
             await _db.GrantConsent("1.0");
             HasConsent = true;
 
-            // redirect to next page
-            //Application.Current.MainPage = new AppShell();
+            await Shell.Current.GoToAsync(nameof(DashboardPage));
+
         }
 
         //Add this into user account settings page?
@@ -72,7 +70,6 @@ namespace MauiScreenTime.ViewModels
         private async Task DeleteAll()
         {
             await _db.DeleteAllConsents();
-            await LoadConsents();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -91,7 +88,8 @@ namespace MauiScreenTime.ViewModels
                 TermsText = await reader.ReadToEndAsync();
                 OnPropertyChanged(nameof(TermsText));
 
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Console.WriteLine("Could not load Terms and Conditions");
                 Console.WriteLine(e.Message);
