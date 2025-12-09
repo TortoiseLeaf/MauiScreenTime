@@ -9,7 +9,8 @@ namespace MauiScreenTime.Services
     public interface IUsageStatsService
     {
         Task<bool> CheckAndRequestPermissionsAsync();
-        //Task<bool> HasPermissionAsync();
+        Task<bool> HasPermissionAsync();
+        
        // Task<List<AppUsageData>> GetAppUsageAsync();
     }
 }

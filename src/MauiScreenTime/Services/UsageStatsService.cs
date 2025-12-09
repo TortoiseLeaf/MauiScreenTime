@@ -23,26 +23,24 @@ namespace MauiScreenTime.Services
         bool statusGranted;
         public async Task<bool> CheckAndRequestPermissionsAsync()
         {
-            //public async void CheckAndRequestPermissionsAsync()
-            //{
-            //async Task RequestBluetooth()
-            //{
+
             if (DeviceInfo.Platform != DevicePlatform.Android)
-                Console.WriteLine("NOt on android error");
+                // update this to show an error log or something
+                //return false;
+                Console.WriteLine("NOT ANDROID ERROR");
 
             var status = PermissionStatus.Unknown;
 
-            if (DeviceInfo.Version.Major >= 12)
-                Console.WriteLine("fires version >= 12");
+            //if (DeviceInfo.Version.Major >= 12)
 
-            {
+            //{
+
+
+
                 status = await Permissions.CheckStatusAsync<UsageStatsPermission>();
-                Console.WriteLine("fires status is assigned by checkstatusasync: ", status.ToString());
-
 
                 if (status == PermissionStatus.Granted)
                 {
-
                     statusGranted = true;
                     Console.WriteLine("fires status granted true ", statusGranted);
                     return statusGranted;
@@ -50,8 +48,14 @@ namespace MauiScreenTime.Services
                 if (status == PermissionStatus.Denied)
                 {
                     statusGranted = false;
-                    Console.WriteLine("fires status granted false ", statusGranted);
-                    status = await Permissions.RequestAsync<UsageStatsPermission>();
+                await Shell.Current.DisplayAlert("Permission required",
+                    "Location permission is required for bluetooth scanning. " +
+                    "We do not store or use your location at all.", "OK");
+
+                // Here i want to open the settings page
+                OpenUsageAccessSettings();
+                //Console.WriteLine("fires status granted false ", statusGranted);
+                //    status = await Permissions.RequestAsync<UsageStatsPermission>();
                 }
 
                 if (Permissions.ShouldShowRationale<UsageStatsPermission>())
@@ -61,7 +65,7 @@ namespace MauiScreenTime.Services
 
                 status = await Permissions.RequestAsync<UsageStatsPermission>();
 
-            }
+            //}
             //else
             //{
             //    status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
@@ -80,21 +84,20 @@ namespace MauiScreenTime.Services
             //}
 
 
-            if (status != PermissionStatus.Granted)
-                await Shell.Current.DisplayAlert("Permission required",
-                    "Location permission is required for bluetooth scanning. " +
-                    "We do not store or use your location at all.", "OK");
+            ////if (status != PermissionStatus.Granted)
+            //    if (statusGranted != true)
+            //    await Shell.Current.DisplayAlert("Permission required",
+            //        "Location permission is required for bluetooth scanning. " +
+            //        "We do not store or use your location at all.", "OK");
 
-            // Here i want to open the settings page
-            OpenUsageAccessSettings();
+            //// Here i want to open the settings page
+            //OpenUsageAccessSettings();
 
-            status = await Permissions.RequestAsync<UsageStatsPermission>();
-            Console.WriteLine("fires requestAsync");
             return statusGranted;
         }
 
 
- 
+
 
         public async Task<bool> HasPermissionAsync()
         {
@@ -124,7 +127,6 @@ namespace MauiScreenTime.Services
                 return await Task.FromResult(false);
             }
 #else
-            Console.WriteLine("ERror");
             return await Task.FromResult(false).ConfigureAwait(false);
 
 #endif
