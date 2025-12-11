@@ -1,14 +1,25 @@
-﻿namespace MauiScreenTime.Pages
+﻿using CommunityToolkit.Mvvm.Input;
+using MauiScreenTime.Services;
+
+namespace MauiScreenTime.ViewModels
 {
-    public class DashboardViewModel
+    public partial class DashboardViewModel
     {
-        public DashboardViewModel() //UsageDatabase db)
+        private readonly IUsageStatsService _usageStatsService;
+
+        public DashboardViewModel(IUsageStatsService usageStatsService) //UsageDatabase db)
         {
             //_db = db;
+            _usageStatsService = usageStatsService;
 
-            // commands for xaml/.cs
-           // GrantConsentCommand = new Command(async () => await GrantConsent());
-           
+            PageAppearing();
+        }
+
+        [RelayCommand]
+        private async Task PageAppearing()
+        {
+            await _usageStatsService.HasPermissionAsync();
+
         }
     }
 }

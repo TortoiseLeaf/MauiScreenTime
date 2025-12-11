@@ -44,36 +44,8 @@ namespace MauiScreenTime.ViewModels
         [RelayCommand]
         private async Task PageAppearing()
         {
-            // this needs to refire when the settings page closes. I think doesn't navigate away from the page and that's why.
-            await CheckAndroidPermissions();
-        }
+            await _usageStatsService.HasPermissionAsync();
 
-
-
-        public async Task<bool> CheckAndroidPermissions()
-        {
-
-            bool hasPermission = await _usageStatsService.HasPermissionAsync();
-            
-
-            if (!hasPermission)
-            {
-                Console.WriteLine("fires has not permission");
-                // retry logic
-                // remove this alert it is too many
-                await Shell.Current.DisplayAlert("Permission Required",
-            "The app cannot function without usage stats permission.",
-            "OK");
-                _usageStatsService.CheckAndRequestPermissionsAsync();
-
-            }
-            if (hasPermission)
-            {
-                System.Diagnostics.Debug.WriteLine("fires has permission");
-                //await Shell.Current.DisplayAlert("Permission Granted", "You have granted permissions", "OK");
-                // collect usage stats
-            }
-            return hasPermission;
         }
 
         public bool HasConsent
