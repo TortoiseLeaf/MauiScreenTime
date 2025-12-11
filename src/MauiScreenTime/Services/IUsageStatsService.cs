@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MauiScreenTime.Data;
 
 namespace MauiScreenTime.Services
 {
@@ -10,6 +11,6 @@ namespace MauiScreenTime.Services
     {
         Task<bool> HasPermissionAsync();
         
-       // Task<List<AppUsageData>> GetAppUsageAsync();
+        Task<List<AppUsageModel>> GetAppUsageAsync();
     }
 }

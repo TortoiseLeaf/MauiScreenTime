@@ -7,7 +7,7 @@ using SQLite;
 
 namespace MauiScreenTime.Data
 {
-    public class AppUsageDb
+    public class AppUsageModel
     {
         public int Id {  get; set; }
         public string PackageName { get; set; }
@@ -24,7 +24,7 @@ namespace MauiScreenTime.Data
         public AppUsageDatabase(string dbPath)
         {
             _database = new SQLiteAsyncConnection(dbPath);
-            _database.CreateTableAsync<AppUsageDb>().Wait();
+            _database.CreateTableAsync<AppUsageModel>().Wait();
         }
     }
 }
