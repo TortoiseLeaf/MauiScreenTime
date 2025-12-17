@@ -1,9 +1,12 @@
-﻿using System;
+﻿using MauiScreenTime.Data;
+using Microsoft.Maui.Controls.PlatformConfiguration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static Microsoft.Maui.ApplicationModel.Permissions;
+
 #if ANDROID
 using Android.App;
 using Android.App.Usage;
@@ -80,5 +83,75 @@ namespace MauiScreenTime.Services
 #endif
 
         }
+
+
+        // check out scope for android tag, it's weird to have it in the IUsageStats interface. might even be a weakness?
+#if ANDROID
+
+        public // List<AppUsageModel> to return actual data Object List
+        void GetAppUsage()
+        {
+            var context = Android.App.Application.Context;
+            var usageStatsManager = (UsageStatsManager)context.GetSystemService(Context.UsageStatsService);
+
+            // interval starts at midnight today, ends with right now
+            DateTime endTime = DateTime.Now;
+            DateTime startTime = DateTime.Today;
+
+            long startTimeMillis = new DateTimeOffset(startTime).ToUnixTimeMilliseconds();
+            long endTimeMillis = new DateTimeOffset(endTime).ToUnixTimeMilliseconds();
+
+            var usageStatsList = usageStatsManager.QueryUsageStats(
+                UsageStatsInterval.Daily,
+                startTimeMillis,
+                endTimeMillis
+            );
+
+            var DeviceAppUsageList = new List<AppUsageModel>();
+
+            if (usageStatsList != null)
+            {
+                foreach (var appUsageData in usageStatsList)
+                {
+                    
+                    if (appUsageData.TotalTimeInForeground > 0)
+                    {
+                        DeviceAppUsageList.Add(new AppUsageModel
+                        {
+                            PackageName = appUsageData.PackageName,
+                            AppName =  GetAppName(context, appUsageData.PackageName),
+                            UsageTimeMilliseconds = TimeSpan.FromMilliseconds(appUsageData.TotalTimeInForeground),
+                            //FirstTimeStamp = DateTimeOffset.FromUnixTimeMilliseconds(usageStats.FirstTimeStamp).DateTime,
+                            //LastTimeStamp = DateTimeOffset.FromUnixTimeMilliseconds(usageStats.LastTimeStamp).DateTime,
+                            //LastTimeUsed = DateTimeOffset.FromUnixTimeMilliseconds(usageStats.LastTimeUsed).DateTime
+                        });
+                    }
+                }
+            }
+
+            var myData = DeviceAppUsageList.OrderByDescending(a => a.UsageTimeMilliseconds).ToList();
+
+            string jsonString = System.Text.Json.JsonSerializer.Serialize(myData);
+            Console.WriteLine($"My data: {jsonString}");
+        }
+
+        // replace this with hardcoded app names? "com.gmail" = "Gmail" e.g.
+        private string GetAppName(Context context, string packageName)
+        {
+            try
+            {
+                var packageManager = context.PackageManager;
+                var applicationInfo = packageManager.GetApplicationInfo(packageName, 0);
+                return packageManager.GetApplicationLabel(applicationInfo);
+            }
+            catch
+            {
+                return packageName;
+            }
+        }
+
+#endif
+
+
     }
-};
+}

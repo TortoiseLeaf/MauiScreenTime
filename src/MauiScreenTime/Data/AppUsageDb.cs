@@ -13,7 +13,7 @@ namespace MauiScreenTime.Data
         public string PackageName { get; set; }
         public string AppName { get; set; }
         public DateTime Date {  get; set; }
-        public long UsageTimeMilliseconds { get; set; }
+        public TimeSpan UsageTimeMilliseconds { get; set; }
     }
 
     //appusagedb controller placeholder
