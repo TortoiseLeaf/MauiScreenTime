@@ -19,7 +19,29 @@ namespace MauiScreenTime.ViewModels
         private async Task PageAppearing()
         {
             await _usageStatsService.HasPermissionAsync();
+            usageGo();
 
+        }
+
+        public async void usageGo()
+        {
+            bool hasPerm = await _usageStatsService.HasPermissionAsync();
+
+            if (hasPerm)
+            {
+
+                try
+                {
+#if ANDROID
+
+                    _usageStatsService.GetAppUsage();
+#endif
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("log error firing getappusage: ", ex.Message.ToString());
+                }
+            }
         }
     }
 }
