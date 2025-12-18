@@ -39,12 +39,6 @@ namespace MauiScreenTime.Services
         }
         public async Task<bool> HasPermissionAsync()
         {
-            // additional checks to ensure correct platform and version?
-
-            //if (DeviceInfo.Platform != DevicePlatform.Android)
-            //if (DeviceInfo.Version.Major >= 12)
-
-            //{
 
 #if ANDROID
             try
@@ -78,7 +72,7 @@ namespace MauiScreenTime.Services
                 return await Task.FromResult(false);
             }
 #else
-            return await Task.FromResult(false).ConfigureAwait(false);
+                    return await Task.FromResult(false).ConfigureAwait(false);
 
 #endif
 
@@ -88,8 +82,9 @@ namespace MauiScreenTime.Services
         // check out scope for android tag, it's weird to have it in the IUsageStats interface. might even be a weakness?
 #if ANDROID
 
-        public // List<AppUsageModel> to return actual data Object List
-        void GetAppUsage()
+        public async Task<List<AppUsageModel>> GetAppUsageAsync()
+        {
+        return await Task.Run(() =>
         {
             var context = Android.App.Application.Context;
             var usageStatsManager = (UsageStatsManager)context.GetSystemService(Context.UsageStatsService);
@@ -129,11 +124,14 @@ namespace MauiScreenTime.Services
                 }
             }
 
-            var myData = DeviceAppUsageList.OrderByDescending(a => a.UsageTimeMilliseconds).ToList();
+            var usageData = DeviceAppUsageList.OrderByDescending(a => a.UsageTimeMilliseconds).ToList();
 
-            string jsonString = System.Text.Json.JsonSerializer.Serialize(myData);
-            Console.WriteLine($"My data: {jsonString}");
+            return usageData;
+            });
         }
+
+
+
 
         // replace this with hardcoded app names? "com.gmail" = "Gmail" e.g.
         private string GetAppName(Context context, string packageName)
