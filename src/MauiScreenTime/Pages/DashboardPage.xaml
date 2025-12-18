@@ -6,10 +6,16 @@
     <Shell.BackButtonBehavior>
         <BackButtonBehavior IsEnabled="False" IsVisible="False"/>
     </Shell.BackButtonBehavior>
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to DashboardPage! This is showing because you have given consent for data collection"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+
+    <CollectionView ItemsSource="{Binding AppUsageData}">
+        <CollectionView.ItemTemplate>
+            <DataTemplate>
+                <VerticalStackLayout>
+                    
+                    <Label Text="{Binding AppName}" FontSize="16" FontAttributes="Bold" />
+                    <Label Text="{Binding UsageTimeMilliseconds}" />
+                </VerticalStackLayout>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
 </ContentPage>
