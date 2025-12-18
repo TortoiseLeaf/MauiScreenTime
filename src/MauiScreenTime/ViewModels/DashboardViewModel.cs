@@ -1,40 +1,49 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using MauiScreenTime.Data;
 using MauiScreenTime.Services;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace MauiScreenTime.ViewModels
 {
-    public partial class DashboardViewModel
+    public partial class DashboardViewModel : ObservableObject
     {
         private readonly IUsageStatsService _usageStatsService;
 
-        public DashboardViewModel(IUsageStatsService usageStatsService) //UsageDatabase db)
+        [ObservableProperty]
+        private ObservableCollection<AppUsageModel> appUsageData = new();
+
+
+        public DashboardViewModel(IUsageStatsService usageStatsService)
         {
-            //_db = db;
+            
             _usageStatsService = usageStatsService;
 
-            PageAppearing();
+            OnAppearing();
+
         }
 
         [RelayCommand]
-        private async Task PageAppearing()
+        private async Task OnAppearing()
         {
             await _usageStatsService.HasPermissionAsync();
-            usageGo();
-
+            await collectAppUsage();
         }
 
-        public async void usageGo()
+        public async Task collectAppUsage()
         {
-            bool hasPerm = await _usageStatsService.HasPermissionAsync();
+            bool hasPermission = await _usageStatsService.HasPermissionAsync();
 
-            if (hasPerm)
+            if (hasPermission)
             {
 
                 try
                 {
 #if ANDROID
-
-                    _usageStatsService.GetAppUsage();
+                var usageData = await _usageStatsService.GetAppUsageAsync();
+                AppUsageData = new ObservableCollection<AppUsageModel>(usageData);
 #endif
                 }
                 catch (Exception ex)
@@ -42,6 +51,8 @@ namespace MauiScreenTime.ViewModels
                     Console.WriteLine("log error firing getappusage: ", ex.Message.ToString());
                 }
             }
+
         }
+
     }
 }

@@ -116,9 +116,7 @@ namespace MauiScreenTime.Services
                             PackageName = appUsageData.PackageName,
                             AppName =  GetAppName(context, appUsageData.PackageName),
                             UsageTimeMilliseconds = TimeSpan.FromMilliseconds(appUsageData.TotalTimeInForeground),
-                            //FirstTimeStamp = DateTimeOffset.FromUnixTimeMilliseconds(usageStats.FirstTimeStamp).DateTime,
-                            //LastTimeStamp = DateTimeOffset.FromUnixTimeMilliseconds(usageStats.LastTimeStamp).DateTime,
-                            //LastTimeUsed = DateTimeOffset.FromUnixTimeMilliseconds(usageStats.LastTimeUsed).DateTime
+                            
                         });
                     }
                 }
