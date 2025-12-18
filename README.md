@@ -57,12 +57,43 @@ This includes being respectful to different viewpoints, there's a 100 ways to sk
 Remember we're all learning, so everyone has something valuable to contribute.
 
 This Code of Conduct is loosely adapted from the [Atom Code of conduct](https://github.com/atom/atom/blob/master/CODE_OF_CONDUCT.md) 
+
 ## FAQ
 
 > **Note:** This can be built on as we go, common problems will probably reveal themselves early on
 
-**Q:** what should I put in a PR description?
-**A:** As a general rule of thumb, just a couple of sentences like this:
+
+- **Q:** I get the error `inconsistent accessibility: parameter type 'x' is less accessible than method 'y'`
+- **A:** Is it registered in the `mauiprogram.cs` file, or is the class you're trying to inherit from in scope? (e.g. public vs private)
+<br>
+
+- **Q:** I fixed an error but it's still showing in the console
+- **A:** Try cleaning the solution and rebuilding 
+<br>
+
+- **Q:** I get a null pointer exception that breaks the app when i try to run it.
+- **A:** This usually means an object is not assigned properly, so the app's trying to use a `null` instead of your object. Check if you direct injections are initialised in the class constructor you're injecting into. example:
+```
+namespace MauiScreenTime.ViewModels
+{
+    public partial class DashboardViewModel
+    {
+        // declare it
+        private readonly IUsageStatsService _usageStatsService;
+
+        // inject it into the class where you'll use it
+        public DashboardViewModel(IUsageStatsService usageStatsService)
+        {
+        // initialize it into an object
+            _usageStatsService = usageStatsService;
+
+        }
+```
+<br>
+
+
+- **Q:** what should I put in a PR description?
+- **A:** As a general rule of thumb, just a couple of sentences like this:
 ```
 ## what does the PR do?
 (describe the changes)
