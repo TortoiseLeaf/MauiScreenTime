@@ -26,6 +26,7 @@ namespace MauiScreenTime
             builder.Services.AddSingleton(s => new ConversionTableDatabase());
             builder.Services.AddSingleton<IStartupService, StartupService>();
 
+            builder.Services.AddSingleton<IUsageStatsService, UsageStatsService>();
 
             builder.Services.AddSingleton<App>();
             

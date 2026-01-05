@@ -1,5 +1,7 @@
-﻿using MauiScreenTime.Data;
+﻿using CommunityToolkit.Mvvm.Input;
+using MauiScreenTime.Data;
 using MauiScreenTime.Pages;
+using MauiScreenTime.Services;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -10,20 +12,24 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using static Microsoft.Maui.ApplicationModel.Permissions;
 
 
 namespace MauiScreenTime.ViewModels
 {
-    public class ConsentViewModel : INotifyPropertyChanged
+    public partial class ConsentViewModel : INotifyPropertyChanged
     {
         private readonly ConsentDatabase _db;
+        private readonly IUsageStatsService _usageStatsService;
         private bool _hasConsent;
 
         public string TermsText { get; set; }
 
-        public ConsentViewModel(ConsentDatabase db)
+        public ConsentViewModel(ConsentDatabase db, IUsageStatsService usageStatsService)
         {
             _db = db;
+
+            _usageStatsService = usageStatsService;
 
             // commands for xaml/.cs
             GrantConsentCommand = new Command(async () => await GrantConsent());
@@ -31,6 +37,15 @@ namespace MauiScreenTime.ViewModels
             DeleteAllCommand = new Command(async () => await DeleteAll());
 
             _ = LoadTermsAndConditions();
+            //Task<bool> hasPermission = CheckAndroidPermissions();
+            PageAppearing();
+        }
+
+        [RelayCommand]
+        private async Task PageAppearing()
+        {
+            await _usageStatsService.HasPermissionAsync();
+
         }
 
         public bool HasConsent
