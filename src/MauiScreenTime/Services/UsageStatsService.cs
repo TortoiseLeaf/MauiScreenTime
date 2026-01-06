@@ -2,12 +2,16 @@
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using static Microsoft.Maui.ApplicationModel.Permissions;
 
 #if ANDROID
+using Android.Content.PM;
 using Android.App;
 using Android.App.Usage;
 using Android.Content;
@@ -22,6 +26,7 @@ namespace MauiScreenTime.Services
 {
     public class UsageStatsService : IUsageStatsService
     {
+        public List<string> appWhiteList = ["com.android.settings", "com.android.launcher", "com.zhiliaoapp.musically", "com.reddit.frontpage", "com.facebook.katana", "com.instagram.android", "com.twitter.android", "com.snapchat.android", "com.google.android.youtube"];
 
         public void OpenUsageAccessSettings()
         {
@@ -72,12 +77,35 @@ namespace MauiScreenTime.Services
                 return await Task.FromResult(false);
             }
 #else
-                    return await Task.FromResult(false).ConfigureAwait(false);
+            return await Task.FromResult(false).ConfigureAwait(false);
 
 #endif
 
         }
 
+        public IList<string> GetInstalledPackages()
+        {
+            var installedWhitelistApps = new List<string>();
+
+#if ANDROID
+        try {
+            var packageManager = Android.App.Application.Context.PackageManager;
+            var packages = packageManager.GetInstalledPackages(PackageInfoFlags.MatchAll);
+
+            foreach (var package in packages) {
+                foreach (var app in appWhiteList) {
+                    if (app == package.PackageName) {
+                    installedWhitelistApps.Add(package.PackageName);
+                    }
+                    }
+                    }
+                    return installedWhitelistApps;
+                    } catch (Exception Ex) {
+                    System.Diagnostics.Debug.WriteLine($"Error getting installed whitelist apps: ", Ex.Message);
+            }
+#endif
+            return installedWhitelistApps;
+        }
 
         // check out scope for android tag, it's weird to have it in the IUsageStats interface. might even be a weakness?
 #if ANDROID
@@ -109,7 +137,7 @@ namespace MauiScreenTime.Services
                 foreach (var appUsageData in usageStatsList)
                 {
                     
-                    if (appUsageData.TotalTimeInForeground > 0)
+                    if (appUsageData.TotalTimeInForeground > 0 ) //&& packageName is in installedWhitelist)
                     {
                         DeviceAppUsageList.Add(new AppUsageModel
                         {

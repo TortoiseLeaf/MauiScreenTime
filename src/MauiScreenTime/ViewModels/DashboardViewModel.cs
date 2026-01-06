@@ -5,6 +5,7 @@ using MauiScreenTime.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 
 namespace MauiScreenTime.ViewModels
 {
@@ -30,6 +31,11 @@ namespace MauiScreenTime.ViewModels
         {
             await _usageStatsService.HasPermissionAsync();
             await collectAppUsage();
+            var list = _usageStatsService.GetInstalledPackages();
+            foreach (var guy in list) {
+                Console.WriteLine(guy);
+            }
+            
         }
 
         public async Task collectAppUsage()
