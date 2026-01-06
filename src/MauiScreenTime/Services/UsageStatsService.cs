@@ -112,6 +112,8 @@ namespace MauiScreenTime.Services
 
         public async Task<List<AppUsageModel>> GetAppUsageAsync()
         {
+        IList<string> installedWhitelistApps = GetInstalledPackages();
+
         return await Task.Run(() =>
         {
             var context = Android.App.Application.Context;
@@ -137,7 +139,7 @@ namespace MauiScreenTime.Services
                 foreach (var appUsageData in usageStatsList)
                 {
                     
-                    if (appUsageData.TotalTimeInForeground > 0 ) //&& packageName is in installedWhitelist)
+                    if (appUsageData.TotalTimeInForeground > 0 && installedWhitelistApps.Contains(appUsageData.PackageName))
                     {
                         DeviceAppUsageList.Add(new AppUsageModel
                         {
