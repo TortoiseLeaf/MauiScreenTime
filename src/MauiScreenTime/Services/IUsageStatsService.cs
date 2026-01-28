@@ -12,10 +12,9 @@ namespace MauiScreenTime.Services
     {
         IList<string> GetInstalledPackages();
         Task<bool> HasPermissionAsync();
-        #if ANDROID
+        
         Task<List<AppUsageModel>> GetAppUsageAsync();
-        //void GetAppUsage();
-#endif
+
         
     }
 }

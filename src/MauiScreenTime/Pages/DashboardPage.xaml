@@ -12,7 +12,7 @@
             <DataTemplate>
                 <VerticalStackLayout>
                     
-                    <Label Text="{Binding AppName}" FontSize="16" FontAttributes="Bold" />
+                    <Label Text="{Binding PackageName}" FontSize="16" FontAttributes="Bold" />
                     <Label Text="{Binding UsageTimeMilliseconds}" />
                 </VerticalStackLayout>
             </DataTemplate>

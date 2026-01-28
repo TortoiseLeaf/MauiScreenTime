@@ -26,8 +26,12 @@ namespace MauiScreenTime.Services
 {
     public class UsageStatsService : IUsageStatsService
     {
-        public List<string> appWhiteList = ["com.android.settings", "com.android.launcher", "com.zhiliaoapp.musically", "com.reddit.frontpage", "com.facebook.katana", "com.instagram.android", "com.twitter.android", "com.snapchat.android", "com.google.android.youtube"];
+        public List<string> appWhiteList = ["Settings", "Launcher", "com.google.android.gm", "com.android.settings", "com.android.launcher", "com.zhiliaoapp.musically", "com.reddit.frontpage", "com.facebook.katana", "com.instagram.android", "com.twitter.android", "com.snapchat.android", "com.google.android.youtube"];
+        private Task<List<AppUsageModel>>? usageData;
 
+#if ANDROID
+        private Android.Content.Context _context;
+#endif
         public void OpenUsageAccessSettings()
         {
 #if ANDROID
@@ -85,39 +89,47 @@ namespace MauiScreenTime.Services
 
         public IList<string> GetInstalledPackages()
         {
-            var installedWhitelistApps = new List<string>();
+            var installedWhitelistPackageNames = new List<string>();
 
 #if ANDROID
         try {
-            var packageManager = Android.App.Application.Context.PackageManager;
+        _context = Android.App.Application.Context;
+
+            var packageManager = _context.PackageManager;
             var packages = packageManager.GetInstalledPackages(PackageInfoFlags.MatchAll);
 
             foreach (var package in packages) {
                 foreach (var app in appWhiteList) {
                     if (app == package.PackageName) {
-                    installedWhitelistApps.Add(package.PackageName);
+                    
+                    installedWhitelistPackageNames.Add(package.PackageName);
                     }
                     }
                     }
-                    return installedWhitelistApps;
+                    return installedWhitelistPackageNames;
+                    
                     } catch (Exception Ex) {
                     System.Diagnostics.Debug.WriteLine($"Error getting installed whitelist apps: ", Ex.Message);
+
             }
 #endif
-            return installedWhitelistApps;
+            return installedWhitelistPackageNames;
         }
 
         // check out scope for android tag, it's weird to have it in the IUsageStats interface. might even be a weakness?
-#if ANDROID
 
-        public async Task<List<AppUsageModel>> GetAppUsageAsync()
+
+        public async Task<List<AppUsageModel>> GetAppUsageAsync() 
         {
-        IList<string> installedWhitelistApps = GetInstalledPackages();
+
+        IList<string> installedWhitelistPackageNames = GetInstalledPackages();
 
         return await Task.Run(() =>
+
         {
-            var context = Android.App.Application.Context;
-            var usageStatsManager = (UsageStatsManager)context.GetSystemService(Context.UsageStatsService);
+#if ANDROID
+            _context = Android.App.Application.Context;
+            var usageStatsManager = (UsageStatsManager)_context.GetSystemService(Context.UsageStatsService);
 
             // interval starts at midnight today, ends with right now
             DateTime endTime = DateTime.Now;
@@ -136,16 +148,15 @@ namespace MauiScreenTime.Services
 
             if (usageStatsList != null)
             {
-                foreach (var appUsageData in usageStatsList)
-                {
-                    
-                    if (appUsageData.TotalTimeInForeground > 0 && installedWhitelistApps.Contains(appUsageData.PackageName))
+                foreach (var usageObj in usageStatsList)
+                {    
+                    if (usageObj.TotalTimeInForeground > 0 && installedWhitelistPackageNames.Contains(usageObj.PackageName))
                     {
                         DeviceAppUsageList.Add(new AppUsageModel
                         {
-                            PackageName = appUsageData.PackageName,
-                            AppName =  GetAppName(context, appUsageData.PackageName),
-                            UsageTimeMilliseconds = TimeSpan.FromMilliseconds(appUsageData.TotalTimeInForeground),
+                            PackageName = usageObj.PackageName,
+                            //AppName =  usageObj.ApplicationInfo.LoadLabel(packageManager),
+                            UsageTimeMilliseconds = TimeSpan.FromMilliseconds(usageObj.TotalTimeInForeground),
                             
                         });
                     }
@@ -153,31 +164,35 @@ namespace MauiScreenTime.Services
             }
 
             var usageData = DeviceAppUsageList.OrderByDescending(a => a.UsageTimeMilliseconds).ToList();
-
+#endif
             return usageData;
+
             });
+
         }
 
 
 
 
         // replace this with hardcoded app names? "com.gmail" = "Gmail" e.g.
-        private string GetAppName(Context context, string packageName)
-        {
-            try
-            {
-                var packageManager = context.PackageManager;
-                var applicationInfo = packageManager.GetApplicationInfo(packageName, 0);
-                return packageManager.GetApplicationLabel(applicationInfo);
-            }
-            catch
-            {
-                return packageName;
-            }
-        }
+        //`package.ApplicationInfo.LoadLabel(packageManager)`
+        //private string GetAppName(Context context, string packageName)
+        //{
+        //    try
+        //    {
+        //        var packageManager = context.PackageManager;
+        //        var applicationInfo = packageManager.GetApplicationInfo(packageName, 0);
+        //        return packageManager.GetApplicationLabel(applicationInfo);
+        //    }
+        //    catch
+        //    {
+        //        return packageName;
+        //    }
+        //}
 
-#endif
+
 
 
     }
+
 }
