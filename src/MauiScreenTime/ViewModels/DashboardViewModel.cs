@@ -12,6 +12,7 @@ namespace MauiScreenTime.ViewModels
     public partial class DashboardViewModel : ObservableObject
     {
         private readonly IUsageStatsService _usageStatsService;
+        public bool hasPermission;
 
         [ObservableProperty]
         private ObservableCollection<AppUsageModel> appUsageData = new();
@@ -31,16 +32,12 @@ namespace MauiScreenTime.ViewModels
         {
             await _usageStatsService.HasPermissionAsync();
             await collectAppUsage();
-            var list = _usageStatsService.GetInstalledPackages();
-            foreach (var guy in list) {
-                Console.WriteLine(guy);
-            }
             
         }
 
         public async Task collectAppUsage()
         {
-            bool hasPermission = await _usageStatsService.HasPermissionAsync();
+            hasPermission = await _usageStatsService.HasPermissionAsync();
 
             if (hasPermission)
             {
