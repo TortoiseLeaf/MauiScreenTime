@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using MauiScreenTime.Data;
 using MauiScreenTime.Services;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -15,7 +16,7 @@ namespace MauiScreenTime.ViewModels
         public bool hasPermission;
 
         [ObservableProperty]
-        private ObservableCollection<AppUsageModel> appUsageData = new();
+        private ObservableCollection<AppUsageModel> appUsageList = new();
 
 
         public DashboardViewModel(IUsageStatsService usageStatsService)
@@ -30,32 +31,30 @@ namespace MauiScreenTime.ViewModels
         [RelayCommand]
         private async Task OnAppearing()
         {
-            await _usageStatsService.HasPermissionAsync();
-            await collectAppUsage();
             
-        }
-
-        public async Task collectAppUsage()
-        {
             hasPermission = await _usageStatsService.HasPermissionAsync();
-
             if (hasPermission)
             {
-
                 try
                 {
-#if ANDROID
-                var usageData = await _usageStatsService.GetAppUsageAsync();
-                AppUsageData = new ObservableCollection<AppUsageModel>(usageData);
-#endif
+                    var usageData = await _usageStatsService.GetAppUsageAsync();
+
+                    appUsageList.Clear();
+                    foreach (var app in usageData)
+                    {
+                        appUsageList.Add(app);
+                    }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("log error firing getappusage: ", ex.Message.ToString());
+                    await Application.Current.MainPage.DisplayAlert("Error collecting data", ex.Message, "OK");
                 }
+                
             }
-
         }
+
+
+        
 
     }
 }
