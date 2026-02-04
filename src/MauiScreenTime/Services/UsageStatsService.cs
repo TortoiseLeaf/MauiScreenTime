@@ -123,7 +123,7 @@ namespace MauiScreenTime.Services
         {
 
         IList<string> installedWhitelistPackageNames = GetInstalledPackages();
-
+            
         return await Task.Run(() =>
 
         {
@@ -174,21 +174,6 @@ namespace MauiScreenTime.Services
 
 
 
-        // replace this with hardcoded app names? "com.gmail" = "Gmail" e.g.
-        //`package.ApplicationInfo.LoadLabel(packageManager)`
-        //private string GetAppName(Context context, string packageName)
-        //{
-        //    try
-        //    {
-        //        var packageManager = context.PackageManager;
-        //        var applicationInfo = packageManager.GetApplicationInfo(packageName, 0);
-        //        return packageManager.GetApplicationLabel(applicationInfo);
-        //    }
-        //    catch
-        //    {
-        //        return packageName;
-        //    }
-        //}
 
 
 
