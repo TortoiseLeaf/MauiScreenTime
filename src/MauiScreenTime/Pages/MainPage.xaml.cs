@@ -1,6 +1,7 @@
 ﻿using MauiScreenTime.Data;
 using MauiScreenTime.Pages;
 using MauiScreenTime.ViewModels;
+using System.Windows.Input;
 
 namespace MauiScreenTime
 {
@@ -18,10 +19,12 @@ namespace MauiScreenTime
 
         }
 
+
         private async void InitConsentCheck()
         {
             await _viewModel.InitializeConsentCheckAsync();
         }
+
 
     }
 }

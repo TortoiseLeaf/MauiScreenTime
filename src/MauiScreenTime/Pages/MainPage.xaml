@@ -16,16 +16,25 @@
             
             
             <Label
-                Text="Hello, World!"
+                Text="MAUI ScreenTime"
                 Style="{StaticResource Headline}"
                 SemanticProperties.HeadingLevel="Level1" />
 
             <Label
-                Text="Welcome to &#10;.NET Multi-platform App UI"
+                Text=""
                 Style="{StaticResource SubHeadline}"
                 SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Welcome to dot net Multi platform App U I" />
+                SemanticProperties.Description="" />
             
+            
+            
+                <Button Text="Dashboard" 
+     Command="{Binding NavigateToDashboardCommand}"
+     BackgroundColor="Purple" />
+                
+
+            
+
 
         </VerticalStackLayout>
     </ScrollView>
