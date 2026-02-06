@@ -13,48 +13,52 @@ namespace MauiScreenTime.ViewModels
     public partial class DashboardViewModel : ObservableObject
     {
         private readonly IUsageStatsService _usageStatsService;
-        public bool hasPermission;
+        public bool _hasPermission;
 
         [ObservableProperty]
-        private ObservableCollection<AppUsageModel> appUsageList = new();
+        private ObservableCollection<AppUsageModel> _appUsageList = new();
 
 
         public DashboardViewModel(IUsageStatsService usageStatsService)
         {
-            
+
             _usageStatsService = usageStatsService;
 
-            OnAppearing();
+            _ = OnAppearing();
 
         }
 
+        // methods that run when page loads
         [RelayCommand]
         private async Task OnAppearing()
         {
-            
-            hasPermission = await _usageStatsService.HasPermissionAsync();
-            if (hasPermission)
+
+            await GetUsageData();
+
+        }
+
+
+        private async Task GetUsageData()
+        {
+            _hasPermission = await _usageStatsService.HasPermissionAsync();
+            if (_hasPermission)
             {
                 try
                 {
                     var usageData = await _usageStatsService.GetAppUsageAsync();
 
-                    appUsageList.Clear();
+                    _appUsageList.Clear();
                     foreach (var app in usageData)
                     {
-                        appUsageList.Add(app);
+                        _appUsageList.Add(app);
                     }
                 }
                 catch (Exception ex)
                 {
                     await Application.Current.MainPage.DisplayAlert("Error collecting data", ex.Message, "OK");
                 }
-                
             }
+
         }
-
-
-        
-
     }
 }
