@@ -4,8 +4,9 @@ using MauiScreenTime.Data;
 using MauiScreenTime.ViewModels;
 using MauiScreenTime.Pages;
 using MauiScreenTime.Services;
-
-
+using Serilog;
+using Serilog.Extensions.Hosting;
+using Serilog.Sinks.File;
 
 namespace MauiScreenTime
 {
@@ -22,12 +23,18 @@ namespace MauiScreenTime
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+            builder.Services.AddSerilog(
+        new LoggerConfiguration()
+            .WriteTo.File(Path.Combine(FileSystem.Current.AppDataDirectory, "log.txt"))
+            .CreateLogger()
+    );
+
             builder.Services.AddSingleton<ConsentDatabase>();
             builder.Services.AddSingleton(s => new ConversionTableDatabase());
             builder.Services.AddSingleton<IStartupService, StartupService>();
 
             builder.Services.AddSingleton<IUsageStatsService, UsageStatsService>();
-
+        
             builder.Services.AddSingleton<App>();
             
             //builder.Services.AddTransient<ConsentDatabase>();
@@ -42,7 +49,7 @@ namespace MauiScreenTime
             builder.Services.AddTransient<MainPage>();
 
 
-
+            builder.Services.AddLogging();
 
 #if DEBUG
             builder.Logging.AddDebug();
