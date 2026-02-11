@@ -27,6 +27,8 @@ namespace MauiScreenTime.Services
 
             }
         }
+        
+        // checks for policy consent boolean from dedicated db
         public async Task InitializeConsentCheckAsync()
         {
 

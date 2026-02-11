@@ -40,13 +40,9 @@ namespace MauiScreenTime.Data
 
         public ConsentDatabase()
         {
-            // _connection = new SQLiteAsyncConnection(Path.Combine(FileSystem.AppDataDirectory, DB_NAME));
-            //_connection.CreateTableAsync<UserConsentModel>();
 
             _databaseService = new DatabaseService();
 
-            //_connection = GetDbFile();
-            //var _connection = GetConnectionAsync();
         }
 
         private async Task<SQLiteAsyncConnection> GetConnectionAsync()
@@ -54,7 +50,6 @@ namespace MauiScreenTime.Data
             if (_connection == null)
 
             {
-                //var databaseService = new DatabaseService();
                 string dbPath = await _databaseService.GetDatabasePathAsync();
 
                 _connection = new SQLiteAsyncConnection(dbPath);

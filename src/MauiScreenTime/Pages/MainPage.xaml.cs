@@ -19,10 +19,18 @@ namespace MauiScreenTime
 
         }
 
-
+        // initialises the policy consent check
         private async void InitConsentCheck()
         {
-            await _viewModel.InitializeConsentCheckAsync();
+            try
+            {
+                await _viewModel.InitializeConsentCheckAsync();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error calling consent check in MainPage.xaml.cs: {ex}");
+                await Shell.Current.DisplayAlert("Error", "Please try restarting the application", "OK");
+            }
         }
 
 

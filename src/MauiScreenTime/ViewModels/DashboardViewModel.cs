@@ -16,22 +16,38 @@ namespace MauiScreenTime.ViewModels
         public bool hasPermission;
 
         [ObservableProperty]
-        private ObservableCollection<AppUsageModel> appUsageList = new();
+        private ObservableCollection<AppUsageModel> _appUsageList = new();
 
 
         public DashboardViewModel(IUsageStatsService usageStatsService)
         {
-            
+
             _usageStatsService = usageStatsService;
 
             OnAppearing();
 
         }
 
+        // Calls methods when page launches
         [RelayCommand]
         private async Task OnAppearing()
         {
-            
+
+            try
+            {
+                await GetUsageData();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error calling the usage data in OnAppearing() dashboard: {ex}");
+
+                await Shell.Current.DisplayAlert("Error", "Unable to load data. Please try again.","OK");
+            }
+        }
+
+        // gets usage data from service if permissions granted
+        private async Task GetUsageData()
+        {
             hasPermission = await _usageStatsService.HasPermissionAsync();
             if (hasPermission)
             {
@@ -39,22 +55,21 @@ namespace MauiScreenTime.ViewModels
                 {
                     var usageData = await _usageStatsService.GetAppUsageAsync();
 
-                    appUsageList.Clear();
+                    _appUsageList.Clear();
                     foreach (var app in usageData)
                     {
-                        appUsageList.Add(app);
+                        _appUsageList.Add(app);
                     }
                 }
                 catch (Exception ex)
                 {
-                    await Application.Current.MainPage.DisplayAlert("Error collecting data", ex.Message, "OK");
+                    System.Diagnostics.Debug.WriteLine($"Error calling get usage data in dashboard: {ex}");
+
+                    await Shell.Current.DisplayAlert("Error", "Unable to load data. Please try again.", "OK");
                 }
-                
             }
+
+
         }
-
-
-        
-
     }
 }
