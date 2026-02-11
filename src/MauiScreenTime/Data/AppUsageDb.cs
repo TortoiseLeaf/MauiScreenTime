@@ -14,6 +14,8 @@ namespace MauiScreenTime.Data
         public string AppName { get; set; }
         public DateTime Date {  get; set; }
         public TimeSpan UsageTimeMilliseconds { get; set; }
+        public long UsageTimeMinutes { get; set; }
+
     }
 
     //appusagedb controller placeholder
@@ -21,8 +23,10 @@ namespace MauiScreenTime.Data
     {
         private readonly SQLiteAsyncConnection _database;
 
-        public AppUsageDatabase(string dbPath)
+        public AppUsageDatabase()
         {
+            var dbPath = Path.Combine(FileSystem.AppDataDirectory, "app_usage_table.db");
+
             _database = new SQLiteAsyncConnection(dbPath);
             _database.CreateTableAsync<AppUsageModel>().Wait();
         }

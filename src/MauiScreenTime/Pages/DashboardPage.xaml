@@ -15,7 +15,7 @@
                 <Frame Padding="10" Margin="0,5" BorderColor="LightGray">
                     <Grid ColumnDefinitions="*,Auto">
                         <StackLayout Grid.Column="0">
-                            <Label Text="{Binding UsageTimeMilliseconds}" 
+                            <Label Text="{Binding UsageTimeMinutes}" 
                                    FontAttributes="Bold"
                                    FontSize="16"/>
                             <Label Text="{Binding PackageName}" 
