@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MauiScreenTime.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace MauiScreenTime.Services
 {
     public interface ICO2Service
     {
-        Task CalculateCO2eAsync();
+        Task CalculateCO2eAsync(AppUsageModel appData);
 
     }
 }

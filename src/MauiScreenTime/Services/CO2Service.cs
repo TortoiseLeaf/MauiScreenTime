@@ -23,10 +23,28 @@ namespace MauiScreenTime.Services
 
             _appUsageDatabase = appUsageDatabase;
         }
-        public async Task CalculateCO2eAsync()
+        public async Task CalculateCO2eAsync(AppUsageModel appData)
             {
-            
-                
+
+            var packageName = appData.PackageName;
+
+            var conversionTable = await _conversionTableDatabase.GetConversionTable();
+
+            if (conversionTable != null)
+            {
+                var conversionObject = conversionTable.Find(x => x.PackageName == packageName);
+                Console.WriteLine(conversionObject.CO2Mins);
+                Console.WriteLine("here");
+
+                double CO2fromTable = conversionObject.CO2Mins;
+                double CO2Mins = appData.UsageTimeMinutes;
+
+                double CO2e = CO2fromTable * CO2Mins;
+                Console.WriteLine(CO2e);
+                 //add it to the appUsageModel?
             }
+            
+            //return CO2e;
         }
+    }
     }

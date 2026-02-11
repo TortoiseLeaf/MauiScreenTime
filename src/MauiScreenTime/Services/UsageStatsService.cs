@@ -160,13 +160,15 @@ namespace MauiScreenTime.Services
                             PackageName = usageObj.PackageName,
                             //AppName =  usageObj.ApplicationInfo.LoadLabel(packageManager),
                             UsageTimeMilliseconds = TimeSpan.FromMilliseconds(usageObj.TotalTimeInForeground),
+                            UsageTimeMinutes = usageObj.TotalTimeInForeground / 60000,
+
                             
                         });
                     }
                 }
             }
 
-            var usageData = DeviceAppUsageList.OrderByDescending(a => a.UsageTimeMilliseconds).ToList();
+            var usageData = DeviceAppUsageList.OrderByDescending(a => a.UsageTimeMinutes).ToList();
 #endif
             return usageData;
 

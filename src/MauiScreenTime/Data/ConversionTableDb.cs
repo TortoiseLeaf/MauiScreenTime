@@ -54,12 +54,21 @@ namespace MauiScreenTime.Data
                     new ConversionTableModel { AppName = "Pinterest", CO2Mins = 1.3, PackageName = "com.pinterest" },
                     new ConversionTableModel { AppName = "Reddit", CO2Mins = 2.48, PackageName = "com.reddit.frontpage" },
                     new ConversionTableModel { AppName = "TikTok", CO2Mins = 2.63, PackageName = "com.zhiliaoapp.musically" },
+                    // for testing, remove after
+                    new ConversionTableModel { AppName = "settings", CO2Mins = 2.63, PackageName = "com.android.settings" },
 
                 });
 
             }
         }
-        
+
+        public async Task<List<ConversionTableModel>> GetConversionTable()
+        {
+            
+            return await _database.QueryAsync<ConversionTableModel>("SELECT * FROM ConversionTableModel");
+
+        }
+
     }
 
 }
