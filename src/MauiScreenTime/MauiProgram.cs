@@ -5,6 +5,7 @@ using MauiScreenTime.ViewModels;
 using MauiScreenTime.Pages;
 using MauiScreenTime.Services;
 using Serilog;
+using Serilog.Extensions.Logging;
 using Serilog.Extensions.Hosting;
 using Serilog.Sinks.File;
 
@@ -15,6 +16,15 @@ namespace MauiScreenTime
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
+            var logPath = Path.Combine(FileSystem.AppDataDirectory, "logs.txt");
+            builder.Services.AddSerilog(
+new LoggerConfiguration()
+.MinimumLevel.Debug() // remove this for prod
+.WriteTo.File(Path.Combine(FileSystem.Current.AppDataDirectory, "log.txt"), rollingInterval: RollingInterval.Day)
+.CreateLogger()
+);
+            Log.Information("Serilog initialized - log path: {LogPath}", logPath);
+
             builder
                 .UseMauiApp<App>()
                 .ConfigureFonts(fonts =>
@@ -23,11 +33,12 @@ namespace MauiScreenTime
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
-            builder.Services.AddSerilog(
-        new LoggerConfiguration()
-            .WriteTo.File(Path.Combine(FileSystem.Current.AppDataDirectory, "log.txt"))
-            .CreateLogger()
-    );
+            builder.Services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.ClearProviders();
+                loggingBuilder.AddSerilog(dispose: true);
+            });
+
 
             builder.Services.AddSingleton<ConsentDatabase>();
             builder.Services.AddSingleton(s => new ConversionTableDatabase());
@@ -37,7 +48,6 @@ namespace MauiScreenTime
         
             builder.Services.AddSingleton<App>();
             
-            //builder.Services.AddTransient<ConsentDatabase>();
 
             builder.Services.AddTransient<DashboardViewModel>();
             builder.Services.AddTransient<ConsentViewModel>();
@@ -50,6 +60,7 @@ namespace MauiScreenTime
 
 
             builder.Services.AddLogging();
+            Log.Information("App started successfully");
 
 #if DEBUG
             builder.Logging.AddDebug();

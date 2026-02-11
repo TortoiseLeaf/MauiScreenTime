@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using MauiScreenTime.Data;
 using MauiScreenTime.Services;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -12,6 +13,7 @@ namespace MauiScreenTime.ViewModels
 {
     public partial class DashboardViewModel : ObservableObject
     {
+        protected readonly ILogger<DashboardViewModel> _logger;
         private readonly IUsageStatsService _usageStatsService;
         public bool _hasPermission;
 
@@ -19,12 +21,17 @@ namespace MauiScreenTime.ViewModels
         private ObservableCollection<AppUsageModel> _appUsageList = new();
 
 
-        public DashboardViewModel(IUsageStatsService usageStatsService)
+        public DashboardViewModel(IUsageStatsService usageStatsService, ILogger<DashboardViewModel> logger)
         {
 
             _usageStatsService = usageStatsService;
 
             _ = OnAppearing();
+
+            _logger = logger;
+            _logger.LogInformation("xxx ViewModel constructor called");
+            Console.WriteLine("xxx");
+            Console.WriteLine(_logger);
 
         }
 
@@ -32,9 +39,16 @@ namespace MauiScreenTime.ViewModels
         [RelayCommand]
         private async Task OnAppearing()
         {
-
-            await GetUsageData();
-
+            _logger.LogInformation("xxx I did the thing!");
+            try
+            {
+                throw new InvalidOperationException("xxx Such bad, much error.");
+                await GetUsageData();
+            } catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting usage data in Dashboard viewmodel.");
+                //await Application.Current.MainPage.DisplayAlert("Logger Test", $"Exception caught in dashboard viewmodel: {ex.Message}", "OK");
+            }
         }
 
 
