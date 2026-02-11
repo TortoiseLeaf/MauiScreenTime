@@ -26,12 +26,14 @@ namespace MauiScreenTime.Services
 {
     public class UsageStatsService : IUsageStatsService
     {
-        public List<string> appWhiteList = ["Settings", "Launcher", "com.google.android.gm", "com.android.settings", "com.android.launcher", "com.zhiliaoapp.musically", "com.reddit.frontpage", "com.facebook.katana", "com.instagram.android", "com.twitter.android", "com.snapchat.android", "com.google.android.youtube"];
+        public List<string> appWhiteList = ["com.google.android.gm", "com.android.settings", "com.android.launcher", "com.zhiliaoapp.musically", "com.reddit.frontpage", "com.facebook.katana", "com.instagram.android", "com.twitter.android", "com.snapchat.android", "com.google.android.youtube"];
         private Task<List<AppUsageModel>>? usageData;
 
 #if ANDROID
         private Android.Content.Context _context;
 #endif
+
+        // opens device permissions page if permissions not granted
         public void OpenUsageAccessSettings()
         {
 #if ANDROID
@@ -46,6 +48,8 @@ namespace MauiScreenTime.Services
             }
 #endif
         }
+
+        // checks for permissions
         public async Task<bool> HasPermissionAsync()
         {
 
@@ -87,6 +91,7 @@ namespace MauiScreenTime.Services
 
         }
 
+        // gets installed packages from device
         public IList<string> GetInstalledPackages()
         {
             var installedWhitelistPackageNames = new List<string>();
@@ -116,9 +121,7 @@ namespace MauiScreenTime.Services
             return installedWhitelistPackageNames;
         }
 
-        // check out scope for android tag, it's weird to have it in the IUsageStats interface. might even be a weakness?
-
-
+        // get app usage data from installed whitelisted apps
         public async Task<List<AppUsageModel>> GetAppUsageAsync() 
         {
 
