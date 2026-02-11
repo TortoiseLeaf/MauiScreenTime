@@ -45,7 +45,7 @@ namespace MauiScreenTime.ViewModels
             }
         }
 
-
+        // gets usage data from service if permissions granted
         private async Task GetUsageData()
         {
             hasPermission = await _usageStatsService.HasPermissionAsync();
