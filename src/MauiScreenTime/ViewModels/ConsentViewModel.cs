@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using MauiScreenTime.Data;
+using MauiScreenTime.Data.Interfaces;
 using MauiScreenTime.Pages;
 using MauiScreenTime.Services;
 using SQLite;
@@ -19,13 +20,13 @@ namespace MauiScreenTime.ViewModels
 {
     public partial class ConsentViewModel : INotifyPropertyChanged
     {
-        private readonly ConsentDatabase _db;
+        private readonly IConsentDatabase _db;
         private readonly IUsageStatsService _usageStatsService;
         private bool _hasConsent;
 
         public string TermsText { get; set; }
 
-        public ConsentViewModel(ConsentDatabase db, IUsageStatsService usageStatsService)
+        public ConsentViewModel(IConsentDatabase db, IUsageStatsService usageStatsService)
         {
             _db = db;
 
