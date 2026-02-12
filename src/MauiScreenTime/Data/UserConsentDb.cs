@@ -1,4 +1,5 @@
 ﻿//using Android.AdServices.Common;
+using MauiScreenTime.Data.Interfaces;
 using MauiScreenTime.Services;
 using SQLite;
 using System;
@@ -30,7 +31,7 @@ namespace MauiScreenTime.Data
 
     }
 
-    public class ConsentDatabase
+    public class ConsentDatabase : IConsentDatabase
     {
 
         private const string DB_NAME = "user_consent.db3";

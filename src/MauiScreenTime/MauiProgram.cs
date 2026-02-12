@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls;
 using MauiScreenTime.Data;
+using MauiScreenTime.Data.Interfaces;
 using MauiScreenTime.ViewModels;
 using MauiScreenTime.Pages;
 using MauiScreenTime.Services;
@@ -22,7 +23,7 @@ namespace MauiScreenTime
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
-            builder.Services.AddSingleton<ConsentDatabase>();
+            builder.Services.AddSingleton<IConsentDatabase, ConsentDatabase>();
             builder.Services.AddSingleton(s => new ConversionTableDatabase());
             builder.Services.AddSingleton<IStartupService, StartupService>();
 
