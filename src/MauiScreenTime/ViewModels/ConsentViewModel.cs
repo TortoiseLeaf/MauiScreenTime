@@ -86,6 +86,7 @@ namespace MauiScreenTime.ViewModels
         private async Task DeleteAll()
         {
             await _db.DeleteAllConsents();
+            HasConsent = false;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
