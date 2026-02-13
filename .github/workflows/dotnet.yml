@@ -5,26 +5,61 @@ name: Build .NET MAUI App
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "dev" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "dev" ]
 
 jobs:
   build:
-
     runs-on: windows-latest
-
+    
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
+        
+    # Cache NuGet packages 
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/packages.lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    #cache maui
+    - name: Cache MAUI workload
+      id: maui-cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~\.dotnet\sdk-manifests
+          ~\.dotnet\metadata
+          ~\.dotnet\packs
+        key: ${{ runner.os }}-maui-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-maui-
+    
     - name: Install .NET MAUI
+    # check cache
+      if: steps.maui-cache.outputs.cache-hit != 'true'
       run: dotnet workload install maui
+    
     - name: Restore dependencies
       run: dotnet restore
+    
     - name: Build
-      run: dotnet build MauiScreenTime.csproj -c Release -f net9.0-android --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet build src/MauiScreenTime/MauiScreenTime.csproj -c Release -f net9.0-android --no-restore
+    
+    - name: Build Test Project
+      run: dotnet build test/MauiScreenTimeTests/MauiScreenTimeTests.csproj -c Release --no-restore
+
+    # - name: Run unit tests with report
+    #   run: dotnet test /test/MauiScreenTimeTests/MauiScreenTimeTests.csproj --configuration Release --no-build --logger "trx;LogFileName=TestResults.trx"
+
+    - name: Test 
+      # if: hashFiles('test/MauiScreenTimeTests/MauiScreenTimeTests.csproj') != ''
+      run: dotnet test test/MauiScreenTimeTests/MauiScreenTimeTests.csproj --no-build --configuration Release --verbosity normal
+      # run: dotnet --no-build --verbosity normal -c Release
