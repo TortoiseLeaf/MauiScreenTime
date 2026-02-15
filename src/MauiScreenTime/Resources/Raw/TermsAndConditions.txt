@@ -62,3 +62,30 @@ Performance of a Contract. We may process your personal information when we beli
 12. HOW CAN YOU CONTACT US ABOUT THIS NOTICE? If you have questions or comments about this notice, you may contact us by post at: 
 
 13. HOW CAN YOU REVIEW, UPDATE, OR DELETE THE DATA WE COLLECT FROM YOU? Based on the applicable laws of your country, you may have the right to request access to the personal information we collect from you, details about how we have processed it, correct inaccuracies, or delete your personal information. You may also have the right to withdraw your consent to our processing of your personal information. These rights may be limited in some circumstances by applicable law. To request to review, update, or delete your personal information, please fill out and submit a data subject access request.
+
+T&C Cliffnotes
+1. We collect data on an opt-in basis which relates to Application Data, Mobile Device Data and Push Notifications. This is primarily required to maintain the security and operation of our application(s), for troubleshooting, and for our internal analytics and reporting purposes.
+
+2. We process your information for a variety of reasons, including: functionality and maintenance of our services, GDPR compliance, and for security and communication purposes.
+
+3. Your personal data is only used under your consent when there is a valid legal reason to do so, which can be explained on request. Your permission can be withdrawn at any time. We may process your information when we believe it necessary for compliance with legal, safety or contractual obligations.
+
+4. Your information may be shared with a third party in limited cases, such as during a merger, sale of company assets, financing, or acquisition of the company.
+
+5. We are not responsible for how third party apps, websites, or advertisers handle your data. Links or adverts do not imply an endorsement, and any information you choose to share with those third parties will not be covered by this privacy policy. Any third party privacy policy should be reviewed independently.
+
+6. Your data is kept only for as long as needed for the stated purposes or as required by law. When your data is no longer needed, we will either delete or anonymise it, or securely store it until it can be deleted when possible.
+
+7. We use appropriate and reasonable technical security measures to protect your data as best as possible, but data security cannot be completely guaranteed. As we cannot guarantee protection against all unauthorised access, data transmission is therefore done at your own risk. You should only access the services within a secure environment.
+
+8. Users must be at least 18 or have parental permission to use this app. If any date is discovered to be that of anyone under the age of 18, the associated account will be deactivated and all relevant information will be deleted.
+
+9. In regions such as the EEA, UK, or Switzerland, you have rights which allow for greater access and control over your data. You are entitled, on request at any time, to access and obtaining a copy of your data, to rectification or deletion of your data, the restriction of processing your data, to data portability if applicable, and to avoiding automated decisions. Your consent can be withdrawn at any time, and users can contact us at any time to exercise their rights. You hold the right to complain to a data standards authority if you believe your data is being misused.
+
+10. While Do-Not-Track features do exist, there is no uniform standard yet. As such, we do not currently respond to DNT signals. If this changes in future, users will be notified in an updated privacy notice.
+
+11. This privacy policy will be updated to stay compliant with relevant laws. Changes will be marked by an updated date, and we may notify you of major changes. We encourage you to review this Privacy Notice frequently to be informed of how we are protecting your information.
+
+12. If you have questions or comments about this notice, you may contact us by post at: 
+
+13. Depending on your countries laws, you may have the right to access, correct, or delete your personal information, or withdraw consent for its processing. Some rights may be limited by law. Please make a data subject access request to request any of the above processes.
