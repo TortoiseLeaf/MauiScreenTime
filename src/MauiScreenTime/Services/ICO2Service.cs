@@ -9,7 +9,7 @@ namespace MauiScreenTime.Services
 {
     public interface ICO2Service
     {
-        Task CalculateCO2eAsync(AppUsageModel appData);
+        Task<AppUsageModel> CalculateCO2eAsync(AppUsageModel appData);
 
     }
 }

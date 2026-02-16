@@ -15,7 +15,7 @@ namespace MauiScreenTime.Services
 
         public CO2Service(ConversionTableDatabase conversionTableDatabase, AppUsageDatabase appUsageDatabase)
         {
-            // how much is superfluous, is it worth having the null check? What message or alternative can the else do?
+            // how much is superfluous, is it worth having the null check? else retry the connection? how to prevent recursion?
             if (conversionTableDatabase != null)
             {
                 _conversionTableDatabase = conversionTableDatabase;
@@ -23,7 +23,7 @@ namespace MauiScreenTime.Services
 
             _appUsageDatabase = appUsageDatabase;
         }
-        public async Task CalculateCO2eAsync(AppUsageModel appData)
+        public async Task<AppUsageModel> CalculateCO2eAsync(AppUsageModel appData)
             {
 
             var packageName = appData.PackageName;
@@ -32,19 +32,31 @@ namespace MauiScreenTime.Services
 
             if (conversionTable != null)
             {
-                var conversionObject = conversionTable.Find(x => x.PackageName == packageName);
-                Console.WriteLine(conversionObject.CO2Mins);
-                Console.WriteLine("here");
 
-                double CO2fromTable = conversionObject.CO2Mins;
-                double CO2Mins = appData.UsageTimeMinutes;
+                var conversionObject = conversionTable.FirstOrDefault(x => x.PackageName == packageName);
 
-                double CO2e = CO2fromTable * CO2Mins;
-                Console.WriteLine(CO2e);
-                 //add it to the appUsageModel?
+                //Console.WriteLine(conversionObject.CO2Mins);
+                //Console.WriteLine("here after conversion object");
+
+                if (conversionObject != null)
+                {
+                    double CO2fromTable = conversionObject.CO2Mins;
+                    double appUsageMins = appData.UsageTimeMinutes;
+
+                    double CO2e = CO2fromTable * appUsageMins;
+                    
+                    //add it to the appUsageModel?
+
+                    // does this write it to the db? ********************
+                    // can just overwrite each previous entry for the app.
+                    appData.CO2e = CO2e;
+
+
+                }
             }
-            
-            //return CO2e;
+            Console.WriteLine(appData.CO2e);
+
+            return appData;
         }
     }
     }
