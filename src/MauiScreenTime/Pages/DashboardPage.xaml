@@ -18,6 +18,9 @@
                             <Label Text="{Binding UsageTimeMinutes}" 
                                    FontAttributes="Bold"
                                    FontSize="16"/>
+                            <Label Text="{Binding CO2e}" 
+       FontAttributes="Bold"
+       FontSize="16"/>
                             <Label Text="{Binding PackageName}" 
                                    FontSize="12"
                                    TextColor="Gray"/>

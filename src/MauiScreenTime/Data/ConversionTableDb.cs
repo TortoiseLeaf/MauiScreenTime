@@ -55,7 +55,9 @@ namespace MauiScreenTime.Data
                     new ConversionTableModel { AppName = "Reddit", CO2Mins = 2.48, PackageName = "com.reddit.frontpage" },
                     new ConversionTableModel { AppName = "TikTok", CO2Mins = 2.63, PackageName = "com.zhiliaoapp.musically" },
                     // for testing, remove after
+                    new ConversionTableModel { AppName = "launcher", CO2Mins = 2.63, PackageName = "com.android.launcher" },
                     new ConversionTableModel { AppName = "settings", CO2Mins = 2.63, PackageName = "com.android.settings" },
+
 
                 });
 

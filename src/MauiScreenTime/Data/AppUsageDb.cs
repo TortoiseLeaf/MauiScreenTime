@@ -15,6 +15,7 @@ namespace MauiScreenTime.Data
         public DateTime Date {  get; set; }
         public TimeSpan UsageTimeMilliseconds { get; set; }
         public long UsageTimeMinutes { get; set; }
+        public double CO2e { get; set; }
 
     }
 
