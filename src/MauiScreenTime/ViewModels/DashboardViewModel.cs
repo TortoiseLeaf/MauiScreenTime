@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿//using Android.AdServices.Common;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MauiScreenTime.Data;
 using MauiScreenTime.Services;
@@ -73,13 +74,22 @@ namespace MauiScreenTime.ViewModels
             }
 
         }
+
+        // return the appUsage with CO2e here to show in view 
         private async Task GetCO2Coversion()
         {
+
             foreach (var app in _appUsageList)
             {
-                Console.WriteLine(app);
-                await _co2Service.CalculateCO2eAsync(app);
+                Console.WriteLine("here app into conversion dashboard");
+                Console.WriteLine(app.ToString());
+                var appData = await _co2Service.CalculateCO2eAsync(app);
+
+                //_appUsageList.Add(appData);
+                Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(appData));
+
             }
+            _appUsageList.Add(appData);
         }
     }
 }
