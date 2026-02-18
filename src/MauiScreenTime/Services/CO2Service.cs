@@ -35,8 +35,8 @@ namespace MauiScreenTime.Services
 
                 var conversionObject = conversionTable.FirstOrDefault(x => x.PackageName == packageName);
 
-                //Console.WriteLine(conversionObject.CO2Mins);
-                //Console.WriteLine("here after conversion object");
+                Console.WriteLine(conversionObject.CO2Mins);
+                Console.WriteLine("here after conversion object");
 
                 if (conversionObject != null)
                 {

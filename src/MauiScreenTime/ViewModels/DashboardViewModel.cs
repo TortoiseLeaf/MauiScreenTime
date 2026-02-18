@@ -19,7 +19,8 @@ namespace MauiScreenTime.ViewModels
 
         [ObservableProperty]
         private ObservableCollection<AppUsageModel> _appUsageList = new();
-
+        [ObservableProperty]
+        private ObservableCollection<AppUsageModel> _appUsageListCO2 = new();
 
         public DashboardViewModel(IUsageStatsService usageStatsService, ICO2Service co2Service)
         {
@@ -59,10 +60,13 @@ namespace MauiScreenTime.ViewModels
                 {
                     var usageData = await _usageStatsService.GetAppUsageAsync();
 
-                    _appUsageList.Clear();
-                    foreach (var app in usageData)
+                    if (usageData != null)
                     {
-                        _appUsageList.Add(app);
+                        _appUsageList.Clear();
+                        foreach (var app in usageData)
+                        {
+                            _appUsageList.Add(app);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -85,11 +89,11 @@ namespace MauiScreenTime.ViewModels
                 Console.WriteLine(app.ToString());
                 var appData = await _co2Service.CalculateCO2eAsync(app);
 
-                //_appUsageList.Add(appData);
+                _appUsageListCO2.Add(appData);
                 Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(appData));
 
             }
-            _appUsageList.Add(appData);
+            //_appUsageList.Add(appData);
         }
     }
 }
