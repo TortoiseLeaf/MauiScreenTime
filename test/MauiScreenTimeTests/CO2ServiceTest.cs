@@ -35,15 +35,30 @@ namespace MauiScreenTimeTests
                 new() { PackageName = "Test", CO2Mins = 5.0 }
             };
             
-
             _mockConversionDatabase.Setup(x => x.GetConversionTable()).ReturnsAsync(mockTable);
 
             // Act
             var result = await _co2Service.CalculateCO2eAsync(testData);
 
             // Assert
-            Assert.Equal(50.0, result.CO2e); // 5.0 * 10
+            Assert.Equal(50.0, result.CO2e);// 5.0 * 10
         }
 
+
+        [Fact]
+        public async Task CalculateCO2eAsync_ReturnsAppUsageModelType()
+        {
+            // Arrange
+            var testData = new AppUsageModel { PackageName = "Test", UsageTimeMinutes = 10 };
+            _mockConversionDatabase.Setup(x => x.GetConversionTable()).ReturnsAsync(new List<ConversionTableModel>{
+                new() { PackageName = "Test", CO2Mins = 5.0 }
+            });
+
+            // Act
+            var result = await _co2Service.CalculateCO2eAsync(testData);
+
+            // Assert
+            Assert.IsType<AppUsageModel>(result);
+        }
     }
 }
