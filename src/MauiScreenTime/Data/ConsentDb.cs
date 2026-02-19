@@ -35,14 +35,14 @@ namespace MauiScreenTime.Data
     {
 
         private const string DB_NAME = "user_consent.db3";
-        private readonly DatabaseService _databaseService;
+        private readonly IDatabaseService _databaseService;
         private SQLiteAsyncConnection _connection;
 
 
-        public ConsentDatabase()
+        public ConsentDatabase(IDatabaseService databaseService)
         {
 
-            _databaseService = new DatabaseService();
+            _databaseService = databaseService;
 
         }
 
