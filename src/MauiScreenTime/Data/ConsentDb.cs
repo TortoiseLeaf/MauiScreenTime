@@ -1,4 +1,4 @@
-﻿//using Android.AdServices.Common;
+//using Android.AdServices.Common;
 using MauiScreenTime.Data.Interfaces;
 using MauiScreenTime.Services;
 using SQLite;

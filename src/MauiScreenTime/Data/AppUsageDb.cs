@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MauiScreenTime.Data.Interfaces;
 using SQLite;
 
 namespace MauiScreenTime.Data
@@ -20,7 +21,7 @@ namespace MauiScreenTime.Data
     }
 
     //appusagedb controller placeholder
-    public class AppUsageDatabase
+    public class AppUsageDatabase : IAppUsageDatabase
     {
         private readonly SQLiteAsyncConnection _database;
 

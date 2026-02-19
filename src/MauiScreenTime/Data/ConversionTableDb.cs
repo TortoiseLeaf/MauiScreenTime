@@ -1,4 +1,5 @@
-﻿using SQLite;
+﻿using MauiScreenTime.Data.Interfaces;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace MauiScreenTime.Data
         public double CO2Mins { get; set; }
     }
 
-    public class ConversionTableDatabase
+    public class ConversionTableDatabase : IConversionTableDatabase
     {
         private readonly SQLiteAsyncConnection _database;
 

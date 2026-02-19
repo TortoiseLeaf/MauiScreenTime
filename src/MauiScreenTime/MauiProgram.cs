@@ -24,7 +24,8 @@ namespace MauiScreenTime
                 });
 
             builder.Services.AddSingleton<IConsentDatabase, ConsentDatabase>();
-            builder.Services.AddSingleton(s => new ConversionTableDatabase());
+            builder.Services.AddSingleton<IAppUsageDatabase, AppUsageDatabase>();
+            builder.Services.AddSingleton<IConversionTableDatabase, ConversionTableDatabase>();
             
 
             builder.Services.AddSingleton<IStartupService, StartupService>();
