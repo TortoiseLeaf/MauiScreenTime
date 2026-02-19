@@ -1,5 +1,6 @@
 ﻿//using Android.Media;
 using MauiScreenTime.Data;
+using MauiScreenTime.Data.Interfaces;
 using MauiScreenTime.Pages;
 using System;
 using System.Collections.Generic;
@@ -12,10 +13,10 @@ namespace MauiScreenTime.Services
 
     public class StartupService : IStartupService
     {
-        private readonly ConsentDatabase _consentDatabase;
+        private readonly IConsentDatabase _consentDatabase;
         private bool _hasConsent;
 
-        public StartupService(ConsentDatabase consentDatabase)
+        public StartupService(IConsentDatabase consentDatabase)
         {
             if (consentDatabase != null)
             {

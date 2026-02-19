@@ -1,4 +1,5 @@
 ﻿//using Android.AdServices.Common;
+using MauiScreenTime.Data.Interfaces;
 using MauiScreenTime.Services;
 using SQLite;
 using System;
@@ -30,18 +31,18 @@ namespace MauiScreenTime.Data
 
     }
 
-    public class ConsentDatabase
+    public class ConsentDatabase : IConsentDatabase
     {
 
         private const string DB_NAME = "user_consent.db3";
-        private readonly DatabaseService _databaseService;
+        private readonly IDatabaseService _databaseService;
         private SQLiteAsyncConnection _connection;
 
 
-        public ConsentDatabase()
+        public ConsentDatabase(IDatabaseService databaseService)
         {
 
-            _databaseService = new DatabaseService();
+            _databaseService = databaseService;
 
         }
 
@@ -50,7 +51,7 @@ namespace MauiScreenTime.Data
             if (_connection == null)
 
             {
-                string dbPath = await _databaseService.GetDatabasePathAsync();
+                string dbPath = await _databaseService.GetDatabasePathAsync(DB_NAME);
 
                 _connection = new SQLiteAsyncConnection(dbPath);
             }
