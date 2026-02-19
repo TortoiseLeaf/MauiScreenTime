@@ -10,22 +10,24 @@ namespace MauiScreenTime.Data
 {
     public class UserActivityLogModel
     {
+        [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public DateTime Date { get; set; }
+        public DateTime TimeStamp { get; set; }
         public double CO2Total { get; set; }
         public long CO2SavedDaily { get; set; }
         public int TreesPlanted { get; set; }
     }
 
-    public class UserActivityLogDatabase
+    public class UserActivityLogDatabase 
     {
         private const string DB_NAME = "user_activity_log.db3";
-        private readonly DatabaseService _databaseService;
+        private readonly IDatabaseService _databaseService;
         private SQLiteAsyncConnection _connection;
 
-        public UserActivityLogDatabase()
+        public UserActivityLogDatabase(IDatabaseService databaseService)
         {
-            _databaseService = new DatabaseService();
+            _databaseService = databaseService;
         }
 
         private async Task<SQLiteAsyncConnection> GetConnectionAsync()
@@ -33,7 +35,7 @@ namespace MauiScreenTime.Data
             if (_connection == null)
 
             {
-                string dbPath = await _databaseService.GetDatabasePathAsync();
+                string dbPath = await _databaseService.GetDatabasePathAsync(DB_NAME);
 
                 _connection = new SQLiteAsyncConnection(dbPath);
                 await _connection.CreateTableAsync<UserActivityLogModel>();
@@ -56,9 +58,9 @@ namespace MauiScreenTime.Data
         }
         public async Task<UserActivityLogModel> GetActivityByDate(DateTime inputDate) 
         {
-            var connection = await GetConnectionAsync();
+            var connection = await GetConnectionAsync();                       
             return await connection.Table<UserActivityLogModel>()
-                .Where(a => a.Date >= inputDate && a.Date < inputDate.AddDays(1))
+                .Where(a => a.Date == inputDate.Date)
                 .FirstOrDefaultAsync();
         }
         public async Task<double> GetCO2eTotalByDate(DateTime inputDate) 
@@ -86,16 +88,17 @@ namespace MauiScreenTime.Data
             }
             else
             {
-                await AddActivityLog(today, 0, 0, treeNumber);
+                await AddActivityLog(0, 0, treeNumber);
             }
         }
-        public async Task AddActivityLog(DateTime Date, Double CO2Total, long CO2SavedToday, int treesPlanted = 0)
+        public async Task AddActivityLog(double CO2Total, long CO2SavedToday, int treesPlanted = 0)
         {
             var connection = await GetConnectionAsync();
             var today = DateTime.UtcNow;
             await connection.InsertAsync(new UserActivityLogModel
             {
-                Date = today,
+                Date = today.Date,
+                TimeStamp = today,
                 CO2Total = CO2Total,
                 CO2SavedDaily = CO2SavedToday,
                 TreesPlanted = treesPlanted
@@ -106,6 +109,15 @@ namespace MauiScreenTime.Data
         {
             var connection = await GetConnectionAsync();
             await connection.DeleteAllAsync<UserActivityLogModel>();
+        }
+
+        public async Task DisposeAsync()
+        {
+            if (_connection != null)
+            {
+                await _connection.CloseAsync();
+                _connection = null;
+            }
         }
     }
 }
