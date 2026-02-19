@@ -51,7 +51,7 @@ namespace MauiScreenTime.ViewModels
         }
 
         // gets usage data from service if permissions granted
-        private async Task GetUsageData()
+        public async Task GetUsageData()
         {
             hasPermission = await _usageStatsService.HasPermissionAsync();
             if (hasPermission)
@@ -80,7 +80,7 @@ namespace MauiScreenTime.ViewModels
         }
 
         // return the appUsage with CO2e here to show in view 
-        private async Task GetCO2Coversion()
+        public async Task GetCO2Coversion()
         {
 
             foreach (var app in _appUsageList)
