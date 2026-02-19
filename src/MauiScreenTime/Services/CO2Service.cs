@@ -4,16 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MauiScreenTime.Data;
+using MauiScreenTime.Data.Interfaces;
 
 namespace MauiScreenTime.Services
 {
-    internal class CO2Service : ICO2Service
+    public class CO2Service : ICO2Service
     {
-            private readonly ConversionTableDatabase _conversionTableDatabase;
-            private readonly AppUsageDatabase _appUsageDatabase;
+            private readonly IConversionTableDatabase _conversionTableDatabase;
+            private readonly IAppUsageDatabase _appUsageDatabase;
 
 
-        public CO2Service(ConversionTableDatabase conversionTableDatabase, AppUsageDatabase appUsageDatabase)
+        public CO2Service(IConversionTableDatabase conversionTableDatabase, IAppUsageDatabase appUsageDatabase)
         {
             // how much is superfluous, is it worth having the null check? else retry the connection? how to prevent recursion?
             if (conversionTableDatabase != null)
