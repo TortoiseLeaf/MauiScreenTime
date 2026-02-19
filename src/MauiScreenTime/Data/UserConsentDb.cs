@@ -51,7 +51,7 @@ namespace MauiScreenTime.Data
             if (_connection == null)
 
             {
-                string dbPath = await _databaseService.GetDatabasePathAsync();
+                string dbPath = await _databaseService.GetDatabasePathAsync(DB_NAME);
 
                 _connection = new SQLiteAsyncConnection(dbPath);
             }
