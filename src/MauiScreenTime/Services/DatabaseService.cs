@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace MauiScreenTime.Services
 {
-    public class DatabaseService
+    public class DatabaseService : IDatabaseService
     {
-    private string _dbPath;
+
+        private string _dbPath;
+
 
         public async Task<string> GetDatabasePathAsync(string dbName)
         {
@@ -28,6 +30,7 @@ namespace MauiScreenTime.Services
 
             return _dbPath;
         }
+    
     }
 }
 
