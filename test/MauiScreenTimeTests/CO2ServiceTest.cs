@@ -30,12 +30,9 @@ namespace MauiScreenTimeTests
         {
             // Arrange
             var testData = new AppUsageModel { PackageName = "Test", UsageTimeMinutes = 10 };
-            var mockTable = new List<ConversionTableModel>
-            {
-                new() { PackageName = "Test", CO2Mins = 5.0 }
-            };
             
-            _mockConversionDatabase.Setup(x => x.GetConversionTable()).ReturnsAsync(mockTable);
+            
+            _mockConversionDatabase.Setup(x => x.GetMatchingCO2Mins("Test")).ReturnsAsync(5.0);
 
             // Act
             var result = await _co2Service.CalculateCO2eAsync(testData);
@@ -44,15 +41,27 @@ namespace MauiScreenTimeTests
             Assert.Equal(50.0, result.CO2e);// 5.0 * 10
         }
 
+        [Fact]
+        public async Task MethodAsync_WhenObjectNotFound_ReturnsUnmodifiedData()
+        {
+            // Arrange
+            var testData = new AppUsageModel { PackageName = "NotFound", UsageTimeMinutes = 10 };
+
+            _mockConversionDatabase.Setup(x => x.GetMatchingCO2Mins("NotFound")).ReturnsAsync(0);
+
+            // Act
+            var result = await _co2Service.CalculateCO2eAsync(testData);
+
+            // Assert
+            Assert.Equal(0, result.CO2e);
+        }
 
         [Fact]
         public async Task CalculateCO2eAsync_ReturnsAppUsageModelType()
         {
             // Arrange
             var testData = new AppUsageModel { PackageName = "Test", UsageTimeMinutes = 10 };
-            _mockConversionDatabase.Setup(x => x.GetConversionTable()).ReturnsAsync(new List<ConversionTableModel>{
-                new() { PackageName = "Test", CO2Mins = 5.0 }
-            });
+            _mockConversionDatabase.Setup(x => x.GetMatchingCO2Mins("Test")).ReturnsAsync(0.5);
 
             // Act
             var result = await _co2Service.CalculateCO2eAsync(testData);
