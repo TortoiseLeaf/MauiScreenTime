@@ -27,35 +27,25 @@ namespace MauiScreenTime.Services
         public async Task<AppUsageModel> CalculateCO2eAsync(AppUsageModel appData)
             {
 
-            var packageName = appData.PackageName;
-
-            var conversionTable = await _conversionTableDatabase.GetConversionTable();
-
-            if (conversionTable != null)
+            try
             {
+                var packageName = appData.PackageName;
 
-                var conversionObject = conversionTable.FirstOrDefault(x => x.PackageName == packageName);
-
-                Console.WriteLine(conversionObject.CO2Mins);
-                Console.WriteLine("here after conversion object");
-
-                if (conversionObject != null)
-                {
-                    double CO2fromTable = conversionObject.CO2Mins;
-                    double appUsageMins = appData.UsageTimeMinutes;
-
-                    double CO2e = CO2fromTable * appUsageMins;
-                    
-                    //add it to the appUsageModel?
-
-                    // does this write it to the db? ********************
-                    // can just overwrite each previous entry for the app.
-                    appData.CO2e = CO2e;
+                var CO2Mins = await _conversionTableDatabase.GetMatchingCO2Mins(packageName);
 
 
-                }
+                double appUsageMins = appData.UsageTimeMinutes;
+
+                double CO2e = CO2Mins * appUsageMins;
+
+
+                // write to the db or just do on the fly? performance/security 
+                appData.CO2e = CO2e;
             }
-            Console.WriteLine(appData.CO2e);
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error calculating CO2e in CO2Service : {ex}");
+            }
 
             return appData;
         }

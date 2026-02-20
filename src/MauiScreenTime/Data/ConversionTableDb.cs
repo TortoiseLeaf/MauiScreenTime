@@ -65,11 +65,11 @@ namespace MauiScreenTime.Data
             }
         }
 
-        public async Task<List<ConversionTableModel>> GetConversionTable()
+        public async Task<double> GetMatchingCO2Mins(string packageName)
         {
             
-            return await _database.QueryAsync<ConversionTableModel>("SELECT * FROM ConversionTableModel");
-
+            var CO2Mins = await _database.QueryAsync<ConversionTableModel>("SELECT CO2Mins FROM ConversionTableModel WHERE PackageName = @PackageName", new { PackageName = packageName });
+            return CO2Mins.FirstOrDefault()?.CO2Mins ?? 0;
         }
 
     }
