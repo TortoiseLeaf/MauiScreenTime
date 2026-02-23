@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿//using Android.AdServices.Common;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MauiScreenTime.Data;
 using MauiScreenTime.Services;
@@ -13,17 +14,19 @@ namespace MauiScreenTime.ViewModels
     public partial class DashboardViewModel : ObservableObject
     {
         private readonly IUsageStatsService _usageStatsService;
+        private readonly ICO2Service _co2Service;
         public bool hasPermission;
 
         [ObservableProperty]
         private ObservableCollection<AppUsageModel> _appUsageList = new();
+        [ObservableProperty]
+        private ObservableCollection<AppUsageModel> _appUsageListCO2 = new();
 
-
-        public DashboardViewModel(IUsageStatsService usageStatsService)
+        public DashboardViewModel(IUsageStatsService usageStatsService, ICO2Service co2Service)
         {
 
             _usageStatsService = usageStatsService;
-
+            _co2Service = co2Service;
             OnAppearing();
 
         }
@@ -43,10 +46,12 @@ namespace MauiScreenTime.ViewModels
 
                 await Shell.Current.DisplayAlert("Error", "Unable to load data. Please try again.","OK");
             }
+
+            await GetCO2Coversion();
         }
 
         // gets usage data from service if permissions granted
-        private async Task GetUsageData()
+        public async Task GetUsageData()
         {
             hasPermission = await _usageStatsService.HasPermissionAsync();
             if (hasPermission)
@@ -55,10 +60,13 @@ namespace MauiScreenTime.ViewModels
                 {
                     var usageData = await _usageStatsService.GetAppUsageAsync();
 
-                    _appUsageList.Clear();
-                    foreach (var app in usageData)
+                    if (usageData != null)
                     {
-                        _appUsageList.Add(app);
+                        _appUsageList.Clear();
+                        foreach (var app in usageData)
+                        {
+                            _appUsageList.Add(app);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -69,7 +77,23 @@ namespace MauiScreenTime.ViewModels
                 }
             }
 
+        }
 
+        // return the appUsage with CO2e here to show in view 
+        public async Task GetCO2Coversion()
+        {
+
+            foreach (var app in _appUsageList)
+            {
+                Console.WriteLine("here app into conversion dashboard");
+                Console.WriteLine(app.ToString());
+                var appData = await _co2Service.CalculateCO2eAsync(app);
+
+                _appUsageListCO2.Add(appData);
+                Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(appData));
+
+            }
+            //_appUsageList.Add(appData);
         }
     }
 }

@@ -9,15 +9,20 @@
         <BackButtonBehavior IsEnabled="False" IsVisible="False"/>
     </Shell.BackButtonBehavior>
 
-    <CollectionView ItemsSource="{Binding AppUsageList}" Margin="20">
+    <CollectionView ItemsSource="{Binding AppUsageListCO2}" Margin="20">
         <CollectionView.ItemTemplate>
             <DataTemplate>
                 <Frame Padding="10" Margin="0,5" BorderColor="LightGray">
                     <Grid ColumnDefinitions="*,Auto">
                         <StackLayout Grid.Column="0">
-                            <Label Text="{Binding UsageTimeMilliseconds}" 
+                            <Label Text="Mins"/>
+                            <Label Text="{Binding UsageTimeMinutes, TargetNullValue='0'}" 
                                    FontAttributes="Bold"
                                    FontSize="16"/>
+                            <Label Text="CO2e"/>
+                            <Label Text="{Binding CO2e}" 
+       FontAttributes="Bold"
+       FontSize="16"/>
                             <Label Text="{Binding PackageName}" 
                                    FontSize="12"
                                    TextColor="Gray"/>
@@ -28,4 +33,5 @@
             </DataTemplate>
         </CollectionView.ItemTemplate>
     </CollectionView>
+    
 </ContentPage>

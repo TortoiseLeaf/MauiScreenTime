@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls;
 using MauiScreenTime.Data;
 using MauiScreenTime.Data.Interfaces;
@@ -24,10 +24,13 @@ namespace MauiScreenTime
                 });
 
             builder.Services.AddSingleton<IConsentDatabase, ConsentDatabase>();
-            builder.Services.AddSingleton(s => new ConversionTableDatabase());
-            builder.Services.AddSingleton<IStartupService, StartupService>();
-            builder.Services.AddSingleton<IDatabaseService, DatabaseService>();
+            builder.Services.AddSingleton<IAppUsageDatabase, AppUsageDatabase>();
+            builder.Services.AddSingleton<IConversionTableDatabase, ConversionTableDatabase>();
+            
 
+            builder.Services.AddSingleton<IStartupService, StartupService>();
+            builder.Services.AddSingleton<ICO2Service, CO2Service>();
+            builder.Services.AddSingleton<IDatabaseService, DatabaseService>();
             builder.Services.AddSingleton<IUsageStatsService, UsageStatsService>();
 
             builder.Services.AddSingleton<App>();

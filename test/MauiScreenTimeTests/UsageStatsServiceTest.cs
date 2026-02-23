@@ -144,7 +144,7 @@ namespace MauiScreenTimeTests
         public void HasPermission_WhenSet_ShouldReturnCorrectValue()
         {
             // Arrange
-            var viewModel = new DashboardViewModel(null);
+            var viewModel = new DashboardViewModel(null, null);
 
             // Act
             viewModel.hasPermission = true;

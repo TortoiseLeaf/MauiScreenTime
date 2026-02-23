@@ -1,4 +1,5 @@
-﻿using SQLite;
+﻿using MauiScreenTime.Data.Interfaces;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace MauiScreenTime.Data
         public double CO2Mins { get; set; }
     }
 
-    public class ConversionTableDatabase
+    public class ConversionTableDatabase : IConversionTableDatabase
     {
         private readonly SQLiteAsyncConnection _database;
 
@@ -54,12 +55,23 @@ namespace MauiScreenTime.Data
                     new ConversionTableModel { AppName = "Pinterest", CO2Mins = 1.3, PackageName = "com.pinterest" },
                     new ConversionTableModel { AppName = "Reddit", CO2Mins = 2.48, PackageName = "com.reddit.frontpage" },
                     new ConversionTableModel { AppName = "TikTok", CO2Mins = 2.63, PackageName = "com.zhiliaoapp.musically" },
+                    // for testing, remove after
+                    new ConversionTableModel { AppName = "launcher", CO2Mins = 2.63, PackageName = "com.android.launcher" },
+                    new ConversionTableModel { AppName = "settings", CO2Mins = 2.63, PackageName = "com.android.settings" },
+
 
                 });
 
             }
         }
-        
+
+        public async Task<double> GetMatchingCO2Mins(string packageName)
+        {
+            
+            var CO2Mins = await _database.QueryAsync<ConversionTableModel>("SELECT CO2Mins FROM ConversionTableModel WHERE PackageName = @PackageName", new { PackageName = packageName });
+            return CO2Mins.FirstOrDefault()?.CO2Mins ?? 0;
+        }
+
     }
 
 }
