@@ -10,8 +10,8 @@ namespace MauiScreenTime.Services
 {
     public class CO2Service : ICO2Service
     {
-            private readonly IConversionTableDatabase _conversionTableDatabase;
-            private readonly IAppUsageDatabase _appUsageDatabase;
+        private readonly IConversionTableDatabase _conversionTableDatabase;
+        private readonly IAppUsageDatabase _appUsageDatabase;
 
 
         public CO2Service(IConversionTableDatabase conversionTableDatabase, IAppUsageDatabase appUsageDatabase)
@@ -25,7 +25,7 @@ namespace MauiScreenTime.Services
             _appUsageDatabase = appUsageDatabase;
         }
         public async Task<AppUsageModel> CalculateCO2eAsync(AppUsageModel appData)
-            {
+        {
 
             try
             {
@@ -49,5 +49,25 @@ namespace MauiScreenTime.Services
 
             return appData;
         }
+
+        public async Task<double> CalculateCO2TotalAsync(List<AppUsageModel> appUsageList)
+        {
+            double CO2Total = 0;
+
+            if (appUsageList != null)
+            {
+                foreach (var appUsage in appUsageList)
+                {
+                    var newData = await CalculateCO2eAsync(appUsage);
+
+                    CO2Total = CO2Total + newData.CO2e;
+                }
+            }
+            else
+            {
+                CO2Total = 0; //error message explaining appUsageList is empty.
+            }
+                return CO2Total; // return this to frontend. Save it to ActivityLog in the WorkManager service
+        }
     }
-    }
+}
