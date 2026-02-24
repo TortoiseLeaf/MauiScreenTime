@@ -87,4 +87,10 @@
 	  </MauiXaml>
 	</ItemGroup>
 
+	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
+	  <PackageReference Include="Xamarin.AndroidX.Work.Runtime">
+	    <Version>2.11.0.1</Version>
+	  </PackageReference>
+	</ItemGroup>
+
 </Project>

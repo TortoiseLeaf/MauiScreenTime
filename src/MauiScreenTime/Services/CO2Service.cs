@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MauiScreenTime.Data;
 using MauiScreenTime.Data.Interfaces;
+using MauiScreenTime.Services.Interfaces;
 
 namespace MauiScreenTime.Services
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MauiScreenTime.Services
+namespace MauiScreenTime.Services.Interfaces
 {
     public interface IStartupService
     {
