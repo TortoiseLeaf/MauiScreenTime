@@ -55,10 +55,6 @@ namespace MauiScreenTime.Data
                     new ConversionTableModel { AppName = "Pinterest", CO2Mins = 1.3, PackageName = "com.pinterest" },
                     new ConversionTableModel { AppName = "Reddit", CO2Mins = 2.48, PackageName = "com.reddit.frontpage" },
                     new ConversionTableModel { AppName = "TikTok", CO2Mins = 2.63, PackageName = "com.zhiliaoapp.musically" },
-                    // for testing, remove after
-                    new ConversionTableModel { AppName = "launcher", CO2Mins = 2.63, PackageName = "com.android.launcher" },
-                    new ConversionTableModel { AppName = "settings", CO2Mins = 2.63, PackageName = "com.android.settings" },
-
 
                 });
 
@@ -67,9 +63,16 @@ namespace MauiScreenTime.Data
 
         public async Task<double> GetMatchingCO2Mins(string packageName)
         {
-            
-            var CO2Mins = await _database.QueryAsync<ConversionTableModel>("SELECT CO2Mins FROM ConversionTableModel WHERE PackageName = @PackageName", new { PackageName = packageName });
-            return CO2Mins.FirstOrDefault()?.CO2Mins ?? 0;
+            double CO2Mins = 0;
+            try
+            {
+                var CO2MinsList = await _database.QueryAsync<ConversionTableModel>("SELECT CO2Mins FROM ConversionTableModel WHERE PackageName = ?", packageName);
+                return CO2Mins = CO2MinsList.FirstOrDefault()?.CO2Mins ?? 0;
+            } catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error querying conversion table in db class: {ex}");
+            }
+            return CO2Mins;
         }
 
     }
