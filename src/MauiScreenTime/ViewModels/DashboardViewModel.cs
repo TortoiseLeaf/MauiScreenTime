@@ -6,6 +6,7 @@ using MauiScreenTime.Services;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 
@@ -18,9 +19,10 @@ namespace MauiScreenTime.ViewModels
         public bool hasPermission;
 
         [ObservableProperty]
-        private ObservableCollection<AppUsageModel> _appUsageList = new();
+        private List<AppUsageModel> _appUsageList = new();
         [ObservableProperty]
         private ObservableCollection<AppUsageModel> _appUsageListCO2 = new();
+
 
         public DashboardViewModel(IUsageStatsService usageStatsService, ICO2Service co2Service)
         {
@@ -48,6 +50,8 @@ namespace MauiScreenTime.ViewModels
             }
 
             await GetCO2Coversion();
+
+            await GetCO2Total();
         }
 
         // gets usage data from service if permissions granted
@@ -85,14 +89,28 @@ namespace MauiScreenTime.ViewModels
 
             foreach (var app in _appUsageList)
             {
-                Console.WriteLine("here app into conversion dashboard");
-                Console.WriteLine(app.ToString());
+                // try/catch
                 var appData = await _co2Service.CalculateCO2eAsync(app);
 
                 _appUsageListCO2.Add(appData);
-                Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(appData));
 
             }
+            //_appUsageList.Add(appData);
+        }
+
+        // return totalCO2
+        public async Task GetCO2Total()
+        {
+
+        
+                // try/catch
+                var totalCO2 = await _co2Service.CalculateCO2TotalAsync(_appUsageList);
+
+            Console.WriteLine(totalCO2);
+            Console.WriteLine("here");
+
+
+            
             //_appUsageList.Add(appData);
         }
     }

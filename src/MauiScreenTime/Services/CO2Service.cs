@@ -31,6 +31,7 @@ namespace MauiScreenTime.Services
             {
                 var packageName = appData.PackageName;
 
+                // trycatch
                 var CO2Mins = await _conversionTableDatabase.GetMatchingCO2Mins(packageName);
 
 
