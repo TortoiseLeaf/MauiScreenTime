@@ -60,7 +60,7 @@ namespace MauiScreenTime.Services
                 {
                     var newData = await CalculateCO2eAsync(appUsage);
 
-                    CO2Total = CO2Total + newData.CO2e;
+                    CO2Total += newData.CO2e;
                 }
             }
             else

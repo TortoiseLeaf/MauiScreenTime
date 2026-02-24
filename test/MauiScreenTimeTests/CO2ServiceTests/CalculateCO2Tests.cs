@@ -8,9 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MauiScreenTimeTests
+namespace MauiScreenTimeTests.CO2ServiceTests
 {
-    public class CO2ServiceTests
+    public class CalculateCO2Tests
     {
         private readonly Mock<IConversionTableDatabase> _mockConversionDatabase;
         private readonly Mock<IAppUsageDatabase> _mockAppUsageDatabase;
@@ -18,7 +18,7 @@ namespace MauiScreenTimeTests
         private readonly ICO2Service _co2Service;
         private AppUsageModel mockAppData;
 
-        public CO2ServiceTests()
+        public CalculateCO2Tests()
         {
             _mockConversionDatabase = new Mock<IConversionTableDatabase>();
             _mockAppUsageDatabase = new Mock<IAppUsageDatabase>();
