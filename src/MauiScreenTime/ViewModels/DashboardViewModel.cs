@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MauiScreenTime.Data;
-using MauiScreenTime.Services;
+using MauiScreenTime.Services.Interfaces;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;

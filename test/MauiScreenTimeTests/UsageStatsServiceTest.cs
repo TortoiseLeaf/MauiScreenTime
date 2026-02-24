@@ -1,6 +1,6 @@
 ﻿using MauiScreenTime.Data;
 //using Microsoft.Maui.Controls.PlatformConfiguration.Android.Content.PM;
-using MauiScreenTime.Services;
+using MauiScreenTime.Services.Interfaces;
 using MauiScreenTime.ViewModels;
 using Moq;
 using System.Collections.Generic;

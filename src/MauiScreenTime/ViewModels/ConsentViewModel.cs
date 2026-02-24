@@ -2,7 +2,7 @@
 using MauiScreenTime.Data;
 using MauiScreenTime.Data.Interfaces;
 using MauiScreenTime.Pages;
-using MauiScreenTime.Services;
+using MauiScreenTime.Services.Interfaces;
 using SQLite;
 using System;
 using System.Collections.Generic;
