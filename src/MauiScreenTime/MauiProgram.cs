@@ -8,7 +8,6 @@ using MauiScreenTime.Services;
 using MauiScreenTime.Services.Interfaces;
 
 
-
 namespace MauiScreenTime
 {
     public static class MauiProgram
@@ -33,6 +32,10 @@ namespace MauiScreenTime
             builder.Services.AddSingleton<ICO2Service, CO2Service>();
             builder.Services.AddSingleton<IDatabaseService, DatabaseService>();
             builder.Services.AddSingleton<IUsageStatsService, UsageStatsService>();
+
+#if ANDROID
+            builder.Services.AddSingleton<MauiScreenTime.Platforms.Android.MauiWorkerFactory>();
+#endif
 
             builder.Services.AddSingleton<App>();
             
