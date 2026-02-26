@@ -87,7 +87,7 @@ namespace MauiScreenTime.Services
             todayTotal = await _userActivityLogDatabase.GetCO2eTotalByDate(DateTime.Now);
             yesterdayTotal = await _userActivityLogDatabase.GetCO2eTotalByDate(yesterday);
 
-            differenceSaved = todayTotal - yesterdayTotal;
+            differenceSaved = yesterdayTotal - todayTotal;
             
             if (differenceSaved > 0)
             {

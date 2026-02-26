@@ -22,7 +22,10 @@ namespace MauiScreenTime.ViewModels
         private List<AppUsageModel> _appUsageList = new();
         [ObservableProperty]
         private ObservableCollection<AppUsageModel> _appUsageListCO2 = new();
-
+        [ObservableProperty]
+        private double _co2Total = new();
+        [ObservableProperty]
+        private double _co2DailySaved = new();
 
         public DashboardViewModel(IUsageStatsService usageStatsService, ICO2Service co2Service)
         {
@@ -52,6 +55,8 @@ namespace MauiScreenTime.ViewModels
             await GetCO2Coversion();
 
             await GetCO2Total();
+
+            await GetDailyDifference();
         }
 
         // gets usage data from service if permissions granted
@@ -102,16 +107,48 @@ namespace MauiScreenTime.ViewModels
         public async Task GetCO2Total()
         {
 
-        
-                // try/catch
-                var totalCO2 = await _co2Service.CalculateCO2TotalAsync(_appUsageList);
 
-            Console.WriteLine(totalCO2);
-            Console.WriteLine("here");
+            try
+            {
+                Co2Total = await _co2Service.CalculateCO2TotalAsync(_appUsageList);
+                //Console.WriteLine("here dashboard value");
+                //Console.WriteLine(_co2Total);
+            }
+            catch(Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error totalling CO2e in dashboard: {ex}");
+
+                await Shell.Current.DisplayAlert("Error", "Unable to total CO2e.", "OK");
+            }
 
 
-            
-            //_appUsageList.Add(appData);
+            //return _co2Total; // this isn't showing, why?
         }
+
+        public async Task GetDailyDifference()
+        {
+
+
+            try
+            {
+                _co2DailySaved = await _co2Service.CalculateCO2DifferenceAsync();
+                if (_co2DailySaved < 0)
+                {
+                    Co2DailySaved = 0;
+                }
+                Console.WriteLine("here dashboard dailysaved value");
+                Console.WriteLine(_co2DailySaved);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error totalling CO2e in dashboard: {ex}");
+
+                await Shell.Current.DisplayAlert("Error", "Unable to total CO2e.", "OK");
+            }
+
+
+            //return _co2DailySaved ;
+        }
+
     }
 }
