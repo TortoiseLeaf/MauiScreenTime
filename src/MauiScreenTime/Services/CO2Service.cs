@@ -78,6 +78,7 @@ namespace MauiScreenTime.Services
 
         public async Task<double> CalculateCO2DifferenceAsync()
         {
+            
             double todayTotal;
             double yesterdayTotal;
             double differenceSaved;
@@ -87,13 +88,15 @@ namespace MauiScreenTime.Services
             yesterdayTotal = await _userActivityLogDatabase.GetCO2eTotalByDate(yesterday);
 
             differenceSaved = todayTotal - yesterdayTotal;
+            
             if (differenceSaved > 0)
             {
                 await _userActivityLogDatabase.AddActivityLog(0, differenceSaved);
                 Console.WriteLine("CO2 difference daily saved to activityLog successfully!");
             }
-            var x = await _userActivityLogDatabase.GetCO2SavedDaylyByDate(DateTime.Now);
-            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(x));
+            //var x = await _userActivityLogDatabase.GetCO2SavedDaylyByDate(DateTime.Now);
+            //var xy = await _userActivityLogDatabase.GetActivityByDate(DateTime.Now);
+            //Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(xy));
             return differenceSaved;
         }
     }
