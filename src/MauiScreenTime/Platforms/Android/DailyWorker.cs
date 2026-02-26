@@ -28,7 +28,7 @@ namespace MauiScreenTime.Platforms.Android
             {
                 var appUsageList = _usageStatsService.GetAppUsageAsync().GetAwaiter().GetResult();
                 _co2Service.CalculateCO2TotalAsync(appUsageList);
-                System.Diagnostics.Debug.WriteLine("here Successfully fired the 23h co2 Total");
+                System.Diagnostics.Debug.WriteLine("here Successfully fired the 23h co2 Total congratulations");
                 return Result.InvokeSuccess();
             }
             catch (Exception ex)
