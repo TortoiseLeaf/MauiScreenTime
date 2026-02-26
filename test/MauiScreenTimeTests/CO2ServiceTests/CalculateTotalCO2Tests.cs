@@ -22,7 +22,7 @@ namespace MauiScreenTimeTests.CO2ServiceTests
         {
             _mockConversionDatabase = new Mock<IConversionTableDatabase>();
             _mockAppUsageDatabase = new Mock<IAppUsageDatabase>();
-            _co2Service = new CO2Service(_mockConversionDatabase.Object, _mockAppUsageDatabase.Object);
+            _co2Service = new CO2Service(_mockConversionDatabase.Object, _mockAppUsageDatabase.Object, null);
         }
 
         [Fact]

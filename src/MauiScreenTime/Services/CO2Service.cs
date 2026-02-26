@@ -13,9 +13,10 @@ namespace MauiScreenTime.Services
     {
         private readonly IConversionTableDatabase _conversionTableDatabase;
         private readonly IAppUsageDatabase _appUsageDatabase;
+        private readonly UserActivityLogDatabase _userActivityLogDatabase;
 
 
-        public CO2Service(IConversionTableDatabase conversionTableDatabase, IAppUsageDatabase appUsageDatabase)
+        public CO2Service(IConversionTableDatabase conversionTableDatabase, IAppUsageDatabase appUsageDatabase, UserActivityLogDatabase userActivityLogDatabase)
         {
             // how much is superfluous, is it worth having the null check? else retry the connection? how to prevent recursion?
             if (conversionTableDatabase != null)
@@ -24,6 +25,7 @@ namespace MauiScreenTime.Services
             }
 
             _appUsageDatabase = appUsageDatabase;
+            _userActivityLogDatabase = userActivityLogDatabase;
         }
         public async Task<AppUsageModel> CalculateCO2eAsync(AppUsageModel appData)
         {
@@ -64,12 +66,18 @@ namespace MauiScreenTime.Services
 
                     CO2Total += newData.CO2e;
                 }
+                await _userActivityLogDatabase.AddActivityLog(CO2Total, 1);
+                Console.WriteLine("added total to activity log successfully!");
             }
             else
             {
                 CO2Total = 0; //error message explaining appUsageList is empty.
             }
-                return CO2Total; // return this to frontend. Save it to ActivityLog in the WorkManager service
+            var x = await _userActivityLogDatabase.GetActivityByDate(DateTime.Now);
+
+            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(x));
+            Console.WriteLine("here now");
+                return x.CO2Total; // return this to frontend. Save it to ActivityLog in the WorkManager service
         }
     }
 }
