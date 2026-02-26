@@ -14,5 +14,8 @@ namespace MauiScreenTime.Data.Interfaces
 
         Task<double> GetCO2SavedDaylyByDate(DateTime inputDate);
 
+        Task<UserActivityLogModel> GetActivityByDate(DateTime inputDate);
+
+
     }
 }
