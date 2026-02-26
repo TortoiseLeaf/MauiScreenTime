@@ -16,7 +16,7 @@ namespace MauiScreenTime.Data
         public DateTime Date { get; set; }
         public DateTime TimeStamp { get; set; }
         public double CO2Total { get; set; }
-        public long CO2SavedDaily { get; set; }
+        public double CO2SavedDaily { get; set; }
         public int TreesPlanted { get; set; }
     }
 
@@ -69,7 +69,7 @@ namespace MauiScreenTime.Data
             var activity = await GetActivityByDate(inputDate);
             return activity?.CO2Total ?? 0;                
         }
-        public async Task<long> GetCO2SavedDaylyByDate(DateTime inputDate)
+        public async Task<double> GetCO2SavedDaylyByDate(DateTime inputDate)
         {
             var activity = await GetActivityByDate(inputDate);
             return activity?.CO2SavedDaily ?? 0;
@@ -92,7 +92,7 @@ namespace MauiScreenTime.Data
                 await AddActivityLog(0, 0, treeNumber);
             }
         }
-        public async Task AddActivityLog(double CO2Total, long CO2SavedToday, int treesPlanted = 0)
+        public async Task AddActivityLog(double CO2Total, double CO2SavedToday, int treesPlanted = 0)
         {
             var connection = await GetConnectionAsync();
             var today = DateTime.UtcNow;
