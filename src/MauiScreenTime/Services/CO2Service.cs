@@ -13,10 +13,10 @@ namespace MauiScreenTime.Services
     {
         private readonly IConversionTableDatabase _conversionTableDatabase;
         private readonly IAppUsageDatabase _appUsageDatabase;
-        private readonly UserActivityLogDatabase _userActivityLogDatabase;
+        private readonly IUserActivityLogDatabase _userActivityLogDatabase;
 
 
-        public CO2Service(IConversionTableDatabase conversionTableDatabase, IAppUsageDatabase appUsageDatabase, UserActivityLogDatabase userActivityLogDatabase)
+        public CO2Service(IConversionTableDatabase conversionTableDatabase, IAppUsageDatabase appUsageDatabase, IUserActivityLogDatabase userActivityLogDatabase)
         {
             // how much is superfluous, is it worth having the null check? else retry the connection? how to prevent recursion?
             if (conversionTableDatabase != null)
@@ -66,18 +66,35 @@ namespace MauiScreenTime.Services
 
                     CO2Total += newData.CO2e;
                 }
-                await _userActivityLogDatabase.AddActivityLog(CO2Total, 1);
-                Console.WriteLine("added total to activity log successfully!");
+                await _userActivityLogDatabase.AddActivityLog(CO2Total, 0);
             }
             else
             {
                 CO2Total = 0; //error message explaining appUsageList is empty.
             }
-            var x = await _userActivityLogDatabase.GetActivityByDate(DateTime.Now);
+           
+            return CO2Total;
+        }
 
+        public async Task<double> CalculateCO2DifferenceAsync()
+        {
+            double todayTotal;
+            double yesterdayTotal;
+            double differenceSaved;
+            DateTime yesterday = DateTime.Now - new TimeSpan(1, 0, 0, 0);
+
+            todayTotal = await _userActivityLogDatabase.GetCO2eTotalByDate(DateTime.Now);
+            yesterdayTotal = await _userActivityLogDatabase.GetCO2eTotalByDate(yesterday);
+
+            differenceSaved = todayTotal - yesterdayTotal;
+            if (differenceSaved > 0)
+            {
+                await _userActivityLogDatabase.AddActivityLog(0, differenceSaved);
+                Console.WriteLine("CO2 difference daily saved to activityLog successfully!");
+            }
+            var x = await _userActivityLogDatabase.GetCO2SavedDaylyByDate(DateTime.Now);
             Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(x));
-            Console.WriteLine("here now");
-                return x.CO2Total; // return this to frontend. Save it to ActivityLog in the WorkManager service
+            return differenceSaved;
         }
     }
 }
