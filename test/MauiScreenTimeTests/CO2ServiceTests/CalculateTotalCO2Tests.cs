@@ -15,6 +15,7 @@ namespace MauiScreenTimeTests.CO2ServiceTests
     {
         private readonly Mock<IConversionTableDatabase> _mockConversionDatabase;
         private readonly Mock<IAppUsageDatabase> _mockAppUsageDatabase;
+        private readonly Mock<IUserActivityLogDatabase> _mockUserActivityLogDatabase;
         private readonly ICO2Service _co2Service;
         private AppUsageModel mockAppData;
 
@@ -22,7 +23,8 @@ namespace MauiScreenTimeTests.CO2ServiceTests
         {
             _mockConversionDatabase = new Mock<IConversionTableDatabase>();
             _mockAppUsageDatabase = new Mock<IAppUsageDatabase>();
-            _co2Service = new CO2Service(_mockConversionDatabase.Object, _mockAppUsageDatabase.Object, null);
+            _mockUserActivityLogDatabase = new Mock<IUserActivityLogDatabase>();
+            _co2Service = new CO2Service(_mockConversionDatabase.Object, _mockAppUsageDatabase.Object, _mockUserActivityLogDatabase.Object);
         }
 
         [Fact]
@@ -39,6 +41,7 @@ namespace MauiScreenTimeTests.CO2ServiceTests
             _mockConversionDatabase.Setup(x => x.GetMatchingCO2Mins("Item1")).ReturnsAsync(3.0);
             _mockConversionDatabase.Setup(x => x.GetMatchingCO2Mins("Item2")).ReturnsAsync(2.0);
             _mockConversionDatabase.Setup(x => x.GetMatchingCO2Mins("Item3")).ReturnsAsync(1.0);
+            _mockUserActivityLogDatabase.Setup(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<long>(),It.IsAny<int>())).Returns(Task.CompletedTask);
 
             // Act
             var result = await _co2Service.CalculateCO2TotalAsync(mockList);

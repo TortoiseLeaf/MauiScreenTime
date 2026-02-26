@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MauiScreenTime.Services.Interfaces;
+using MauiScreenTime.Data.Interfaces;
 
 namespace MauiScreenTime.Data
 {
@@ -19,7 +20,7 @@ namespace MauiScreenTime.Data
         public int TreesPlanted { get; set; }
     }
 
-    public class UserActivityLogDatabase 
+    public class UserActivityLogDatabase : IUserActivityLogDatabase
     {
         private const string DB_NAME = "user_activity_log.db3";
         private readonly IDatabaseService _databaseService;
