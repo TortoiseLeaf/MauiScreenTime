@@ -41,7 +41,7 @@ namespace MauiScreenTimeTests.CO2ServiceTests
             _mockConversionDatabase.Setup(x => x.GetMatchingCO2Mins("Item1")).ReturnsAsync(3.0);
             _mockConversionDatabase.Setup(x => x.GetMatchingCO2Mins("Item2")).ReturnsAsync(2.0);
             _mockConversionDatabase.Setup(x => x.GetMatchingCO2Mins("Item3")).ReturnsAsync(1.0);
-            _mockUserActivityLogDatabase.Setup(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<long>(),It.IsAny<int>())).Returns(Task.CompletedTask);
+            _mockUserActivityLogDatabase.Setup(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(),It.IsAny<int>())).Returns(Task.CompletedTask);
 
             // Act
             var result = await _co2Service.CalculateCO2TotalAsync(mockList);
@@ -74,6 +74,27 @@ namespace MauiScreenTimeTests.CO2ServiceTests
 
             // Assert
             Assert.Equal(0, result);
+        }
+
+        [Fact]
+        public async Task CalculateTotalAsync_CallsAddLog()
+        {
+            // Arrange
+            var mockList = new List<AppUsageModel>
+    {
+        new AppUsageModel { PackageName = "Item1", UsageTimeMinutes = 5 },
+        new AppUsageModel { PackageName = "Item2", UsageTimeMinutes = 10 },
+        new AppUsageModel { PackageName = "Item3", UsageTimeMinutes = 15 }
+    };
+
+            _mockConversionDatabase.Setup(x => x.GetMatchingCO2Mins("Item1")).ReturnsAsync(5.0);
+            _mockUserActivityLogDatabase.Setup(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>())).Returns(Task.CompletedTask);
+
+            // Act
+            await _co2Service.CalculateCO2TotalAsync(mockList);
+
+            // Assert
+            _mockUserActivityLogDatabase.Verify(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>()), Times.Once);
         }
     }
 }
