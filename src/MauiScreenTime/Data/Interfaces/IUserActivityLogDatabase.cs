@@ -12,9 +12,12 @@ namespace MauiScreenTime.Data.Interfaces
 
         Task<double> GetCO2eTotalByDate(DateTime inputDate);
 
-        Task<double> GetCO2SavedDaylyByDate(DateTime inputDate);
+        Task<double> GetCO2SavedDailyByDate(DateTime inputDate);
 
         Task<UserActivityLogModel> GetActivityByDate(DateTime inputDate);
+
+        Task<List<UserActivityLogModel>> GetAllActivitiesLogged();
+        Task AddCO2SavedDaily(double CO2SavedToday);
 
 
     }
