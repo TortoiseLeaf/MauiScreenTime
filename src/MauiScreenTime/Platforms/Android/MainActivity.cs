@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.Content.PM;
 using Android.OS;
+using AndroidX.Work;
 using MauiScreenTime.Platforms.Android;
 
 namespace MauiScreenTime
@@ -11,6 +12,17 @@ namespace MauiScreenTime
         protected override void OnCreate(Android.OS.Bundle? savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+            // build factory before scheduled method runs
+            var factory = IPlatformApplication.Current?.Services
+                            .GetRequiredService<MauiWorkerFactory>();
+
+            var config = new Configuration.Builder()
+                .SetWorkerFactory(factory)
+                .Build();
+
+            WorkManager.Initialize(this, config);
+
             WorkManagerHelper.ScheduleCalculateTotalCO2(this);
         }
     }

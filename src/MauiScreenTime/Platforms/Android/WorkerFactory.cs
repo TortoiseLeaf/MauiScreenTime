@@ -13,13 +13,12 @@ namespace MauiScreenTime.Platforms.Android
     
     public class MauiWorkerFactory : WorkerFactory
     {
-        private readonly ICO2Service _co2Service;
-        private readonly IUsageStatsService _usageStatsService;
+        private readonly IDailyWorkerService _dailyWorkerService;
 
-        public MauiWorkerFactory(ICO2Service co2Service, IUsageStatsService usageStatsService)
+        public MauiWorkerFactory(IDailyWorkerService dailyWorkerService)
         {
-            _co2Service = co2Service;
-            _usageStatsService = usageStatsService;
+            _dailyWorkerService = dailyWorkerService;
+
         }
 
         public override ListenableWorker? CreateWorker(
@@ -28,7 +27,7 @@ namespace MauiScreenTime.Platforms.Android
             WorkerParameters workerParameters)
         {
             if (workerClassName == Java.Lang.Class.FromType(typeof(DailyWorker)).CanonicalName)
-                return new DailyWorker(appContext, workerParameters, _co2Service, _usageStatsService);
+                return new DailyWorker(appContext, workerParameters, _dailyWorkerService);
 
             return null; // Fall back to default factory for other workers
         }
