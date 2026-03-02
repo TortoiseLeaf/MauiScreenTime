@@ -60,7 +60,7 @@ namespace MauiScreenTime.Data
         public async Task<UserActivityLogModel> GetActivityByDate(DateTime inputDate) 
         {
             var connection = await GetConnectionAsync();                       
-            return await connection.Table<UserActivityLogModel>()
+            return await connection.Table<UserActivityLogModel>().OrderByDescending(x => x.TimeStamp)
                 .Where(a => a.Date == inputDate.Date)
                 .FirstOrDefaultAsync();
         }
@@ -69,7 +69,7 @@ namespace MauiScreenTime.Data
             var activity = await GetActivityByDate(inputDate);
             return activity?.CO2Total ?? 0;                
         }
-        public async Task<double> GetCO2SavedDaylyByDate(DateTime inputDate)
+        public async Task<double> GetCO2SavedDailyByDate(DateTime inputDate)
         {
             var activity = await GetActivityByDate(inputDate);
             return activity?.CO2SavedDaily ?? 0;
@@ -92,17 +92,37 @@ namespace MauiScreenTime.Data
                 await AddActivityLog(0, 0, treeNumber);
             }
         }
+        public async Task AddCO2SavedDaily(double CO2SavedToday)
+        {
+            var connection = await GetConnectionAsync();
+            var today = DateTime.UtcNow;
+
+            var activity = await GetActivityByDate(today);
+
+            if (activity != null)
+            {
+                activity.CO2SavedDaily += CO2SavedToday;
+                activity.Date = DateTime.UtcNow;
+                await connection.UpdateAsync(activity);
+            }
+            else
+            {
+                await AddActivityLog(0, CO2SavedToday, 0);
+            }
+        }
         public async Task AddActivityLog(double CO2Total, double CO2SavedToday, int treesPlanted = 0)
         {
             var connection = await GetConnectionAsync();
             var today = DateTime.UtcNow;
+            //var yesterday = today - new TimeSpan(1, 0, 0, 0);
+
             await connection.InsertAsync(new UserActivityLogModel
             {
                 Date = today.Date,
                 TimeStamp = today,
                 CO2Total = CO2Total,
-                CO2SavedDaily = CO2SavedToday,
-                TreesPlanted = treesPlanted
+                //CO2SavedDaily = CO2SavedToday,
+                //TreesPlanted += treesPlanted
             }
             );
         }                
