@@ -6,28 +6,38 @@ using System.Threading.Tasks;
 using Android.Content;
 using AndroidX.Work;
 using MauiScreenTime.Services.Interfaces;
+using Android.Util;
 
 namespace MauiScreenTime.Platforms.Android
 {
     public class DailyWorker : Worker
     {
-        private readonly ICO2Service _co2Service;
-        private readonly IUsageStatsService _usageStatsService;
+       
+        private readonly IDailyWorkerService _dailyWorkerService;
 
+        public DailyWorker(Context context, WorkerParameters parameters)
+        : base(context, parameters)
+        {
+            _dailyWorkerService = null;
+        }
 
-        public DailyWorker(Context context, WorkerParameters parameters, ICO2Service co2Service, IUsageStatsService usageStatsService)
+        public DailyWorker(Context context, WorkerParameters parameters, IDailyWorkerService dailyWorkerService)
             : base(context, parameters)
         {
-            _co2Service = co2Service;
-            _usageStatsService = usageStatsService;
+            
+            _dailyWorkerService = dailyWorkerService;
         }
 
         public override Result DoWork()
         {
+            Log.Debug("DailyWorker", "here successfully fired the daily worker");
             try
             {
-                var appUsageList = _usageStatsService.GetAppUsageAsync().GetAwaiter().GetResult();
-                _co2Service.CalculateCO2TotalAsync(appUsageList);
+                
+
+                _dailyWorkerService.StoreCO2TotalTodayAsync().GetAwaiter().GetResult();
+
+                Log.Debug("DailyWorker", "here successfully fired the 23h total congrats");
                 System.Diagnostics.Debug.WriteLine("here Successfully fired the 23h co2 Total congratulations");
                 return Result.InvokeSuccess();
             }
