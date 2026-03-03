@@ -64,14 +64,31 @@ namespace MauiScreenTime.Data
                 .Where(a => a.Date == inputDate.Date)
                 .FirstOrDefaultAsync();
         }
-        public async Task<double> GetCO2eTotalByDate(DateTime inputDate) 
+        public async Task<UserActivityLogModel> GetHighestCO2TotalReducedByDate(DateTime inputDate)
         {
-            var activity = await GetActivityByDate(inputDate);
-            return activity?.CO2Total ?? 0;                
+            var connection = await GetConnectionAsync();
+            return await connection.Table<UserActivityLogModel>().OrderByDescending(x => x.CO2SavedDaily)
+                .Where(a => a.Date == inputDate.Date)
+                .FirstOrDefaultAsync();
         }
-        public async Task<double> GetCO2SavedDailyByDate(DateTime inputDate)
+
+        public async Task<UserActivityLogModel> GetHighestCO2TotalByDate(DateTime inputDate)
         {
-            var activity = await GetActivityByDate(inputDate);
+            var connection = await GetConnectionAsync();
+            return await connection.Table<UserActivityLogModel>().OrderByDescending(x => x.CO2Total)
+                .Where(a => a.Date == inputDate.Date)
+                .FirstOrDefaultAsync();
+        }
+
+
+        //public async Task<double> GetCO2TotalByDate(DateTime inputDate) 
+        //{
+        //    var activity = await GetActivityByDate(inputDate);
+        //    return activity?.CO2Total ?? 0;                
+        //}
+        public async Task<double> GetCO2TotalReducedByDate(DateTime inputDate)
+        {
+            var activity = await GetHighestCO2TotalReducedByDate(inputDate);
             return activity?.CO2SavedDaily ?? 0;
         }
         public async Task AddTrees(int treeNumber)
@@ -92,24 +109,25 @@ namespace MauiScreenTime.Data
                 await AddActivityLog(0, 0, treeNumber);
             }
         }
-        public async Task AddCO2SavedDaily(double CO2SavedToday)
-        {
-            var connection = await GetConnectionAsync();
-            var today = DateTime.UtcNow;
 
-            var activity = await GetActivityByDate(today);
+        //public async Task AddCO2SavedDaily(double CO2SavedToday)
+        //{
+        //    var connection = await GetConnectionAsync();
+        //    var today = DateTime.UtcNow;
 
-            if (activity != null)
-            {
-                activity.CO2SavedDaily += CO2SavedToday;
-                activity.Date = DateTime.UtcNow;
-                await connection.UpdateAsync(activity);
-            }
-            else
-            {
-                await AddActivityLog(0, CO2SavedToday, 0);
-            }
-        }
+        //    var activity = await GetActivityByDate(today);
+
+        //    if (activity != null)
+        //    {
+        //        activity.CO2SavedDaily += CO2SavedToday;
+        //        activity.Date = DateTime.UtcNow;
+        //        await connection.UpdateAsync(activity);
+        //    }
+        //    else
+        //    {
+        //        await AddActivityLog(0, CO2SavedToday, 0);
+        //    }
+        //}
         public async Task AddActivityLog(double CO2Total, double CO2SavedToday, int treesPlanted = 0)
         {
             var connection = await GetConnectionAsync();
@@ -120,12 +138,28 @@ namespace MauiScreenTime.Data
             {
                 Date = today.Date,
                 TimeStamp = today,
-                CO2Total = CO2Total,
+                CO2Total = (double)CO2Total,
+                CO2SavedDaily = CO2SavedToday,
+                //TreesPlanted += treesPlanted
+            }
+            );
+        }
+        public async Task AddActivityLogDEBUG(double CO2Total, double CO2SavedToday, int treesPlanted)
+        {
+            var connection = await GetConnectionAsync();
+            var today = DateTime.Now.AddDays(-1);
+            //var yesterday = today - new TimeSpan(1, 0, 0, 0);
+
+            await connection.InsertAsync(new UserActivityLogModel
+            {
+                Date = today.Date,
+                TimeStamp = today,
+                CO2Total = (double)CO2Total,
                 //CO2SavedDaily = CO2SavedToday,
                 //TreesPlanted += treesPlanted
             }
             );
-        }                
+        }
         public async Task DeleteAllActivitiesLogged() 
         {
             var connection = await GetConnectionAsync();
