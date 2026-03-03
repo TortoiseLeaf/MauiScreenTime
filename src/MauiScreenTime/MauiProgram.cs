@@ -33,6 +33,7 @@ namespace MauiScreenTime
             builder.Services.AddSingleton<ICO2Service, CO2Service>();
             builder.Services.AddSingleton<IDatabaseService, DatabaseService>();
             builder.Services.AddSingleton<IUsageStatsService, UsageStatsService>();
+            builder.Services.AddSingleton<IDailyWorkerService, DailyWorkerService>();
 
 #if ANDROID
             builder.Services.AddSingleton<MauiScreenTime.Platforms.Android.MauiWorkerFactory>();
