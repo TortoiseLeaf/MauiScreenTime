@@ -29,11 +29,12 @@ namespace MauiScreenTime.Data
                 _database.CreateTableAsync<ConversionTableModel>().Wait();
 
                 SeedDataIfEmpty();
-            } catch (SQLiteException ex) 
+            }
+            catch (SQLiteException ex)
             {
                 Console.WriteLine("Error creating Co2Conversion Table: ", ex.Message);
             }
-            
+
         }
 
 
@@ -61,20 +62,12 @@ namespace MauiScreenTime.Data
             }
         }
 
-        public async Task<double> GetMatchingCO2Mins(string packageName)
+        public async Task<ConversionTableModel> GetConversionTableEntryByPackageName(string packageName)
         {
-            double CO2Mins = 0;
-            try
-            {
-                var CO2MinsList = await _database.QueryAsync<ConversionTableModel>("SELECT CO2Mins FROM ConversionTableModel WHERE PackageName = ?", packageName);
-                return CO2Mins = CO2MinsList.FirstOrDefault()?.CO2Mins ?? 0;
-            } catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error querying conversion table in db class: {ex}");
-            }
-            return CO2Mins;
+            var entry = await _database.Table<ConversionTableModel>()
+                        .Where(c => c.PackageName == packageName)
+                        .FirstOrDefaultAsync();
+            return entry;
         }
-
     }
-
 }

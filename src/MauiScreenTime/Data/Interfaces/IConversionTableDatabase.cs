@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace MauiScreenTime.Data.Interfaces
 {
     public interface IConversionTableDatabase
-    {
-        Task<double> GetMatchingCO2Mins(string packageName);
+    {        
+        Task<ConversionTableModel> GetConversionTableEntryByPackageName(string packageName);
 
     }
 }
