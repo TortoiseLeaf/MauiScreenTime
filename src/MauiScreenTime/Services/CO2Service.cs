@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using MauiScreenTime.Data;
 using MauiScreenTime.Data.Interfaces;
 using MauiScreenTime.Services.Interfaces;
+#if ANDROID
+using Android.Util;
+#endif
 
 namespace MauiScreenTime.Services
 {
@@ -45,6 +48,7 @@ namespace MauiScreenTime.Services
 
                 // write to the db or just do on the fly? performance/security 
                 appData.CO2e = CO2e;
+
             }
             catch (Exception ex)
             {
@@ -66,7 +70,10 @@ namespace MauiScreenTime.Services
 
                     CO2Total += newData.CO2e;
                 }
-                await _userActivityLogDatabase.AddActivityLog(CO2Total, 0);
+
+                // call this once a day or 
+                await _userActivityLogDatabase.AddActivityLog(CO2Total, 0, 0);
+
             }
             else
             {
@@ -76,28 +83,6 @@ namespace MauiScreenTime.Services
             return CO2Total;
         }
 
-        public async Task<double> CalculateCO2DifferenceAsync()
-        {
-            
-            double todayTotal;
-            double yesterdayTotal;
-            double differenceSaved;
-            DateTime yesterday = DateTime.Now - new TimeSpan(1, 0, 0, 0);
-
-            todayTotal = await _userActivityLogDatabase.GetCO2eTotalByDate(DateTime.Now);
-            yesterdayTotal = await _userActivityLogDatabase.GetCO2eTotalByDate(yesterday);
-
-            differenceSaved = yesterdayTotal - todayTotal;
-            
-            if (differenceSaved > 0)
-            {
-                await _userActivityLogDatabase.AddActivityLog(0, differenceSaved);
-                Console.WriteLine("CO2 difference daily saved to activityLog successfully!");
-            }
-            //var x = await _userActivityLogDatabase.GetCO2SavedDaylyByDate(DateTime.Now);
-            //var xy = await _userActivityLogDatabase.GetActivityByDate(DateTime.Now);
-            //Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(xy));
-            return differenceSaved;
+       
         }
     }
-}

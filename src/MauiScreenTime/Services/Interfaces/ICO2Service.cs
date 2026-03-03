@@ -13,7 +13,7 @@ namespace MauiScreenTime.Services.Interfaces
 
         Task<double> CalculateCO2TotalAsync(List<AppUsageModel> appUsageList);
 
-        Task<double> CalculateCO2DifferenceAsync();
+
 
     }
 }
