@@ -49,11 +49,32 @@
 FontSize="20"
         HorizontalTextAlignment="Center"
 TextColor="Gray"/>
-        <Label Text="{Binding Co2DailySaved}" 
+        <Label Text="{Binding Co2TotalReduced}" 
    FontSize="30"
    TextColor="Gray"
    HorizontalTextAlignment="Center"
    HorizontalOptions="Center" />
-        
+
+        <Label Text="CO2 total today:" 
+FontSize="20"
+        HorizontalTextAlignment="Center"
+TextColor="Gray"/>
+        <Label Text="{Binding Co2TotalTD}" 
+FontSize="30"
+TextColor="Gray"
+HorizontalTextAlignment="Center"
+HorizontalOptions="Center" />
+
+
+        <Label Text="Co2 total yesterday:" 
+FontSize="20"
+        HorizontalTextAlignment="Center"
+TextColor="Gray"/>
+        <Label Text="{Binding Co2TotalY}" 
+FontSize="30"
+TextColor="Gray"
+HorizontalTextAlignment="Center"
+HorizontalOptions="Center" />
+
     </VerticalStackLayout>
 </ContentPage>
