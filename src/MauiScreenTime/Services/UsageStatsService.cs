@@ -26,7 +26,7 @@ namespace MauiScreenTime.Services
 {
     public class UsageStatsService : IUsageStatsService
     {
-        public List<string> appWhiteList = ["com.google.android.gm", "com.android.settings", "com.android.launcher", "com.zhiliaoapp.musically", "com.reddit.frontpage", "com.facebook.katana", "com.instagram.android", "com.twitter.android", "com.snapchat.android", "com.google.android.youtube"];
+        public List<string> appWhiteList = ["com.zhiliaoapp.musically", "com.reddit.frontpage", "com.facebook.katana", "com.instagram.android", "com.twitter.android", "com.snapchat.android", "com.google.android.youtube"];
         private Task<List<AppUsageModel>>? usageData;
 
 #if ANDROID
@@ -160,13 +160,15 @@ namespace MauiScreenTime.Services
                             PackageName = usageObj.PackageName,
                             //AppName =  usageObj.ApplicationInfo.LoadLabel(packageManager),
                             UsageTimeMilliseconds = TimeSpan.FromMilliseconds(usageObj.TotalTimeInForeground),
+                            UsageTimeMinutes = usageObj.TotalTimeInForeground / 60000,
+
                             
                         });
                     }
                 }
             }
 
-            var usageData = DeviceAppUsageList.OrderByDescending(a => a.UsageTimeMilliseconds).ToList();
+            var usageData = DeviceAppUsageList.OrderByDescending(a => a.UsageTimeMinutes).ToList();
 #endif
             return usageData;
 

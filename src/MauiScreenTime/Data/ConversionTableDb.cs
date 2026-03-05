@@ -1,4 +1,5 @@
-﻿using SQLite;
+﻿using MauiScreenTime.Data.Interfaces;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace MauiScreenTime.Data
         public double CO2Mins { get; set; }
     }
 
-    public class ConversionTableDatabase
+    public class ConversionTableDatabase : IConversionTableDatabase
     {
         private readonly SQLiteAsyncConnection _database;
 
@@ -59,7 +60,21 @@ namespace MauiScreenTime.Data
 
             }
         }
-        
+
+        public async Task<double> GetMatchingCO2Mins(string packageName)
+        {
+            double CO2Mins = 0;
+            try
+            {
+                var CO2MinsList = await _database.QueryAsync<ConversionTableModel>("SELECT CO2Mins FROM ConversionTableModel WHERE PackageName = ?", packageName);
+                return CO2Mins = CO2MinsList.FirstOrDefault()?.CO2Mins ?? 0;
+            } catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error querying conversion table in db class: {ex}");
+            }
+            return CO2Mins;
+        }
+
     }
 
 }
