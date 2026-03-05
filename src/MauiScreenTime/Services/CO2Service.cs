@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +22,9 @@ namespace MauiScreenTime.Services
         public CO2Service(IConversionTableDatabase conversionTableDatabase, IAppUsageDatabase appUsageDatabase, IUserActivityLogDatabase userActivityLogDatabase)
         {
             // how much is superfluous, is it worth having the null check? else retry the connection? how to prevent recursion?
+                //this is superfluous and will throw an err later, if the conversion table db IS null what happens?
+                //it stays null and we will try to access it anyway later -> null reference exception
+                //we either check properly and have a plan b or we don't bother
             if (conversionTableDatabase != null)
             {
                 _conversionTableDatabase = conversionTableDatabase;
@@ -38,17 +41,24 @@ namespace MauiScreenTime.Services
                 var packageName = appData.PackageName;
 
                 // trycatch
-                var CO2Mins = await _conversionTableDatabase.GetMatchingCO2Mins(packageName);
-
-
+                var conversionTableEntry = await _conversionTableDatabase.GetConversionTableEntryByPackageName(packageName);
+                
+                //if no conversion table entry is found should we use a default co2mins value? 
+                if (conversionTableEntry == null) 
+                {
+                    System.Diagnostics.Debug.WriteLine($"No conversion entry found for: {appData.PackageName}");
+                    return appData; //returns early, C02e is 0
+                }
+                                
+                var CO2Mins = conversionTableEntry.CO2Mins;
+                
                 double appUsageMins = appData.UsageTimeMinutes;
 
                 double CO2e = CO2Mins * appUsageMins;
 
-
                 // write to the db or just do on the fly? performance/security 
                 appData.CO2e = CO2e;
-
+                appData.AppName = conversionTableEntry.AppName;
             }
             catch (Exception ex)
             {

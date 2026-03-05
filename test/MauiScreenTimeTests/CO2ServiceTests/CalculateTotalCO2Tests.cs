@@ -1,4 +1,4 @@
-﻿using MauiScreenTime.Data;
+using MauiScreenTime.Data;
 using MauiScreenTime.Data.Interfaces;
 using MauiScreenTime.Services;
 using MauiScreenTime.Services.Interfaces;
@@ -38,10 +38,15 @@ namespace MauiScreenTimeTests.CO2ServiceTests
         new AppUsageModel { PackageName = "Item3", UsageTimeMinutes = 15 }
     };
 
-            _mockConversionDatabase.Setup(x => x.GetMatchingCO2Mins("Item1")).ReturnsAsync(3.0);
-            _mockConversionDatabase.Setup(x => x.GetMatchingCO2Mins("Item2")).ReturnsAsync(2.0);
-            _mockConversionDatabase.Setup(x => x.GetMatchingCO2Mins("Item3")).ReturnsAsync(1.0);
-            _mockUserActivityLogDatabase.Setup(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(),It.IsAny<int>())).Returns(Task.CompletedTask);
+            _mockConversionDatabase
+                   .Setup(x => x.GetConversionTableEntryByPackageName("Item1"))
+                   .ReturnsAsync(new ConversionTableModel { PackageName = "Item1", CO2Mins = 3.0 });
+            _mockConversionDatabase
+                .Setup(x => x.GetConversionTableEntryByPackageName("Item2"))
+                .ReturnsAsync(new ConversionTableModel { PackageName = "Item2", CO2Mins = 2.0 });
+            _mockConversionDatabase
+                .Setup(x => x.GetConversionTableEntryByPackageName("Item3"))
+                .ReturnsAsync(new ConversionTableModel { PackageName = "Item3", CO2Mins = 1.0 });
 
             // Act
             var result = await _co2Service.CalculateCO2TotalAsync(mockList);

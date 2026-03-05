@@ -3,6 +3,7 @@ using MauiScreenTime.Data.Interfaces;
 using MauiScreenTime.Services;
 using MauiScreenTime.Services.Interfaces;
 using Moq;
+using Moq.Language.Flow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,9 +32,16 @@ namespace MauiScreenTimeTests.CO2ServiceTests
         {
             // Arrange
             var testData = new AppUsageModel { PackageName = "Test", UsageTimeMinutes = 10 };
-            
-            
-            _mockConversionDatabase.Setup(x => x.GetMatchingCO2Mins("Test")).ReturnsAsync(5.0);
+            var conversionTableEntry = new ConversionTableModel
+            {
+                PackageName = "Test",
+                AppName = "Test",
+                CO2Mins = 5.0
+            };
+
+            _mockConversionDatabase
+                .Setup(x => x.GetConversionTableEntryByPackageName("Test"))
+                .ReturnsAsync(conversionTableEntry);
 
             // Act
             var result = await _co2Service.CalculateCO2eAsync(testData);
@@ -48,7 +56,9 @@ namespace MauiScreenTimeTests.CO2ServiceTests
             // Arrange
             var testData = new AppUsageModel { PackageName = "NotFound", UsageTimeMinutes = 10 };
 
-            _mockConversionDatabase.Setup(x => x.GetMatchingCO2Mins("NotFound")).ReturnsAsync(0);
+            _mockConversionDatabase
+                .Setup(x => x.GetConversionTableEntryByPackageName("NotFound"))
+                .ReturnsAsync((ConversionTableModel)null);
 
             // Act
             var result = await _co2Service.CalculateCO2eAsync(testData);
@@ -62,7 +72,16 @@ namespace MauiScreenTimeTests.CO2ServiceTests
         {
             // Arrange
             var testData = new AppUsageModel { PackageName = "Test", UsageTimeMinutes = 10 };
-            _mockConversionDatabase.Setup(x => x.GetMatchingCO2Mins("Test")).ReturnsAsync(0.5);
+            var conversionTableEntry = new ConversionTableModel 
+            { 
+                PackageName = "Test", 
+                AppName = "Test", 
+                CO2Mins = 0.5 
+            };
+
+            _mockConversionDatabase
+                .Setup(x => x.GetConversionTableEntryByPackageName("Test"))
+                .ReturnsAsync(conversionTableEntry);
 
             // Act
             var result = await _co2Service.CalculateCO2eAsync(testData);
