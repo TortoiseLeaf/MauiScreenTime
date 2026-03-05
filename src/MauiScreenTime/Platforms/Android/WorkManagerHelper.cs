@@ -29,6 +29,21 @@ namespace MauiScreenTime.Platforms.Android
                 .SetRequiredNetworkType(NetworkType.NotRequired)
                 .Build();
 
+            //var workRequest = (PeriodicWorkRequest)new PeriodicWorkRequest.Builder(
+            //        Java.Lang.Class.FromType(typeof(DailyWorker)),
+            //        15,
+            //        Java.Util.Concurrent.TimeUnit.Minutes!)
+            //    //.SetInitialDelay((long)delay.TotalMinutes, Java.Util.Concurrent.TimeUnit.Minutes!)
+            //    .SetConstraints(constraints)
+            //    .Build();
+
+            //WorkManager
+            //    .GetInstance(context)
+            //    .EnqueueUniquePeriodicWork(
+            //        "total_CO2_23h",
+            //        ExistingPeriodicWorkPolicy.CancelAndReenqueue,
+            //        workRequest);
+
             var workRequest = (PeriodicWorkRequest)new PeriodicWorkRequest.Builder(
                     Java.Lang.Class.FromType(typeof(DailyWorker)),
                     24,
@@ -43,6 +58,7 @@ namespace MauiScreenTime.Platforms.Android
                     "total_CO2_23h",
                     ExistingPeriodicWorkPolicy.Keep,
                     workRequest);
+
         }
     }
 }

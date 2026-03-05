@@ -43,6 +43,10 @@ namespace MauiScreenTime.Platforms.Android
             }
             catch (Exception ex)
             {
+                Log.Debug("DailyWorker", "Error, failed to fire the 23h co2Total");
+                Log.Debug("DailyWorker", ex.Message);
+                Log.Debug("DailyWorker", ex.StackTrace);
+
                 return Result.InvokeFailure();
             }
         }

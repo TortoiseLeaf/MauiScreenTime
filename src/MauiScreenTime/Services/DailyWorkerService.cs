@@ -15,23 +15,24 @@ namespace MauiScreenTime.Services
     {
         private readonly ICO2Service _co2Service;
         private readonly IAppUsageDatabase _appUsageDatabase;
-        //private readonly IUserActivityLogDatabase _userActivityLogDatabase;
         private readonly IUsageStatsService _usageStatsService;
+        private readonly IUserActivityLogDatabase _userActivityLogDatabase;
 
 
-        public DailyWorkerService(ICO2Service co2Service, IAppUsageDatabase appUsageDatabase, IUsageStatsService usageStatsService)
+        public DailyWorkerService(ICO2Service co2Service, IAppUsageDatabase appUsageDatabase, IUsageStatsService usageStatsService, IUserActivityLogDatabase userActivityLogDatabase)
         {
 
             _co2Service = co2Service;
             _appUsageDatabase = appUsageDatabase;
             _usageStatsService = usageStatsService;
-
+            _userActivityLogDatabase = userActivityLogDatabase;
         }
         public async Task StoreCO2TotalTodayAsync()
         {
             List<AppUsageModel>? appUsageList;  
             try
             {   
+
                 appUsageList = _usageStatsService.GetAppUsageAsync().GetAwaiter().GetResult();
                 
             } catch (Exception ex)
@@ -44,8 +45,16 @@ namespace MauiScreenTime.Services
 
             try
             {
-                _co2Service.CalculateCO2TotalAsync(appUsageList).GetAwaiter().GetResult();
+                // USE THIS AS DEBUGGER TO CHECK THE METHOD IS CALLING WHEN SCHEDULED
+                _userActivityLogDatabase.AddActivityLog(0,0,1).GetAwaiter().GetResult();
+
+                // get the co2Total, and save it to the db
+                var co2TotalToday = _co2Service.CalculateCO2TotalAsync(appUsageList).GetAwaiter().GetResult();
+                _userActivityLogDatabase.AddActivityLog(co2TotalToday, 0, 0).GetAwaiter().GetResult();
                 System.Diagnostics.Debug.WriteLine("DailyTaskService: RunDailyTask saved to db completed");
+
+                // calculate and store to db the Co2 difference between yesterday and today
+                _co2Service.CalculateCO2DifferenceAsync().GetAwaiter().GetResult();
 
             }
             catch (Exception ex)
