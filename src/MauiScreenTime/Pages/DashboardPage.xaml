@@ -45,7 +45,7 @@
       HorizontalTextAlignment="Center"
       HorizontalOptions="Center" />
 
-        <Label Text="Total Co2 Saved:" 
+        <Label Text="Total Co2 reduced:" 
 FontSize="20"
         HorizontalTextAlignment="Center"
 TextColor="Gray"/>

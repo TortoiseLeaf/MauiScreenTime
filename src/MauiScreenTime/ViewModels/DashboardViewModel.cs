@@ -64,18 +64,19 @@ namespace MauiScreenTime.ViewModels
 
                 await Shell.Current.DisplayAlert("Error", "Unable to load data. Please try again.","OK");
             }
-
+            //await GetAllActivity();
+            
             await GetCO2Coversion();
 
             await GetCO2Total();
 
             //await GetDailyDifference();
-
+           
             await CalculateCO2DifferenceAsync();
 
             // debug
             await getDataSoFar();
-            await GetAllActivity();
+            
         }
 
         // gets usage data from service if permissions granted
@@ -174,8 +175,8 @@ namespace MauiScreenTime.ViewModels
             var today = DateTime.Now.Date;
             var yesterday = DateTime.Now.Date.AddDays(-1);
 
-            var yday = await _userActivityLogDatabase.GetHighestCO2TotalByDate(yesterday);
-            var todayH = await _userActivityLogDatabase.GetHighestCO2TotalByDate(today);
+            var yday = await _userActivityLogDatabase.GetHighestCO2DailyTotalUsedByDate(yesterday);
+            var todayH = await _userActivityLogDatabase.GetHighestCO2DailyTotalUsedByDate(today);
 
             Co2TotalReduced = await _userActivityLogDatabase.GetCO2TotalReducedByDate(DateTime.Now);
 
@@ -194,16 +195,20 @@ namespace MauiScreenTime.ViewModels
         public async Task GetAllActivity()
         {
             //Console.WriteLine("all logs here");
-            //Console.WriteLine("all logs here");
-            //await _userActivityLogDatabase.AddActivityLogDEBUG(100, 10, null);
+            Console.WriteLine("all logs here");
+
+            await _userActivityLogDatabase.AddActivityLog(0, 10, 0);
+            //await _userActivityLogDatabase.AddActivityLog(50, 0, 0);
 
 
-            //var xy = await _userActivityLogDatabase.GetAllActivitiesLogged();
-            //foreach (var i in xy)
-            //{
-            //    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(i));
-
-            //}
+            var xy = await _userActivityLogDatabase.GetAllActivitiesLogged();
+            foreach (var i in xy) 
+            {
+                if (i.Date == DateTime.Today)
+                {
+                    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(i));
+                }
+            }
 
             //var yesterdayData = await _userActivityLogDatabase.GetActivityByDate(DateTime.Now.AddDays(-1));
             //var todayData = await _userActivityLogDatabase.GetActivityByDate(DateTime.Now);
@@ -217,56 +222,61 @@ namespace MauiScreenTime.ViewModels
 
             double todayTotal;
             double yesterdayTotal;
-            double differenceSaved;
-            var tdyT = await _userActivityLogDatabase.GetHighestCO2TotalByDate(DateTime.Now);
+            double differenceSaved = 0;
+            var tdyT = await _userActivityLogDatabase.GetHighestCO2DailyTotalUsedByDate(DateTime.Now);
             todayTotal = tdyT.CO2Total;
 
 
-            var ydyT = await _userActivityLogDatabase.GetHighestCO2TotalByDate(DateTime.Now.AddDays(-1));
+            var ydyT = await _userActivityLogDatabase.GetHighestCO2DailyTotalUsedByDate(DateTime.Now.AddDays(-1));
             yesterdayTotal = ydyT.CO2Total;
+            Console.WriteLine("here days diff");
 
-            var today = await _userActivityLogDatabase.GetActivityByDate(DateTime.Now);
-            var yesterday = await _userActivityLogDatabase.GetActivityByDate(DateTime.Now.AddDays(-1));
+            var today = await _userActivityLogDatabase.GetHighestCO2DailyTotalUsedByDate(DateTime.Now);
+            var yesterday = await _userActivityLogDatabase.GetHighestCO2DailyTotalUsedByDate(DateTime.Now.AddDays(-1));
 
             Console.WriteLine("here calculate diff");
             Console.WriteLine(todayTotal);
             Console.WriteLine(yesterdayTotal);
-            //Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(today));
-            //Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(yesterday));
+            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(today));
+            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(yesterday));
 
-            differenceSaved = yesterdayTotal - todayTotal;
-
-
-            if (differenceSaved > 0)
+            if (yesterdayTotal > 0)
             {
-                Console.WriteLine(differenceSaved);
-
-                var x = await _userActivityLogDatabase.GetActivityByDate(DateTime.Now);
-                Console.WriteLine("here co2saved before");
-                Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(x));
+                differenceSaved = yesterdayTotal - todayTotal;
 
 
-                //await _userActivityLogDatabase.AddCO2SavedDaily(differenceSaved);
-
-                // problematic because if the 0 overwrites you get inconsistent data
-                try
+                if (differenceSaved > 0)
                 {
-                    await _userActivityLogDatabase.AddActivityLog(0, differenceSaved, 0);
-                } catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine("Error adding diff: ", ex.Message);
+                    Console.WriteLine(differenceSaved);
 
-                }
+                    var x = await _userActivityLogDatabase.GetActivityByDate(DateTime.Now);
+                    Console.WriteLine("here co2saved before");
+                    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(x));
 
-                var xy = await _userActivityLogDatabase.GetActivityByDate(DateTime.Now);
-                Console.WriteLine("here co2saved after");
-                Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(xy));
-                System.Diagnostics.Debug.WriteLine("CO2 difference daily saved to activityLog successfully!");
+
+                    //await _userActivityLogDatabase.AddCO2SavedDaily(differenceSaved);
+
+                    // problematic because if the 0 overwrites you get inconsistent data
+                    try
+                    {
+                        await _userActivityLogDatabase.AddCO2TotalReducedDaily(differenceSaved);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Error adding diff: ", ex.Message);
+
+                    }
+
+                    var xy = await _userActivityLogDatabase.GetActivityByDate(DateTime.Now);
+                    Console.WriteLine("here co2saved after");
+                    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(xy));
+                    System.Diagnostics.Debug.WriteLine("CO2 difference daily saved to activityLog successfully!");
 
 #if ANDROID
-                Log.Debug("CO2Service", "here successfully CO2 difference saved to log");
+                    Log.Debug("CO2Service", "here successfully CO2 difference saved to log");
 #endif
 
+                }
             }
             // [DOTNET] {"Id":154,"Date":"2026-03-02T00:00:00","TimeStamp":"2026-03-02T16:25:04.8102844","CO2Total":0,"CO2SavedDaily":0,"TreesPlanted":0}
 
