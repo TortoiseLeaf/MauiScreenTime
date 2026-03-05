@@ -75,12 +75,21 @@ namespace MauiScreenTime.Data
                 .Sum(x => x.CO2TotalReduced);
         }
 
-        public async Task<UserActivityLogModel> GetHighestCO2DailyTotalUsedByDate(DateTime inputDate)
+        public async Task<UserActivityLogModel> GetHighestCO2DailyTotalByDate(DateTime inputDate)
         {
             var connection = await GetConnectionAsync();
             return await connection.Table<UserActivityLogModel>().OrderByDescending(x => x.CO2Total)
                 .Where(a => a.Date == inputDate.Date)
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<int> GetLatestTreesByDate(DateTime inputDate)
+        {
+            var connection = await GetConnectionAsync();
+            var allEntries = await connection.Table<UserActivityLogModel>().ToListAsync();
+            return allEntries
+                .Where(a => a.Date == inputDate.Date)
+                .Sum(x => x.TreesPlanted);
         }
 
 
@@ -94,44 +103,46 @@ namespace MauiScreenTime.Data
         //    var activity = await GetHighestCO2TotalReducedByDate(inputDate);
         //    return activity?.CO2TotalReduced ?? 0;
         //}
-        public async Task AddTrees(int treeNumber)
-        {
-            var connection = await GetConnectionAsync();
-            var today = DateTime.UtcNow;
+        //public async Task AddTrees(int treeNumber)
+        //{
+        //    var connection = await GetConnectionAsync();
+        //    var today = DateTime.UtcNow;
 
-            var activity = await GetActivityByDate(today);
+        //    var activity = await GetActivityByDate(today);
 
-            if (activity != null)
-            {
-                activity.TreesPlanted += treeNumber;
-                activity.Date = DateTime.UtcNow;
-                await connection.UpdateAsync(activity);
-            }
-            else
-            {
-                await AddActivityLog(0, 0, treeNumber);
-            }
-        }
-        //necessary?
-        public async Task AddCO2TotalReducedDaily(double CO2TotalReduced)
-        {
-            var connection = await GetConnectionAsync();
-            var today = DateTime.UtcNow;
+        //    if (activity != null)
+        //    {
+        //        activity.TreesPlanted = treeNumber;
+        //        activity.Date = DateTime.UtcNow;
+        //        await connection.UpdateAsync(activity);
+        //    }
+        //    else
+        //    {
+        //        await AddActivityLog(0, 0, treeNumber);
+        //    }
+        //}
 
-            var activity = await GetActivityByDate(today);
 
-            if (activity != null)
-            {
-                activity.CO2TotalReduced += CO2TotalReduced;
-                activity.Date = DateTime.UtcNow;
-                await connection.UpdateAsync(activity);
-            }
-            else
-            {
-                await AddActivityLog(0, CO2TotalReduced, 0);
-            }
-        }
-        public async Task AddActivityLog(double CO2Total, double CO2TotalReduced, int treesPlanted = 0)
+        ////necessary?
+        //public async Task AddCO2TotalReducedDaily(double CO2TotalReduced)
+        //{
+        //    var connection = await GetConnectionAsync();
+        //    var today = DateTime.UtcNow;
+
+        //    var activity = await GetActivityByDate(today);
+
+        //    if (activity != null)
+        //    {
+        //        activity.CO2TotalReduced += CO2TotalReduced;
+        //        activity.Date = DateTime.UtcNow;
+        //        await connection.UpdateAsync(activity);
+        //    }
+        //    else
+        //    {
+        //        await AddActivityLog(0, CO2TotalReduced, 0);
+        //    }
+        //}
+        public async Task AddActivityLog(double CO2Total, double CO2TotalReduced, int treesPlanted)
         {
             var connection = await GetConnectionAsync();
             var today = DateTime.UtcNow;
@@ -142,7 +153,7 @@ namespace MauiScreenTime.Data
                 TimeStamp = today,
                 CO2Total = (double)CO2Total,
                 CO2TotalReduced = CO2TotalReduced,
-                //TreesPlanted += treesPlanted
+                TreesPlanted = treesPlanted
             }
             );
         }
