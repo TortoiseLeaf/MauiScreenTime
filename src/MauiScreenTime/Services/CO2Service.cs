@@ -72,7 +72,7 @@ namespace MauiScreenTime.Services
                 }
 
                 // call this once a day or 
-                await _userActivityLogDatabase.AddActivityLog(CO2Total, 0, 0);
+                //await _userActivityLogDatabase.AddActivityLog(CO2Total, 0, 0);
 
             }
             else
@@ -83,6 +83,59 @@ namespace MauiScreenTime.Services
             return CO2Total;
         }
 
-       
+        public async Task<double> CalculateCO2DifferenceAsync()
+        {
+
+            double todayCO2Total;
+            double yesterdayCO2Total;
+            double differenceSaved = 0;
+
+
+            var todayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now);
+            todayCO2Total = todayTotalCO2Obj.CO2Total;
+
+            var yesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now.AddDays(-1));
+            yesterdayCO2Total = yesterdayTotalCO2Obj.CO2Total;
+
+            //// debug to show yesterday and todays entries with the highest CO2Total
+            //var today = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now);
+            //var yesterday = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now.AddDays(-1));
+
+            //Console.WriteLine("here calculate diff");
+            //Console.WriteLine(todayCO2Total);
+            //Console.WriteLine(yesterdayCO2Total);
+            //Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(today));
+            //Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(yesterday));
+
+
+            if (yesterdayCO2Total > 0)
+            {
+                differenceSaved = yesterdayCO2Total - todayCO2Total;
+
+                if (differenceSaved > 0)
+                {
+                    Console.WriteLine("This is the difference saved: " + differenceSaved);
+
+                    try
+                    {
+                        await _userActivityLogDatabase.AddActivityLog(0, differenceSaved, 0);
+                        Console.WriteLine("diff saved successfully");
+
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Error adding diff: ", ex.Message);
+
+                    }
+
+#if ANDROID
+                    Log.Debug("CO2Service", "here successfully CO2 difference saved to log");
+#endif
+
+                }
+            }
+
+            return differenceSaved;
         }
+    }
     }
