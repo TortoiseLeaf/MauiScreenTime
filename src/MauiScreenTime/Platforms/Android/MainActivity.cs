@@ -21,7 +21,7 @@ namespace MauiScreenTime
                 .SetWorkerFactory(factory)
                 .Build();
 
-            WorkManager.Initialize(this, config);
+           // WorkManager.Initialize(this, config);
 
             WorkManagerHelper.ScheduleCalculateTotalCO2(this);
         }
