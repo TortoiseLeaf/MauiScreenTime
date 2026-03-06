@@ -12,6 +12,8 @@ namespace MauiScreenTime
             Routing.RegisterRoute(nameof(ConsentPage), typeof(ConsentPage));
             Routing.RegisterRoute(nameof(DashboardPage), typeof(DashboardPage));
 
+            Routing.RegisterRoute(nameof(GoalPage), typeof(GoalPage));
+
         }
     }
 }
