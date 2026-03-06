@@ -65,13 +65,13 @@ namespace MauiScreenTime.Data
                 .Where(a => a.Date == inputDate.Date)
                 .FirstOrDefaultAsync();
         }
-        public async Task<double> GetCO2TotalReducedByDate(DateTime inputDate)
+        public async Task<double> GetCO2TotalReduced()
         {
             var connection = await GetConnectionAsync();
             var allEntries = await connection.Table<UserActivityLogModel>().ToListAsync();
                 
             return allEntries
-                .Where(a => a.Date == inputDate.Date)
+        
                 .Sum(x => x.CO2TotalReduced);
         }
 
@@ -92,56 +92,6 @@ namespace MauiScreenTime.Data
                 .Sum(x => x.TreesPlanted);
         }
 
-
-        //public async Task<double> GetCO2TotalByDate(DateTime inputDate) 
-        //{
-        //    var activity = await GetActivityByDate(inputDate);
-        //    return activity?.CO2Total ?? 0;                
-        //}
-        //public async Task<double> GetCO2TotalReducedByDate(DateTime inputDate)
-        //{
-        //    var activity = await GetHighestCO2TotalReducedByDate(inputDate);
-        //    return activity?.CO2TotalReduced ?? 0;
-        //}
-        //public async Task AddTrees(int treeNumber)
-        //{
-        //    var connection = await GetConnectionAsync();
-        //    var today = DateTime.UtcNow;
-
-        //    var activity = await GetActivityByDate(today);
-
-        //    if (activity != null)
-        //    {
-        //        activity.TreesPlanted = treeNumber;
-        //        activity.Date = DateTime.UtcNow;
-        //        await connection.UpdateAsync(activity);
-        //    }
-        //    else
-        //    {
-        //        await AddActivityLog(0, 0, treeNumber);
-        //    }
-        //}
-
-
-        ////necessary?
-        //public async Task AddCO2TotalReducedDaily(double CO2TotalReduced)
-        //{
-        //    var connection = await GetConnectionAsync();
-        //    var today = DateTime.UtcNow;
-
-        //    var activity = await GetActivityByDate(today);
-
-        //    if (activity != null)
-        //    {
-        //        activity.CO2TotalReduced += CO2TotalReduced;
-        //        activity.Date = DateTime.UtcNow;
-        //        await connection.UpdateAsync(activity);
-        //    }
-        //    else
-        //    {
-        //        await AddActivityLog(0, CO2TotalReduced, 0);
-        //    }
-        //}
         public async Task AddActivityLog(double CO2Total, double CO2TotalReduced, int treesPlanted)
         {
             var connection = await GetConnectionAsync();
