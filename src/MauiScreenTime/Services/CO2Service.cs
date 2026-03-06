@@ -81,13 +81,10 @@ namespace MauiScreenTime.Services
                     CO2Total += newData.CO2e;
                 }
 
-                // call this once a day or 
-                //await _userActivityLogDatabase.AddActivityLog(CO2Total, 0, 0);
-
             }
             else
             {
-                CO2Total = 0; //error message explaining appUsageList is empty.
+                CO2Total = 0;
             }
            
             return CO2Total;
@@ -106,17 +103,6 @@ namespace MauiScreenTime.Services
 
             var yesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now.AddDays(-1));
             yesterdayCO2Total = yesterdayTotalCO2Obj.CO2Total;
-
-            //// debug to show yesterday and todays entries with the highest CO2Total
-            //var today = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now);
-            //var yesterday = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now.AddDays(-1));
-
-            //Console.WriteLine("here calculate diff");
-            //Console.WriteLine(todayCO2Total);
-            //Console.WriteLine(yesterdayCO2Total);
-            //Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(today));
-            //Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(yesterday));
-
 
             if (yesterdayCO2Total > 0)
             {

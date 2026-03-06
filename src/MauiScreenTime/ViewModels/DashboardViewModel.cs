@@ -72,11 +72,7 @@ namespace MauiScreenTime.ViewModels
 
             await GetCO2Total();
 
-           
-            //await CalculateCO2DifferenceAsync();
-
-            // debug
-            //await IncrementTrees();
+            // returns totals to frontend
             await GetDataSoFar();
             
         }
@@ -146,27 +142,6 @@ namespace MauiScreenTime.ViewModels
 
         }
 
-        //public async Task IncrementTrees()
-        //{
-        //    try
-        //    {
-        //        //await _userActivityLogDatabase.AddTrees(1);
-        //        await _userActivityLogDatabase.AddActivityLog(0, 0, 1);
-
-        //        var x = await _userActivityLogDatabase.GetLatestTreesByDate(DateTime.Today);
-        //        Console.WriteLine("Tree object added successfully here");
-        //        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(x));
-
-
-        //    } catch (Exception ex)
-        //    {
-        //        Console.WriteLine("Error adding trees from dashboard: " + ex.Message);
-
-        //    }
-            
-
-        //}
-
         public async Task GetDataSoFar()
         {
             var today = DateTime.Now.Date;
@@ -177,7 +152,7 @@ namespace MauiScreenTime.ViewModels
 
             LatestTrees = await _userActivityLogDatabase.GetLatestTreesByDate(today);
 
-            Co2TotalReduced = await _userActivityLogDatabase.GetCO2TotalReducedByDate(DateTime.Now);
+            Co2TotalReduced = await _userActivityLogDatabase.GetCO2TotalReduced();
 
             Co2TotalY = yesterdayTotalCO2Obj.CO2Total;
             Co2TotalTD = todayTotalCO2Obj.CO2Total;
@@ -185,6 +160,7 @@ namespace MauiScreenTime.ViewModels
 
         }
 
+        // just been using this for debugging
         public async Task GetAllActivity()
         {
             //Console.WriteLine("all logs here");
@@ -210,60 +186,6 @@ namespace MauiScreenTime.ViewModels
             //Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(yesterdayData));
         }
 
-//        public async Task<double> CalculateCO2DifferenceAsync()
-//        {
-
-//            double todayCO2Total;
-//            double yesterdayCO2Total;
-//            double differenceSaved = 0;
-
-
-//            var todayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now);
-//            todayCO2Total = todayTotalCO2Obj.CO2Total;
-
-//            var yesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now.AddDays(-1));
-//            yesterdayCO2Total = yesterdayTotalCO2Obj.CO2Total;
-
-//            //// debug to show yesterday and todays entries with the highest CO2Total
-//            //var today = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now);
-//            //var yesterday = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now.AddDays(-1));
-
-//            //Console.WriteLine("here calculate diff");
-//            //Console.WriteLine(todayCO2Total);
-//            //Console.WriteLine(yesterdayCO2Total);
-//            //Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(today));
-//            //Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(yesterday));
-
-
-//            if (yesterdayCO2Total > 0)
-//            {
-//                differenceSaved = yesterdayCO2Total - todayCO2Total;
-
-//                if (differenceSaved > 0)
-//                {
-//                    Console.WriteLine("This is the difference saved: " + differenceSaved);
-
-//                    try
-//                    {
-//                        await _userActivityLogDatabase.AddActivityLog(0, differenceSaved,0);
-//                        Console.WriteLine("diff saved successfully");
-
-//                    }
-//                    catch (Exception ex)
-//                    {
-//                        System.Diagnostics.Debug.WriteLine("Error adding diff: ", ex.Message);
-
-//                    }
-
-//#if ANDROID
-//                    Log.Debug("CO2Service", "here successfully CO2 difference saved to log");
-//#endif
-
-//                }
-//            }
-            
-//            return differenceSaved;
-//        }
 
     }
 }
