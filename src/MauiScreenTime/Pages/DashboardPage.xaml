@@ -9,6 +9,287 @@
         <BackButtonBehavior IsEnabled="False" IsVisible="False"/>
     </Shell.BackButtonBehavior>
 
+    <VerticalStackLayout 
+        Padding="20" 
+        Spacing="20">
+
+        <!-- Toggle Buttons -->
+        <Grid ColumnSpacing="10">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Screen Time Button -->
+            <Button
+                x:Name="ScreenTimeButton"
+                Grid.Column="0"
+                Text="Screen Time"
+                Clicked="OnScreenTimeClicked"
+                HeightRequest="60"
+                CornerRadius="14"
+                BackgroundColor="MediumPurple"
+                TextColor="White"
+                FontAttributes="Bold"
+                FontSize="16"/>
+
+            <!-- CO₂e Button -->
+            <Button
+              x:Name="CO2eButton"
+              Grid.Column="1"
+              Text="CO₂e"
+              Clicked="OnCO2eClicked"
+              HeightRequest="60"
+              CornerRadius="14"
+              BackgroundColor="MediumPurple"
+              TextColor="White"
+              FontAttributes="Bold"
+              FontSize="16"/>
+
+        </Grid>
+
+        <!-- Chart Container -->
+        <Frame
+            BackgroundColor="#E9D5FF"
+            CornerRadius="20"
+            Padding="0">
+
+            <!-- OUTER GRID: Y AXIS + CHART -->
+            <Grid ColumnDefinitions="40,*"
+                  HeightRequest="230"
+                  HorizontalOptions="FillAndExpand">
+
+                <!-- ================= Y AXIS ================= -->
+                <Grid Grid.Column="0"
+                      RowDefinitions="*,*,*,*,*"
+                      Padding="0,0,15,0">
+
+                    <VerticalStackLayout
+                        Grid.RowSpan="5"
+                        BindableLayout.ItemsSource="{Binding YAxisLabels}"
+                        VerticalOptions="FillAndExpand"
+                        Spacing="0">
+
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Grid HeightRequest="44">
+                                    <Label Text="{Binding}"
+                                           FontSize="10"
+                                           HorizontalTextAlignment="End"
+                                           VerticalTextAlignment="Center"/>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+
+                    </VerticalStackLayout>
+
+                </Grid>
+
+                <!-- ================= CHART AREA ================= -->
+                <Grid Grid.Column="1"
+                      HorizontalOptions="FillAndExpand">
+
+                    <!-- GRID LINES (BACKGROUND) -->
+                    <Grid RowDefinitions="*,*,*,*,*"
+                          ColumnDefinitions="*,*,*,*,*,*,*,*,*,*,1*"
+                          VerticalOptions="FillAndExpand">
+
+                        <BoxView Grid.Row="0" Grid.ColumnSpan="10" HeightRequest="1" BackgroundColor="Black"/>
+                        <BoxView Grid.Row="1" Grid.ColumnSpan="10" HeightRequest="1" BackgroundColor="Black"/>
+                        <BoxView Grid.Row="2" Grid.ColumnSpan="10" HeightRequest="1" BackgroundColor="Black"/>
+                        <BoxView Grid.Row="3" Grid.ColumnSpan="10" HeightRequest="1" BackgroundColor="Black"/>
+                        <BoxView Grid.Row="4" Grid.ColumnSpan="10" HeightRequest="1" BackgroundColor="Black"/>
+                        <BoxView Grid.Row="5" Grid.ColumnSpan="10" HeightRequest="2" BackgroundColor="Black"/>
+
+                    </Grid>
+
+                    <!-- BAR CHART -->
+                    <Grid ColumnSpacing="5"
+                          HorizontalOptions="FillAndExpand">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+
+                        <!-- Column 0 -->
+                        <VerticalStackLayout Grid.Column="0" VerticalOptions="End" Spacing="6">
+                            <Grid HeightRequest="160" RowDefinitions="*,Auto">
+                                <Border x:Name="Bar0" 
+                                    HeightRequest="{Binding CurrentChart[0].Height}"
+                                    VerticalOptions="End"
+                                    BackgroundColor="{Binding CurrentChart[0].BarColor}"
+                                    StrokeThickness="0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12,12,0,0"/>
+                                    </Border.StrokeShape>
+                                </Border>
+                            </Grid>
+                            <Label Text="{Binding CurrentChart[0].Label}" HorizontalTextAlignment="Center"/>
+                        </VerticalStackLayout>
+
+                        <!-- Column 1 -->
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="End" Spacing="6">
+                            <Grid HeightRequest="160" RowDefinitions="*,Auto">
+                                <Border x:Name="Bar1" 
+                                    HeightRequest="{Binding CurrentChart[1].Height}"
+                                    VerticalOptions="End"
+                                    BackgroundColor="{Binding CurrentChart[1].BarColor}"
+                                    StrokeThickness="0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12,12,0,0"/>
+                                    </Border.StrokeShape>
+                                </Border>
+                            </Grid>
+                            <Label Text="{Binding CurrentChart[1].Label}" HorizontalTextAlignment="Center"/>
+                        </VerticalStackLayout>
+
+                        <!-- Column 2 -->
+                        <VerticalStackLayout Grid.Column="2" VerticalOptions="End" Spacing="6">
+                            <Grid HeightRequest="160" RowDefinitions="*,Auto">
+                                <Border x:Name="Bar2" 
+                                    HeightRequest="{Binding CurrentChart[2].Height}"
+                                    VerticalOptions="End"
+                                    BackgroundColor="{Binding CurrentChart[2].BarColor}"
+                                    StrokeThickness="0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12,12,0,0"/>
+                                    </Border.StrokeShape>
+                                </Border>
+                            </Grid>
+                            <Label Text="{Binding CurrentChart[2].Label}" HorizontalTextAlignment="Center"/>
+                        </VerticalStackLayout>
+
+                        <!-- Column 3 -->
+                        <VerticalStackLayout Grid.Column="3" VerticalOptions="End" Spacing="6">
+                            <Grid HeightRequest="160" RowDefinitions="*,Auto">
+                                <Border x:Name="Bar3" 
+                                    HeightRequest="{Binding CurrentChart[3].Height}"
+                                    VerticalOptions="End"
+                                    BackgroundColor="{Binding CurrentChart[3].BarColor}"
+                                    StrokeThickness="0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12,12,0,0"/>
+                                    </Border.StrokeShape>
+                                </Border>
+                            </Grid>
+                            <Label Text="{Binding CurrentChart[3].Label}" HorizontalTextAlignment="Center"/>
+                        </VerticalStackLayout>
+
+                        <!-- Column 4 -->
+                        <VerticalStackLayout Grid.Column="4" VerticalOptions="End" Spacing="6">
+                            <Grid HeightRequest="160" RowDefinitions="*,Auto">
+                                <Border x:Name="Bar4" 
+                                    HeightRequest="{Binding CurrentChart[4].Height}"
+                                    VerticalOptions="End"
+                                    BackgroundColor="{Binding CurrentChart[4].BarColor}"
+                                    StrokeThickness="0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12,12,0,0"/>
+                                    </Border.StrokeShape>
+                                </Border>
+                            </Grid>
+                            <Label Text="{Binding CurrentChart[4].Label}" HorizontalTextAlignment="Center"/>
+                        </VerticalStackLayout>
+
+                        <!-- Column 5 -->
+                        <VerticalStackLayout Grid.Column="5" VerticalOptions="End" Spacing="6">
+                            <Grid HeightRequest="160" RowDefinitions="*,Auto">
+                                <Border x:Name="Bar5" 
+                                    HeightRequest="{Binding CurrentChart[5].Height}"
+                                    VerticalOptions="End"
+                                    BackgroundColor="{Binding CurrentChart[5].BarColor}"
+                                    StrokeThickness="0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12,12,0,0"/>
+                                    </Border.StrokeShape>
+                                </Border>
+                            </Grid>
+                            <Label Text="{Binding CurrentChart[5].Label}" HorizontalTextAlignment="Center"/>
+                        </VerticalStackLayout>
+
+                        <!-- Column 6 -->
+                        <VerticalStackLayout Grid.Column="6" VerticalOptions="End" Spacing="6">
+                            <Grid HeightRequest="160" RowDefinitions="*,Auto">
+                                <Border x:Name="Bar6" 
+                                    HeightRequest="{Binding CurrentChart[6].Height}"
+                                    VerticalOptions="End"
+                                    BackgroundColor="{Binding CurrentChart[6].BarColor}"
+                                    StrokeThickness="0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12,12,0,0"/>
+                                    </Border.StrokeShape>
+                                </Border>
+                            </Grid>
+                            <Label Text="{Binding CurrentChart[6].Label}" HorizontalTextAlignment="Center"/>
+                        </VerticalStackLayout>
+
+                        <!-- Column 7 -->
+                        <VerticalStackLayout Grid.Column="7" VerticalOptions="End" Spacing="6">
+                            <Grid HeightRequest="160" RowDefinitions="*,Auto">
+                                <Border x:Name="Bar7" 
+                                    HeightRequest="{Binding CurrentChart[7].Height}"
+                                    VerticalOptions="End"
+                                    BackgroundColor="{Binding CurrentChart[7].BarColor}"
+                                    StrokeThickness="0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12,12,0,0"/>
+                                    </Border.StrokeShape>
+                                </Border>
+                            </Grid>
+                            <Label Text="{Binding CurrentChart[7].Label}" HorizontalTextAlignment="Center"/>
+                        </VerticalStackLayout>
+
+                        <!-- Column 8 -->
+                        <VerticalStackLayout Grid.Column="8" VerticalOptions="End" Spacing="6">
+                            <Grid HeightRequest="160" RowDefinitions="*,Auto">
+                                <Border x:Name="Bar8" 
+                                    HeightRequest="{Binding CurrentChart[8].Height}"
+                                    VerticalOptions="End"
+                                    BackgroundColor="{Binding CurrentChart[8].BarColor}"
+                                    StrokeThickness="0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12,12,0,0"/>
+                                    </Border.StrokeShape>
+                                </Border>
+                            </Grid>
+                            <Label Text="{Binding CurrentChart[8].Label}" HorizontalTextAlignment="Center"/>
+                        </VerticalStackLayout>
+
+                        <!-- Column 9 -->
+                        <VerticalStackLayout Grid.Column="9" VerticalOptions="End" Spacing="6">
+                            <Grid HeightRequest="160" RowDefinitions="*,Auto">
+                                <Border x:Name="Bar9" 
+                                    HeightRequest="{Binding CurrentChart[9].Height}"
+                                    VerticalOptions="End"
+                                    BackgroundColor="{Binding CurrentChart[9].BarColor}"
+                                    StrokeThickness="0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12,12,0,0"/>
+                                    </Border.StrokeShape>
+                                </Border>
+                            </Grid>
+                            <Label Text="{Binding CurrentChart[9].Label}" HorizontalTextAlignment="Center"/>
+                        </VerticalStackLayout>
+
+
+
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Frame>
+    </VerticalStackLayout>
     <ScrollView Margin="20">
         <VerticalStackLayout>
             <CollectionView ItemsSource="{Binding AppUsageListCO2}" Margin="20">
