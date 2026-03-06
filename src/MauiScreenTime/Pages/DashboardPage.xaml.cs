@@ -21,7 +21,7 @@ public partial class DashboardPage : ContentPage
         InitializeComponent();
 
         // Set this page as the binding source for XAML
-        BindingContext = this;
+        BindingContext = viewModel;
 
         LoadData();
 

@@ -9,6 +9,7 @@
         <BackButtonBehavior IsEnabled="False" IsVisible="False"/>
     </Shell.BackButtonBehavior>
 
+    <ScrollView Margin="20">
     <VerticalStackLayout 
         Padding="20" 
         Spacing="20">
@@ -289,86 +290,83 @@
                 </Grid>
             </Grid>
         </Frame>
-    </VerticalStackLayout>
-    <ScrollView Margin="20">
-        <VerticalStackLayout>
-            <CollectionView ItemsSource="{Binding AppUsageListCO2}" Margin="20">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame Padding="10" Margin="0,5" BorderColor="LightGray">
-                            <Grid ColumnDefinitions="*,Auto">
-                                <StackLayout Grid.Column="0">
-                                    <Label Text="Mins"/>
-                                    <Label Text="{Binding UsageTimeMinutes, TargetNullValue='0'}" 
+        <CollectionView ItemsSource="{Binding AppUsageListCO2}" Margin="20">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="10" Margin="0,5" BorderColor="LightGray">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackLayout Grid.Column="0">
+                                <Label Text="Mins"/>
+                                <Label Text="{Binding UsageTimeMinutes, TargetNullValue='0'}" 
                                    FontAttributes="Bold"
                                    FontSize="16"/>
-                                    <Label Text="CO2e"/>
-                                    <Label Text="{Binding CO2e}" 
+                                <Label Text="CO2e"/>
+                                <Label Text="{Binding CO2e}" 
        FontAttributes="Bold"
        FontSize="16"/>
-                            <Label Text="{Binding AppName}" 
+                                <Label Text="{Binding AppName}" 
                                    FontSize="12"
                                    TextColor="Gray"/>
 
-                                </StackLayout>
+                            </StackLayout>
 
-                            </Grid>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-            <Label Text="increment to prove dailyworker is firing"
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <Label Text="increment to prove dailyworker is firing"
                FontSize="12"
 TextColor="Gray"
 HorizontalTextAlignment="Center"
 HorizontalOptions="Center" />
-            <Label Text="{Binding LatestTrees}" 
+        <Label Text="{Binding LatestTrees}" 
   FontSize="30"
   TextColor="Gray"
   HorizontalTextAlignment="Center"
   HorizontalOptions="Center" />
-            <Label Text="Total Co2 Today:" 
+        <Label Text="Total Co2 Today:" 
        FontSize="20"
                HorizontalTextAlignment="Center"
        TextColor="Gray"/>
 
-            <Label Text="{Binding Co2Total}" 
+        <Label Text="{Binding Co2Total}" 
       FontSize="30"
       TextColor="Gray"
       HorizontalTextAlignment="Center"
       HorizontalOptions="Center" />
 
-            <Label Text="Total Co2 reduced:" 
+        <Label Text="Total Co2 reduced:" 
 FontSize="20"
         HorizontalTextAlignment="Center"
 TextColor="Gray"/>
-            <Label Text="{Binding Co2TotalReduced}" 
+        <Label Text="{Binding Co2TotalReduced}" 
    FontSize="30"
    TextColor="Gray"
    HorizontalTextAlignment="Center"
    HorizontalOptions="Center" />
 
-            <Label Text="CO2 total today DB:" 
+        <Label Text="CO2 total today DB:" 
 FontSize="20"
         HorizontalTextAlignment="Center"
 TextColor="Gray"/>
-            <Label Text="{Binding Co2TotalTD}" 
+        <Label Text="{Binding Co2TotalTD}" 
 FontSize="30"
 TextColor="Gray"
 HorizontalTextAlignment="Center"
 HorizontalOptions="Center" />
 
 
-            <Label Text="Co2 total yesterday:" 
+        <Label Text="Co2 total yesterday:" 
 FontSize="20"
         HorizontalTextAlignment="Center"
 TextColor="Gray"/>
-            <Label Text="{Binding Co2TotalY}" 
+        <Label Text="{Binding Co2TotalY}" 
 FontSize="30"
 TextColor="Gray"
 HorizontalTextAlignment="Center"
 HorizontalOptions="Center" />
 
-        </VerticalStackLayout>
+    </VerticalStackLayout>
     </ScrollView>
 </ContentPage>
