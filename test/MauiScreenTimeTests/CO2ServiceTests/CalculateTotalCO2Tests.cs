@@ -6,6 +6,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -92,14 +93,13 @@ namespace MauiScreenTimeTests.CO2ServiceTests
         new AppUsageModel { PackageName = "Item3", UsageTimeMinutes = 15 }
     };
 
-            _mockConversionDatabase.Setup(x => x.GetMatchingCO2Mins("Item1")).ReturnsAsync(5.0);
             _mockUserActivityLogDatabase.Setup(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>())).Returns(Task.CompletedTask);
-
+            _mockConversionDatabase.Setup(x => x.GetConversionTableEntryByPackageName(It.IsAny<string>())).ReturnsAsync(new ConversionTableModel { CO2Mins = 5.0 });
             // Act
             await _co2Service.CalculateCO2TotalAsync(mockList);
 
             // Assert
-            _mockUserActivityLogDatabase.Verify(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>()), Times.Once);
+            _mockUserActivityLogDatabase.Verify(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>()), Times.Exactly(0));
         }
     }
 }

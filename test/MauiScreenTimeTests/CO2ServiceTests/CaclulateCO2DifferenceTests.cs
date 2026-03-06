@@ -36,8 +36,8 @@ namespace MauiScreenTimeTests.CO2ServiceTests
             var yesterday = today - new TimeSpan(1, 0, 0, 0);
 
 
-            _mockUserActivityLogDatabase.Setup(x => x.GetCO2eTotalByDate(It.Is<DateTime>(d => d.Date == today))).ReturnsAsync(50);
-            _mockUserActivityLogDatabase.Setup(x => x.GetCO2eTotalByDate(It.Is<DateTime>(d => d.Date == yesterday))).ReturnsAsync(100);
+            _mockUserActivityLogDatabase.Setup(x => x.GetHighestCO2DailyTotalByDate(It.Is<DateTime>(d => d.Date == today))).ReturnsAsync(new UserActivityLogModel { CO2Total = 50 });
+            _mockUserActivityLogDatabase.Setup(x => x.GetHighestCO2DailyTotalByDate(It.Is<DateTime>(d => d.Date == yesterday))).ReturnsAsync(new UserActivityLogModel { CO2Total = 100 });
             _mockUserActivityLogDatabase.Setup(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>())).Returns(Task.CompletedTask);
 
             // Act
@@ -56,8 +56,8 @@ namespace MauiScreenTimeTests.CO2ServiceTests
             var yesterday = today - new TimeSpan(1, 0, 0, 0);
 
 
-            _mockUserActivityLogDatabase.Setup(x => x.GetCO2eTotalByDate(It.Is<DateTime>(d => d.Date == today))).ReturnsAsync(100);
-            _mockUserActivityLogDatabase.Setup(x => x.GetCO2eTotalByDate(It.Is<DateTime>(d => d.Date == yesterday))).ReturnsAsync(50);
+            _mockUserActivityLogDatabase.Setup(x => x.GetHighestCO2DailyTotalByDate(It.Is<DateTime>(d => d.Date == today))).ReturnsAsync(new UserActivityLogModel { CO2Total = 100 });
+            _mockUserActivityLogDatabase.Setup(x => x.GetHighestCO2DailyTotalByDate(It.Is<DateTime>(d => d.Date == yesterday))).ReturnsAsync(new UserActivityLogModel { CO2Total = 50 });
             _mockUserActivityLogDatabase.Setup(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>())).Returns(Task.CompletedTask);
 
             // Act
@@ -75,7 +75,7 @@ namespace MauiScreenTimeTests.CO2ServiceTests
             var today = DateTime.Now.Date;
             var yesterday = today - new TimeSpan(1, 0, 0, 0);
 
-            _mockUserActivityLogDatabase.Setup(x => x.GetCO2eTotalByDate(It.IsAny<DateTime>())).ReturnsAsync(100);
+            _mockUserActivityLogDatabase.Setup(x => x.GetHighestCO2DailyTotalByDate(It.IsAny<DateTime>())).ReturnsAsync(new UserActivityLogModel { CO2Total = 100 });
             _mockUserActivityLogDatabase.Setup(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>())).Returns(Task.CompletedTask);
 
             // Act

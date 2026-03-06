@@ -63,7 +63,7 @@ namespace MauiScreenTimeTests.DatabaseTests
             //Assert
             Assert.Single(result);
             Assert.Equal(co2Total, result[0].CO2Total);
-            Assert.Equal(co2Saved, result[0].CO2SavedDaily);
+            Assert.Equal(co2Saved, result[0].CO2TotalReduced);
             Assert.Equal(treesPlanted, result[0].TreesPlanted);
         }
 
@@ -83,7 +83,7 @@ namespace MauiScreenTimeTests.DatabaseTests
             //assert
             Assert.Equal(id, result.Id);            
             Assert.Equal(co2Total, result.CO2Total);
-            Assert.Equal(co2Saved, result.CO2SavedDaily);
+            Assert.Equal(co2Saved, result.CO2TotalReduced);
             Assert.Equal(treesPlanted, result.TreesPlanted);
         }
         [Fact]
@@ -105,7 +105,7 @@ namespace MauiScreenTimeTests.DatabaseTests
             Assert.Equal(id, result.Id);
             Assert.Equal(date, result.Date);
             Assert.Equal(co2Total, result.CO2Total);
-            Assert.Equal(co2Saved, result.CO2SavedDaily);
+            Assert.Equal(co2Saved, result.CO2TotalReduced);
             Assert.Equal(treesPlanted, result.TreesPlanted);
         }
         [Fact]
@@ -120,10 +120,10 @@ namespace MauiScreenTimeTests.DatabaseTests
             await _database.AddActivityLog(co2Total, co2Saved, treesPlanted);
 
             //act
-            var result = await _database.GetCO2eTotalByDate(todayDate);
+            var result = await _database.GetHighestCO2DailyTotalByDate(todayDate);
 
             //assert
-            Assert.Equal(co2Total, result);
+            Assert.Equal(co2Total, result.CO2Total);
         }
         [Fact]
         public async Task AddTrees_AddInputTrees_ToTreesPlanted()
@@ -138,11 +138,11 @@ namespace MauiScreenTimeTests.DatabaseTests
             await _database.AddActivityLog(co2Total, co2Saved, treesPlanted);
 
             //act
-            await _database.AddTrees(4);
-            var result = await _database.GetActivityById(id);
+            await _database.AddActivityLog(0,0,4);
+            var result = await _database.GetLatestTreesByDate(todayDate);
 
             //assert
-            Assert.Equal(7, result.TreesPlanted);
+            Assert.Equal(7, result);
         }
 
         [Fact]
