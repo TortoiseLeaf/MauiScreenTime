@@ -35,10 +35,6 @@ namespace MauiScreenTime
             builder.Services.AddSingleton<IUsageStatsService, UsageStatsService>();
             builder.Services.AddSingleton<IDailyWorkerService, DailyWorkerService>();
 
-#if ANDROID
-            builder.Services.AddSingleton<MauiScreenTime.Platforms.Android.MauiWorkerFactory>();
-#endif
-
             builder.Services.AddSingleton<App>();
             
             //builder.Services.AddTransient<ConsentDatabase>();
