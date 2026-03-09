@@ -72,6 +72,8 @@ namespace MauiScreenTime.ViewModels
 
             await GetCO2Total();
 
+            await CalculateDifference();
+
             // returns totals to frontend
             await GetDataSoFar();
             
@@ -130,6 +132,9 @@ namespace MauiScreenTime.ViewModels
             {
                 // returns it directly on the fly
                 Co2Total = await _co2Service.CalculateCO2TotalAsync(_appUsageList);
+
+                // save todays total to db
+                await _userActivityLogDatabase.AddActivityLog(Co2Total, 0, 0);
                 
             }
             catch(Exception ex)
@@ -144,20 +149,26 @@ namespace MauiScreenTime.ViewModels
 
         public async Task GetDataSoFar()
         {
-            var today = DateTime.Now.Date;
             var yesterday = DateTime.Now.Date.AddDays(-1);
+            var dayBeforeYesterday = DateTime.Now.Date.AddDays(-2);
+
 
             var yesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(yesterday);
-            var todayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(today);
+            var dayBeforeYesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(dayBeforeYesterday);
 
-            LatestTrees = await _userActivityLogDatabase.GetLatestTreesByDate(today);
+            LatestTrees = await _userActivityLogDatabase.GetLatestTreesByDate(dayBeforeYesterday);
 
             Co2TotalReduced = await _userActivityLogDatabase.GetCO2TotalReduced();
 
             Co2TotalY = yesterdayTotalCO2Obj.CO2Total;
-            Co2TotalTD = todayTotalCO2Obj.CO2Total;
+            Co2TotalTD = dayBeforeYesterdayTotalCO2Obj.CO2Total;
 
 
+        }
+
+        public async Task CalculateDifference()
+        {
+            await _co2Service.CalculateCO2DifferenceAsync();
         }
 
         // just been using this for debugging

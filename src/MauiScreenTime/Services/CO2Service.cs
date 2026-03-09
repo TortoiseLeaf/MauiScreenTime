@@ -93,20 +93,20 @@ namespace MauiScreenTime.Services
         public async Task<double> CalculateCO2DifferenceAsync()
         {
 
-            double todayCO2Total;
             double yesterdayCO2Total;
+            double dayBeforeYesterdayCO2Total;
             double differenceSaved = 0;
 
-
-            var todayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now);
-            todayCO2Total = todayTotalCO2Obj.CO2Total;
 
             var yesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now.AddDays(-1));
             yesterdayCO2Total = yesterdayTotalCO2Obj.CO2Total;
 
+            var dayBeforeYesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now.AddDays(-2));
+            dayBeforeYesterdayCO2Total = dayBeforeYesterdayTotalCO2Obj.CO2Total;
+
             if (yesterdayCO2Total > 0)
             {
-                differenceSaved = yesterdayCO2Total - todayCO2Total;
+                differenceSaved = dayBeforeYesterdayCO2Total - yesterdayCO2Total;
 
                 if (differenceSaved > 0)
                 {

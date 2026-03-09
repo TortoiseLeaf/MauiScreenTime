@@ -346,7 +346,7 @@ TextColor="Gray"/>
    HorizontalTextAlignment="Center"
    HorizontalOptions="Center" />
 
-        <Label Text="CO2 total today DB:" 
+        <Label Text="CO2 total day before yesterday:" 
 FontSize="20"
         HorizontalTextAlignment="Center"
 TextColor="Gray"/>
