@@ -1,4 +1,4 @@
-using MauiScreenTime.ViewModels;
+﻿using MauiScreenTime.ViewModels;
 using Microsoft.Maui.Graphics;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -45,7 +45,7 @@ public partial class DashboardPage : ContentPage
     const double CO2AxisMax = 200; // grams
 
     bool isScreenTimeActive = true;
-
+    bool isFirstLoad = true;
 
     // --------------------------------------------------------------------------
     // DATA
@@ -81,6 +81,8 @@ public partial class DashboardPage : ContentPage
             new() { Label = "Re", Value = 130 },
             new() { Label = "Tik", Value = 125 }
         };
+
+        CalculateTotals();
     }
 
     // Scales raw data to visual bar heights - keeps the chart proportional regardless of values
@@ -95,13 +97,34 @@ public partial class DashboardPage : ContentPage
         }).ToList();
     }
 
+    // Display data beneath charts
+    public string STTotal { get; set; }
+    public string CO2eTotal { get; set; }
+
+    void CalculateTotals()
+    {
+        //Screen Time total
+        double totalMinutes = ScreenTimeData.Sum(value => value.Value);
+
+        int hours = (int)(totalMinutes / 60);
+        int minutes = (int)(totalMinutes % 60);
+        STTotal = $"Total Screen Time: {hours}h {minutes}m";
+
+        // CO2e total
+        double totalCO2e = CO2eData.Sum(value => value.Value);
+        CO2eTotal = $"Total CO₂e: {totalCO2e}g";
+
+        OnPropertyChanged(nameof(STTotal));
+        OnPropertyChanged(nameof(CO2eTotal));
+    }
+
     // --------------------------------------------------------------------------
     // COLOURS AND ANIMATIONS
     // --------------------------------------------------------------------------
 
     // Chart colours
-    readonly Color ScreenTimeBarColor = Color.FromArgb("#22C55E");
-    readonly Color CO2eBarColor = Colors.Orange;
+    readonly Color ScreenTimeBarColor = Color.FromArgb("#41b6e6");
+    readonly Color CO2eBarColor = Color.FromArgb("#1b365d");
 
     // Colours for active/inactive states of the toggle buttons
     readonly Color ActiveColor = Color.FromArgb("#7C3AED");
@@ -158,9 +181,13 @@ public partial class DashboardPage : ContentPage
 
         for (int index = 0; index < count; index++)
         {
+            await Task.Delay(20);   // Add delay to each bar
+
             int control = index;
 
-            double start = bars[control].HeightRequest; // Current height
+            // First load starts bars from zero height
+            double start = isFirstLoad ? 0 : bars[control].HeightRequest;
+
             double end = newData[control].Height; // Target height
 
             var animation = new Animation(aniProgress =>
@@ -172,8 +199,11 @@ public partial class DashboardPage : ContentPage
                 bars[control].BackgroundColor = ColourFade(fromColor, toColor, aniProgress);
             }, 0, 1);
 
-            animation.Commit(this, $"BarAnim{index}", 16, 400, Easing.CubicInOut);
+            animation.Commit(this, $"BarAnim{index}", 16u, (uint)(500 + index * 40), Easing.CubicInOut);
         }
+
+        // First load animation completed
+        isFirstLoad = false;
     }
 
     // --------------------------------------------------------------------------
@@ -190,7 +220,7 @@ public partial class DashboardPage : ContentPage
         var scaled = ScaleData(ScreenTimeData, ScreenTimeBarColor, ScreenTimeAxisMax);
 
         // Animate from current state ? new state
-        await AnimateBars(scaled, CO2eBarColor, ScreenTimeBarColor);
+        await AnimateBars(scaled, isFirstLoad ? ScreenTimeBarColor : CO2eBarColor, ScreenTimeBarColor);
 
         // Update binding source after animation
         CurrentChart = new ObservableCollection<BarItem>(scaled);
@@ -241,6 +271,8 @@ public partial class DashboardPage : ContentPage
         }
     }
 
+
+
     // --------------------------------------------------------------------------
     // EVENTS
     // --------------------------------------------------------------------------
@@ -248,4 +280,7 @@ public partial class DashboardPage : ContentPage
     // Event handlers have to be async void
     async void OnScreenTimeClicked(object sender, EventArgs e) => await ShowScreenTime();
     async void OnCO2eClicked(object sender, EventArgs e) => await ShowCO2e();
+
+    //Switch to GoalPage
+    async void OnGoalClicked(object sender, EventArgs e) => await Shell.Current.GoToAsync(nameof(GoalPage));
 }

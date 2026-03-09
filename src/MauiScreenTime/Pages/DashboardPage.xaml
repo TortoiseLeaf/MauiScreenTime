@@ -52,7 +52,7 @@
 
         <!-- Chart Container -->
         <Frame
-            BackgroundColor="#E9D5FF"
+            BackgroundColor="#F5F7FA"
             CornerRadius="20"
             Padding="0">
 
@@ -290,6 +290,42 @@
                 </Grid>
             </Grid>
         </Frame>
+
+        <!-- Totals Container -->
+        <Frame
+            BackgroundColor="#F5F7FA"
+            CornerRadius="20"
+            Padding="0">
+            <VerticalStackLayout Spacing="4">
+                <!-- Display Totals -->
+                <Label
+                    Text="{Binding STTotal}"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    HorizontalOptions="Center"/>
+                <Label
+                    Text="{Binding CO2eTotal}"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+        </Frame>
+
+        <Grid VerticalOptions="Fill"/>
+        <Grid VerticalOptions="Fill"/>
+
+        <!-- Goal Page Button -->
+        <Button
+            x:Name="GoalPageButton"
+            Grid.Column="0"
+            Text="Goals"
+            Clicked="OnGoalClicked"
+            HeightRequest="70"
+            CornerRadius="14"
+            BackgroundColor="#7C3AED"
+            TextColor="White"
+            FontAttributes="Bold"
+            FontSize="28"/>
         <CollectionView ItemsSource="{Binding AppUsageListCO2}" Margin="20">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
