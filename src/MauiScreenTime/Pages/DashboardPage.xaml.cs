@@ -1,4 +1,5 @@
-﻿using MauiScreenTime.ViewModels;
+﻿using MauiScreenTime.Helpers;
+using MauiScreenTime.ViewModels;
 using Microsoft.Maui.Graphics;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -6,155 +7,20 @@ using System.Threading.Tasks;
 
 namespace MauiScreenTime.Pages;
 
-public class BarItem
-{
-    public double Height { get; set; }
-    public string Label { get; set; }
-    public double Value { get; set; }
-    public Color BarColor { get; set; }
-}
 
 public partial class DashboardPage : ContentPage
 {
+    private readonly DashboardViewModel _viewModel;
+    bool isFirstLoad = true;
+
     public DashboardPage(DashboardViewModel viewModel)
     {
         InitializeComponent();
-
-        // Set this page as the binding source for XAML
-        BindingContext = viewModel;
-
-        LoadData();
-
-        // Create 10 placeholder bars at height 0
-        CurrentChart = new ObservableCollection<BarItem>(Enumerable.Range(0, 10).Select(_ => new BarItem { Height = 0 }));
-
-        _ = ShowScreenTime();
+        _viewModel = viewModel;
+        BindingContext = _viewModel;
+        
     }
 
-    public ObservableCollection<BarItem> CurrentChart { get; set; }
-
-    // Dynamic Y axis labels
-    public ObservableCollection<string> YAxisLabels { get; set; } = new();
-
-    private List<BarItem> ScreenTimeData;
-    private List<BarItem> CO2eData;
-
-    // Maximum height of the chart
-    const double MaxBarHeight = 185;
-    const double ScreenTimeAxisMax = 360; // minutes
-    const double CO2AxisMax = 200; // grams
-
-    bool isScreenTimeActive = true;
-    bool isFirstLoad = true;
-
-    // --------------------------------------------------------------------------
-    // DATA
-    // --------------------------------------------------------------------------
-
-    // Load raw datasets (placeholder data)
-    void LoadData()
-    {
-        ScreenTimeData = new List<BarItem>
-        {
-            new() { Label = "YT", Value = 360 },
-            new() { Label = "Tw", Value = 300 },
-            new() { Label = "X", Value = 100 },
-            new() { Label = "LI", Value = 70 },
-            new() { Label = "Fb", Value = 200 },
-            new() { Label = "Sn", Value = 90 },
-            new() { Label = "In", Value = 175 },
-            new() { Label = "Pin", Value = 60 },
-            new() { Label = "Re", Value = 250 },
-            new() { Label = "Tik", Value = 300 }
-        };
-
-        CO2eData = new List<BarItem>
-        {
-            new() { Label = "YT", Value = 100 },
-            new() { Label = "Tw", Value = 30 },
-            new() { Label = "X", Value = 175 },
-            new() { Label = "LI", Value = 90 },
-            new() { Label = "Fb", Value = 150 },
-            new() { Label = "Sn", Value = 200 },
-            new() { Label = "In", Value = 90 },
-            new() { Label = "Pin", Value = 75 },
-            new() { Label = "Re", Value = 130 },
-            new() { Label = "Tik", Value = 125 }
-        };
-
-        CalculateTotals();
-    }
-
-    // Scales raw data to visual bar heights - keeps the chart proportional regardless of values
-    List<BarItem> ScaleData(List<BarItem> source, Color color, double axisMax)
-    {
-        return source.Select(item => new BarItem
-        {
-            Height = Math.Min(item.Value / axisMax, 1) * MaxBarHeight,
-            Label = item.Label,
-            Value = item.Value,
-            BarColor = color
-        }).ToList();
-    }
-
-    // Display data beneath charts
-    public string STTotal { get; set; }
-    public string CO2eTotal { get; set; }
-
-    void CalculateTotals()
-    {
-        //Screen Time total
-        double totalMinutes = ScreenTimeData.Sum(value => value.Value);
-
-        int hours = (int)(totalMinutes / 60);
-        int minutes = (int)(totalMinutes % 60);
-        STTotal = $"Total Screen Time: {hours}h {minutes}m";
-
-        // CO2e total
-        double totalCO2e = CO2eData.Sum(value => value.Value);
-        CO2eTotal = $"Total CO₂e: {totalCO2e}g";
-
-        OnPropertyChanged(nameof(STTotal));
-        OnPropertyChanged(nameof(CO2eTotal));
-    }
-
-    // --------------------------------------------------------------------------
-    // COLOURS AND ANIMATIONS
-    // --------------------------------------------------------------------------
-
-    // Chart colours
-    readonly Color ScreenTimeBarColor = Color.FromArgb("#41b6e6");
-    readonly Color CO2eBarColor = Color.FromArgb("#1b365d");
-
-    // Colours for active/inactive states of the toggle buttons
-    readonly Color ActiveColor = Color.FromArgb("#7C3AED");
-    readonly Color InactiveColor = Color.FromArgb("#CDB9F0");
-    readonly Color ActiveTextColor = Colors.White;
-    readonly Color InactiveTextColor = Color.FromArgb("#4C1D95");
-
-    // Updates the toggle button colours, depending on which one is active
-    private void UpdateToggleButton(bool isScreenTimeSelected)
-    {
-        if (isScreenTimeSelected)
-        {
-            ScreenTimeButton.BackgroundColor = ActiveColor;
-            ScreenTimeButton.TextColor = ActiveTextColor;
-            CO2eButton.BackgroundColor = InactiveColor;
-            CO2eButton.TextColor = InactiveTextColor;
-        }
-        else
-        {
-            ScreenTimeButton.BackgroundColor = InactiveColor;
-            ScreenTimeButton.TextColor = InactiveTextColor;
-            CO2eButton.BackgroundColor = ActiveColor;
-            CO2eButton.TextColor = ActiveTextColor;
-        }
-
-        ScreenTimeButton.IsEnabled = !isScreenTimeActive;
-        CO2eButton.IsEnabled = isScreenTimeActive;
-    }
-
-    // Linearly interpolates between two colours
     Color ColourFade(Color from, Color to, double pointer)
     {
         float t = (float)pointer;
@@ -166,121 +32,48 @@ public partial class DashboardPage : ContentPage
             from.Alpha + (to.Alpha - from.Alpha) * t
         );
     }
-
-    // Animates bar height and colour simultaneously
-    async Task AnimateBars(List<BarItem> newData, Color fromColor, Color toColor)
+    //private async void OnSomeEvent(object sender, EventArgs e)
+    //{
+    //    await _viewModel.LoadBarDataAsync(...);
+    //    await AnimateBars(_viewModel.CurrentBarData, fromColor, toColor);
+    //}
+    private async Task AnimateBars(List<BarItem> newData, Color fromColor, Color toColor)
     {
-        // Direct references to each bar in XAML
-        var bars = new[]
-        {
-            Bar0, Bar1, Bar2, Bar3, Bar4, Bar5, Bar6, Bar7, Bar8, Bar9
-        };
+        var bars = new[] { Bar0, Bar1, Bar2, Bar3, Bar4, Bar5, Bar6, Bar7, Bar8, Bar9 };
 
-        // Prevent overflow if data count changes
         int count = Math.Min(bars.Length, newData.Count);
 
         for (int index = 0; index < count; index++)
         {
-            await Task.Delay(20);   // Add delay to each bar
+            await Task.Delay(20);
 
             int control = index;
-
-            // First load starts bars from zero height
             double start = isFirstLoad ? 0 : bars[control].HeightRequest;
-
-            double end = newData[control].Height; // Target height
+            double end = newData[control].Height;
 
             var animation = new Animation(aniProgress =>
             {
-                // Height animation
                 bars[control].HeightRequest = start + (end - start) * aniProgress;
-
-                // Colour fade animation
                 bars[control].BackgroundColor = ColourFade(fromColor, toColor, aniProgress);
             }, 0, 1);
 
             animation.Commit(this, $"BarAnim{index}", 16u, (uint)(500 + index * 40), Easing.CubicInOut);
         }
 
-        // First load animation completed
         isFirstLoad = false;
     }
 
-    // --------------------------------------------------------------------------
-    // CHART SWITCHING
-    // --------------------------------------------------------------------------
-
-    // Switch chart to Screen Time
-    async Task ShowScreenTime()
+    private void OnScreenTimeClicked(object sender, EventArgs e)
     {
-        isScreenTimeActive = true;
-
-        UpdateYAxis();
-
-        var scaled = ScaleData(ScreenTimeData, ScreenTimeBarColor, ScreenTimeAxisMax);
-
-        // Animate from current state ? new state
-        await AnimateBars(scaled, isFirstLoad ? ScreenTimeBarColor : CO2eBarColor, ScreenTimeBarColor);
-
-        // Update binding source after animation
-        CurrentChart = new ObservableCollection<BarItem>(scaled);
-        OnPropertyChanged(nameof(CurrentChart));
-
-        UpdateToggleButton(true);
+        _viewModel.OnScreenTimeClicked();
     }
-
-    // Switch chart to CO?e
-    async Task ShowCO2e()
+    private void OnCO2eClicked(object sender, EventArgs e)
     {
-        isScreenTimeActive = false;
-
-        UpdateYAxis();
-
-        var scaled = ScaleData(CO2eData, CO2eBarColor, CO2AxisMax);
-
-        // Animate from current state ? new state
-        await AnimateBars(scaled, ScreenTimeBarColor, CO2eBarColor);
-
-        // Update binding source after animation
-        CurrentChart = new ObservableCollection<BarItem>(scaled);
-        OnPropertyChanged(nameof(CurrentChart));
-
-        UpdateToggleButton(false);
+        _viewModel.OnCO2eClicked();
     }
-
-    // Alternate Y axis values depending on which chart is displayed
-    void UpdateYAxis()
+    private void OnGoalClicked(object sender, EventArgs e)
     {
-        YAxisLabels.Clear();
-
-        if (isScreenTimeActive)
-        {
-            YAxisLabels.Add("6h");
-            YAxisLabels.Add("4h");
-            YAxisLabels.Add("2h");
-            YAxisLabels.Add("1h");
-            YAxisLabels.Add("0h");
-        }
-        else
-        {
-            YAxisLabels.Add("200g");
-            YAxisLabels.Add("150g");
-            YAxisLabels.Add("100g");
-            YAxisLabels.Add("50g");
-            YAxisLabels.Add("0g");
-        }
+        _viewModel.OnGoalClicked();
     }
-
-
-
-    // --------------------------------------------------------------------------
-    // EVENTS
-    // --------------------------------------------------------------------------
-
-    // Event handlers have to be async void
-    async void OnScreenTimeClicked(object sender, EventArgs e) => await ShowScreenTime();
-    async void OnCO2eClicked(object sender, EventArgs e) => await ShowCO2e();
-
-    //Switch to GoalPage
-    async void OnGoalClicked(object sender, EventArgs e) => await Shell.Current.GoToAsync(nameof(GoalPage));
 }
+   

@@ -30,7 +30,7 @@
                 Clicked="OnScreenTimeClicked"
                 HeightRequest="60"
                 CornerRadius="14"
-                BackgroundColor="MediumPurple"
+                BackgroundColor="{Binding ButtonBackgroundColor}"
                 TextColor="White"
                 FontAttributes="Bold"
                 FontSize="16"/>
@@ -43,7 +43,7 @@
               Clicked="OnCO2eClicked"
               HeightRequest="60"
               CornerRadius="14"
-              BackgroundColor="MediumPurple"
+              BackgroundColor="{Binding ButtonBackgroundColor}"
               TextColor="White"
               FontAttributes="Bold"
               FontSize="16"/>
