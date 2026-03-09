@@ -32,12 +32,12 @@ namespace MauiScreenTimeTests.CO2ServiceTests
         public async Task CalculateCO2DifferenceAsync_WithPositiveDifference_ReturnsCorrectValue()
         {
             // Arrange
-            var today = DateTime.Now.Date;
-            var yesterday = today - new TimeSpan(1, 0, 0, 0);
+            var yesterday = DateTime.Now.Date.AddDays(-1);
+            var dayBeforeYesterday = DateTime.Now.Date.AddDays(-2);
 
 
-            _mockUserActivityLogDatabase.Setup(x => x.GetHighestCO2DailyTotalByDate(It.Is<DateTime>(d => d.Date == today))).ReturnsAsync(new UserActivityLogModel { CO2Total = 50 });
-            _mockUserActivityLogDatabase.Setup(x => x.GetHighestCO2DailyTotalByDate(It.Is<DateTime>(d => d.Date == yesterday))).ReturnsAsync(new UserActivityLogModel { CO2Total = 100 });
+            _mockUserActivityLogDatabase.Setup(x => x.GetHighestCO2DailyTotalByDate(It.Is<DateTime>(d => d.Date == yesterday))).ReturnsAsync(new UserActivityLogModel { CO2Total = 50 });
+            _mockUserActivityLogDatabase.Setup(x => x.GetHighestCO2DailyTotalByDate(It.Is<DateTime>(d => d.Date == dayBeforeYesterday))).ReturnsAsync(new UserActivityLogModel { CO2Total = 100 });
             _mockUserActivityLogDatabase.Setup(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>())).Returns(Task.CompletedTask);
 
             // Act
@@ -52,12 +52,11 @@ namespace MauiScreenTimeTests.CO2ServiceTests
         public async Task CalculateCO2DifferenceAsync_WithNegativeDifference_DoesNotCallAddLog()
         {
             // Arrange
-            var today = DateTime.Now.Date;
-            var yesterday = today - new TimeSpan(1, 0, 0, 0);
+            var yesterday = DateTime.Now.Date.AddDays(-1);
+            var dayBeforeYesterday = DateTime.Now.Date.AddDays(-2);
 
-
-            _mockUserActivityLogDatabase.Setup(x => x.GetHighestCO2DailyTotalByDate(It.Is<DateTime>(d => d.Date == today))).ReturnsAsync(new UserActivityLogModel { CO2Total = 100 });
-            _mockUserActivityLogDatabase.Setup(x => x.GetHighestCO2DailyTotalByDate(It.Is<DateTime>(d => d.Date == yesterday))).ReturnsAsync(new UserActivityLogModel { CO2Total = 50 });
+            _mockUserActivityLogDatabase.Setup(x => x.GetHighestCO2DailyTotalByDate(It.Is<DateTime>(d => d.Date == yesterday))).ReturnsAsync(new UserActivityLogModel { CO2Total = 100 });
+            _mockUserActivityLogDatabase.Setup(x => x.GetHighestCO2DailyTotalByDate(It.Is<DateTime>(d => d.Date == dayBeforeYesterday))).ReturnsAsync(new UserActivityLogModel { CO2Total = 50 });
             _mockUserActivityLogDatabase.Setup(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>())).Returns(Task.CompletedTask);
 
             // Act
@@ -72,8 +71,9 @@ namespace MauiScreenTimeTests.CO2ServiceTests
         public async Task CalculateCO2DifferenceAsync_WithZeroDifference_DoesNotCallAddLog()
         {
             // Arrange
-            var today = DateTime.Now.Date;
-            var yesterday = today - new TimeSpan(1, 0, 0, 0);
+            var yesterday = DateTime.Now.Date.AddDays(-1);
+            var dayBeforeYesterday = DateTime.Now.Date.AddDays(-2);
+
 
             _mockUserActivityLogDatabase.Setup(x => x.GetHighestCO2DailyTotalByDate(It.IsAny<DateTime>())).ReturnsAsync(new UserActivityLogModel { CO2Total = 100 });
             _mockUserActivityLogDatabase.Setup(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>())).Returns(Task.CompletedTask);
