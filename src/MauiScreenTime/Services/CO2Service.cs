@@ -59,6 +59,7 @@ namespace MauiScreenTime.Services
                 // write to the db or just do on the fly? performance/security 
                 appData.CO2e = CO2e;
                 appData.AppName = conversionTableEntry.AppName;
+                appData.Date = DateTime.UtcNow;
             }
             catch (Exception ex)
             {

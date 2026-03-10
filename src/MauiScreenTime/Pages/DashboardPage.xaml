@@ -125,8 +125,36 @@
 
 
                         <!-- Column 0 -->
-                        <VerticalStackLayout Grid.Column="0" VerticalOptions="End" Spacing="6">
-                            <Grid HeightRequest="160" RowDefinitions="*,Auto">
+                        <VerticalStackLayout Grid.Column="0"
+                                             VerticalOptions="End"
+                                             Spacing="6">
+                                <Grid x:Name="ChartGrid"
+                                      ColumnSpacing="6"
+                                      HeightRequest="160"
+                                      VerticalOptions="End">
+                                    <BindableLayout.ItemsSource>
+                                        <Binding Path="CurrentChart"/>
+                                    </BindableLayout.ItemsSource>
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate>
+                                            <VerticalStackLayout VerticalOptions="End" Spacing="6">
+                                                <Grid HeightRequest="160" RowDefinitions="*,Auto">
+                                                    <Border
+                        HeightRequest="{Binding Height}"
+                        VerticalOptions="End"
+                        BackgroundColor="{Binding BarColor}"
+                        StrokeThickness="0">
+                                                        <Border.StrokeShape>
+                                                            <RoundRectangle CornerRadius="12,12,0,0"/>
+                                                        </Border.StrokeShape>
+                                                    </Border>
+                                                </Grid>
+                                                <Label Text="{Binding Label}" HorizontalTextAlignment="Center"/>
+                                            </VerticalStackLayout>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </Grid>
+                                <Grid HeightRequest="160" RowDefinitions="*,Auto">
                                 <Border x:Name="Bar0" 
                                     HeightRequest="{Binding CurrentChart[0].Height}"
                                     VerticalOptions="End"

@@ -101,20 +101,6 @@ namespace MauiScreenTime.ViewModels
             }
         }
 
-        //private string _screenTimeTotal;
-        //public string ScreenTimeTotal
-        //{
-        //    get => _screenTimeTotal;
-        //    set { _screenTimeTotal = value; OnPropertyChanged(); }
-        //}
-
-        //private string _co2eTotal;
-        //public string CO2eTotal2
-        //{
-        //    get => _co2eTotal;
-        //    set { _co2eTotal = value; OnPropertyChanged(); }
-        //}
-
         public DashboardViewModel(IUsageStatsService usageStatsService, ICO2Service co2Service, IUserActivityLogDatabase userActivityLogDatabase)
         {
 
@@ -126,10 +112,25 @@ namespace MauiScreenTime.ViewModels
             Enumerable.Range(0, 10).Select(_ => new BarItem { Height = 0 })
         );
 
-            OnAppearing();
+            //OnAppearing();
             InitialiseAsync();
             _ = ShowScreenTime();
 
+        }
+
+        // this can replace onappearing probably
+        public async Task InitialiseAsync()
+        {
+            await PopulateAppCO2ListAsync();
+            await LoadData();
+            CalculateTotals();
+            await ShowScreenTime();
+            await ShowCO2e();
+
+
+            await GetCO2Total();
+            await CalculateDifference();
+            //await GetDataSoFar();
         }
 
         private async Task PopulateAppCO2ListAsync()
@@ -138,36 +139,35 @@ namespace MauiScreenTime.ViewModels
             await GetCO2Coversion();
         }
 
-        public async Task InitialiseAsync()
-        {
-            await PopulateAppCO2ListAsync();
-            LoadData();
-            CalculateTotals();
-            await ShowScreenTime();
-            await ShowCO2e();
-        
-        }
-
+        // are these working?
         public Func<List<BarItem>, Color, Color, Task> AnimateBarsAsync { get; set; }
         private void UpdateButton(bool isSelected)
         {
             ButtonBackgroundColor = isSelected ? ActiveColor : Colors.MediumPurple;
         }
-        // Load raw datasets (placeholder data)
+
+
         async Task LoadData()
         {
-
+            
             ScreenTimeData = _appUsageListCO2.Select(obj => new BarItem
             {
-                Label = obj.AppName,
+                Label = obj.AppName.Length >= 3 ? obj.AppName[..3] : obj.AppName,
                 Value = obj.UsageTimeMinutes
             }).ToList();
 
             CO2eData = _appUsageListCO2.Select(obj => new BarItem
             {
-                Label = obj.AppName,
+                Label = obj.AppName.Length >= 3 ? obj.AppName[..3] : obj.AppName,
+
                 Value = obj.CO2e
             }).ToList();
+
+            foreach (var app in _appUsageListCO2)
+            {
+                Console.WriteLine("Here");
+                Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(app));
+            }
 
             CalculateTotals();
         }
@@ -189,8 +189,6 @@ namespace MauiScreenTime.ViewModels
             //Screen Time total
             double totalMinutes = ScreenTimeData.Sum(value => value.Value);
 
-            Console.WriteLine("here totalminutes " +  totalMinutes);
-            Console.WriteLine("here screenTimeData " +  ScreenTimeData);
             int hours = (int)(totalMinutes / 60);
             int minutes = (int)(totalMinutes % 60);
             STTotal = $"Total Screen Time: {hours}h {minutes}m";
