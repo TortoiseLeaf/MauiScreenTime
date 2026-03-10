@@ -12,6 +12,7 @@ using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using MauiScreenTime.Pages;
+using System.Threading.Tasks;
 
 #if ANDROID
 using Android.Util;
@@ -100,6 +101,20 @@ namespace MauiScreenTime.ViewModels
             }
         }
 
+        //private string _screenTimeTotal;
+        //public string ScreenTimeTotal
+        //{
+        //    get => _screenTimeTotal;
+        //    set { _screenTimeTotal = value; OnPropertyChanged(); }
+        //}
+
+        //private string _co2eTotal;
+        //public string CO2eTotal2
+        //{
+        //    get => _co2eTotal;
+        //    set { _co2eTotal = value; OnPropertyChanged(); }
+        //}
+
         public DashboardViewModel(IUsageStatsService usageStatsService, ICO2Service co2Service, IUserActivityLogDatabase userActivityLogDatabase)
         {
 
@@ -112,11 +127,22 @@ namespace MauiScreenTime.ViewModels
         );
 
             OnAppearing();
-            LoadData();
+            InitialiseAsync();
             _ = ShowScreenTime();
 
-            //OnAppearing();
+        }
 
+        private async Task PopulateAppCO2ListAsync()
+        {
+            await GetUsageData();
+            await GetCO2Coversion();
+        }
+
+        public async Task InitialiseAsync()
+        {
+            await PopulateAppCO2ListAsync();
+            LoadData();
+            CalculateTotals();
         }
 
         public Func<List<BarItem>, Color, Color, Task> AnimateBarsAsync { get; set; }
@@ -125,35 +151,48 @@ namespace MauiScreenTime.ViewModels
             ButtonBackgroundColor = isSelected ? ActiveColor : Colors.MediumPurple;
         }
         // Load raw datasets (placeholder data)
-        void LoadData()
+        async Task LoadData()
         {
-            ScreenTimeData = new List<BarItem>
-        {
-            new() { Label = "YT", Value = Co2Total },
-            new() { Label = "Tw", Value = 300 },
-            new() { Label = "X", Value = 100 },
-            new() { Label = "LI", Value = 70 },
-            new() { Label = "Fb", Value = 200 },
-            new() { Label = "Sn", Value = 90 },
-            new() { Label = "In", Value = 175 },
-            new() { Label = "Pin", Value = 60 },
-            new() { Label = "Re", Value = 250 },
-            new() { Label = "Tik", Value = 300 }
-        };
 
-            CO2eData = new List<BarItem>
-        {
-            new() { Label = "YT", Value = 100 },
-            new() { Label = "Tw", Value = 30 },
-            new() { Label = "X", Value = 175 },
-            new() { Label = "LI", Value = 90 },
-            new() { Label = "Fb", Value = 150 },
-            new() { Label = "Sn", Value = 200 },
-            new() { Label = "In", Value = 90 },
-            new() { Label = "Pin", Value = 75 },
-            new() { Label = "Re", Value = 130 },
-            new() { Label = "Tik", Value = 125 }
-        };
+            ScreenTimeData = _appUsageListCO2.Select(obj => new BarItem
+            {
+                Label = obj.AppName,
+                Value = obj.UsageTimeMinutes
+            }).ToList();
+
+            CO2eData = _appUsageListCO2.Select(obj => new BarItem
+            {
+                Label = obj.AppName,
+                Value = obj.CO2e
+            }).ToList();
+
+            //ScreenTimeData = new List<BarItem>
+            //{
+            //    new() { Label = "YT", Value = Co2Total },
+            //    new() { Label = "Tw", Value = 300 },
+            //    new() { Label = "X", Value = 100 },
+            //    new() { Label = "LI", Value = 70 },
+            //    new() { Label = "Fb", Value = 200 },
+            //    new() { Label = "Sn", Value = 90 },
+            //    new() { Label = "In", Value = 175 },
+            //    new() { Label = "Pin", Value = 60 },
+            //    new() { Label = "Re", Value = 250 },
+            //    new() { Label = "Tik", Value = 300 }
+            //};
+
+        //    CO2eData = new List<BarItem>
+        //{
+        //    new() { Label = "YT", Value = 100 },
+        //    new() { Label = "Tw", Value = 30 },
+        //    new() { Label = "X", Value = 175 },
+        //    new() { Label = "LI", Value = 90 },
+        //    new() { Label = "Fb", Value = 150 },
+        //    new() { Label = "Sn", Value = 200 },
+        //    new() { Label = "In", Value = 90 },
+        //    new() { Label = "Pin", Value = 75 },
+        //    new() { Label = "Re", Value = 130 },
+        //    new() { Label = "Tik", Value = 125 }
+        //};
 
             CalculateTotals();
         }
@@ -175,6 +214,8 @@ namespace MauiScreenTime.ViewModels
             //Screen Time total
             double totalMinutes = ScreenTimeData.Sum(value => value.Value);
 
+            Console.WriteLine("here totalminutes " +  totalMinutes);
+            Console.WriteLine("here screenTimeData " +  ScreenTimeData);
             int hours = (int)(totalMinutes / 60);
             int minutes = (int)(totalMinutes % 60);
             STTotal = $"Total Screen Time: {hours}h {minutes}m";
