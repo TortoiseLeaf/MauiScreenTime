@@ -143,6 +143,9 @@ namespace MauiScreenTime.ViewModels
             await PopulateAppCO2ListAsync();
             LoadData();
             CalculateTotals();
+            await ShowScreenTime();
+            await ShowCO2e();
+        
         }
 
         public Func<List<BarItem>, Color, Color, Task> AnimateBarsAsync { get; set; }
@@ -165,34 +168,6 @@ namespace MauiScreenTime.ViewModels
                 Label = obj.AppName,
                 Value = obj.CO2e
             }).ToList();
-
-            //ScreenTimeData = new List<BarItem>
-            //{
-            //    new() { Label = "YT", Value = Co2Total },
-            //    new() { Label = "Tw", Value = 300 },
-            //    new() { Label = "X", Value = 100 },
-            //    new() { Label = "LI", Value = 70 },
-            //    new() { Label = "Fb", Value = 200 },
-            //    new() { Label = "Sn", Value = 90 },
-            //    new() { Label = "In", Value = 175 },
-            //    new() { Label = "Pin", Value = 60 },
-            //    new() { Label = "Re", Value = 250 },
-            //    new() { Label = "Tik", Value = 300 }
-            //};
-
-        //    CO2eData = new List<BarItem>
-        //{
-        //    new() { Label = "YT", Value = 100 },
-        //    new() { Label = "Tw", Value = 30 },
-        //    new() { Label = "X", Value = 175 },
-        //    new() { Label = "LI", Value = 90 },
-        //    new() { Label = "Fb", Value = 150 },
-        //    new() { Label = "Sn", Value = 200 },
-        //    new() { Label = "In", Value = 90 },
-        //    new() { Label = "Pin", Value = 75 },
-        //    new() { Label = "Re", Value = 130 },
-        //    new() { Label = "Tik", Value = 125 }
-        //};
 
             CalculateTotals();
         }
