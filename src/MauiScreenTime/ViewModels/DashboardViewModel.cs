@@ -53,13 +53,11 @@ namespace MauiScreenTime.ViewModels
 
         [ObservableProperty]
         private double _co2DailySavedDebug = new();
+        
         [ObservableProperty]
-        private double _co2TotalTD = new();
-        [ObservableProperty]
-        private double _co2TotalY = new();
-        [ObservableProperty]
-        private double _latestTrees = new();
+        private double _co2TotalToday = new();
 
+    
 
         public ObservableCollection<BarItem> CurrentChart { get; set; }
 
@@ -115,6 +113,7 @@ namespace MauiScreenTime.ViewModels
             //OnAppearing();
             InitialiseAsync();
             _ = ShowScreenTime();
+            //GetDataSoFar();
 
         }
 
@@ -130,13 +129,14 @@ namespace MauiScreenTime.ViewModels
 
             await GetCO2Total();
             await CalculateDifference();
-            //await GetDataSoFar();
         }
 
         private async Task PopulateAppCO2ListAsync()
         {
             await GetUsageData();
             await GetCO2Coversion();
+            
+
         }
 
         // are these working?
@@ -163,11 +163,6 @@ namespace MauiScreenTime.ViewModels
                 Value = obj.CO2e
             }).ToList();
 
-            foreach (var app in _appUsageListCO2)
-            {
-                Console.WriteLine("Here");
-                Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(app));
-            }
 
             CalculateTotals();
         }
@@ -184,7 +179,7 @@ namespace MauiScreenTime.ViewModels
             }).ToList();
         }
 
-        void CalculateTotals()
+        async Task CalculateTotals()
         {
             //Screen Time total
             double totalMinutes = ScreenTimeData.Sum(value => value.Value);
@@ -199,6 +194,7 @@ namespace MauiScreenTime.ViewModels
 
             OnPropertyChanged(nameof(STTotal));
             OnPropertyChanged(nameof(CO2eTotal));
+
         }
 
         // Updates the toggle button colours, depending on which one is active
@@ -355,33 +351,7 @@ namespace MauiScreenTime.ViewModels
 
 
 
-        // Calls methods when page launches
-        [RelayCommand]
-        private async Task OnAppearing()
-        {
-
-            try
-            {
-                await GetUsageData();
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error calling the usage data in OnAppearing() dashboard: {ex}");
-
-                await Shell.Current.DisplayAlert("Error", "Unable to load data. Please try again.","OK");
-            }
-            //await GetAllActivity();
-            
-            await GetCO2Coversion();
-
-            await GetCO2Total();
-
-            await CalculateDifference();
-
-            // returns totals to frontend
-            await GetDataSoFar();
-            
-        }
+        
 
         // gets usage data from service if permissions granted
         public async Task GetUsageData()
@@ -436,10 +406,11 @@ namespace MauiScreenTime.ViewModels
             {
                 // returns it directly on the fly
                 Co2Total = await _co2Service.CalculateCO2TotalAsync(_appUsageList);
-
                 // save todays total to db
                 await _userActivityLogDatabase.AddActivityLog(Co2Total, 0, 0);
-                
+                var TodayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now);
+                //Console.WriteLine("here saved co2total: " + TodayTotalCO2Obj.CO2Total);
+
             }
             catch(Exception ex)
             {
@@ -451,24 +422,7 @@ namespace MauiScreenTime.ViewModels
 
         }
 
-        public async Task GetDataSoFar()
-        {
-            var yesterday = DateTime.Now.Date.AddDays(-1);
-            var dayBeforeYesterday = DateTime.Now.Date.AddDays(-2);
-
-
-            var yesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(yesterday);
-            var dayBeforeYesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(dayBeforeYesterday);
-
-            LatestTrees = await _userActivityLogDatabase.GetLatestTreesByDate(dayBeforeYesterday);
-
-            Co2TotalReduced = await _userActivityLogDatabase.GetCO2TotalReduced();
-
-            Co2TotalY = yesterdayTotalCO2Obj.CO2Total;
-            Co2TotalTD = dayBeforeYesterdayTotalCO2Obj.CO2Total;
-
-
-        }
+        
 
         public async Task CalculateDifference()
         {
