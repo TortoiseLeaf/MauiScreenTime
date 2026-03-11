@@ -111,7 +111,7 @@ namespace MauiScreenTime.Services
 
                 if (differenceSaved > 0)
                 {
-                    Console.WriteLine("This is the difference saved: " + differenceSaved);
+                    System.Diagnostics.Debug.WriteLine("This is the difference saved here: " + differenceSaved);
 
                     try
                     {
@@ -129,6 +129,10 @@ namespace MauiScreenTime.Services
                     Log.Debug("CO2Service", "here successfully CO2 difference saved to log");
 #endif
 
+                }
+                else
+                {
+                    differenceSaved = 0;
                 }
             }
 
