@@ -40,11 +40,13 @@ namespace MauiScreenTime
             //builder.Services.AddTransient<ConsentDatabase>();
 
             builder.Services.AddTransient<DashboardViewModel>();
+            builder.Services.AddTransient<GoalViewModel>();
             builder.Services.AddTransient<ConsentViewModel>();
             builder.Services.AddTransient<MainViewModel>();
 
 
             builder.Services.AddTransient<DashboardPage>();
+            builder.Services.AddTransient<GoalPage>();
             builder.Services.AddTransient<ConsentPage>();
             builder.Services.AddTransient<MainPage>();
 

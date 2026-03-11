@@ -8,5 +8,27 @@
             Text="Welcome to GoalPage!"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
+
+        <Label Text="{Binding Co2TotalReduced}"
+               FontSize="20"
+TextColor="Gray"
+HorizontalTextAlignment="Center"
+HorizontalOptions="Center" />
+        <Label Text="/ 200g"
+               FontSize="20"
+TextColor="Gray"
+HorizontalTextAlignment="Center"
+HorizontalOptions="Center" />
+        <Label Text="Trees Planted:"
+               FontSize="20"
+TextColor="Gray"
+HorizontalTextAlignment="Center"
+HorizontalOptions="Center" />
+        <Label Text="{Binding TreesTotal}"
+               FontSize="20"
+TextColor="Gray"
+HorizontalTextAlignment="Center"
+HorizontalOptions="Center" />
+        
     </VerticalStackLayout>
 </ContentPage>
