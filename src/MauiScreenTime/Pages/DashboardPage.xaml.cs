@@ -21,6 +21,7 @@ public partial class DashboardPage : ContentPage
         
     }
 
+
     Color ColourFade(Color from, Color to, double pointer)
     {
         float t = (float)pointer;
