@@ -120,7 +120,7 @@ namespace MauiScreenTime.Data
 
             var totalReducedProgress = await GetTotalCO2ReducedProgress();
 
-            if (totalReducedProgress >= 100)
+            if (totalReducedProgress >= 200)
             {
                 var all = await connection.Table<UserActivityLogModel>().ToListAsync();
 
@@ -137,7 +137,7 @@ namespace MauiScreenTime.Data
                     Date = today.Date,
                     TimeStamp = today,
                     CO2Total = 0,
-                    CO2TotalReduced = CO2TotalReduced + 100,
+                    CO2TotalReduced = CO2TotalReduced + 200,
                     CO2ReducedProgress = 0,
                     TreesPlanted = treesPlanted + 1
                 }
