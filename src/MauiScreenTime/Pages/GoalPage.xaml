@@ -9,7 +9,7 @@
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
 
-        <Label Text="{Binding Co2TotalReduced}"
+        <Label Text="{Binding Co2ReducedProgress}"
                FontSize="20"
 TextColor="Gray"
 HorizontalTextAlignment="Center"
@@ -46,6 +46,15 @@ FontSize="20"
         HorizontalTextAlignment="Center"
 TextColor="Gray"/>
         <Label Text="{Binding Co2TotalDayBefore}" 
+FontSize="30"
+TextColor="Gray"
+HorizontalTextAlignment="Center"
+HorizontalOptions="Center" />
+        <Label Text="Total Reduced to date:" 
+FontSize="20"
+        HorizontalTextAlignment="Center"
+TextColor="Gray"/>
+        <Label Text="{Binding Co2TotalReduced}" 
 FontSize="30"
 TextColor="Gray"
 HorizontalTextAlignment="Center"

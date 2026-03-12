@@ -17,6 +17,8 @@ namespace MauiScreenTime.ViewModels
         [ObservableProperty]
         private double _co2TotalReduced = new();
         [ObservableProperty]
+        private double _co2ReducedProgress = new();
+        [ObservableProperty]
         private int _treesTotal = new();
         [ObservableProperty]
         private double _co2TotalDayBefore = new();
@@ -36,32 +38,55 @@ namespace MauiScreenTime.ViewModels
 
         public async Task InitialiseMethods()
         {
-            await CalculateDifference();
-            await IncrementTree();
+            await CalculateDifferenceAndUpdateProgressBar();
+            //await IncrementTree();
+            await GetCO2ProgressBar();
             await GetTreesPlanted();
         }
 
-        public async Task CalculateDifference()
+        public async Task CalculateDifferenceAndUpdateProgressBar()
         {
-            Co2TotalReduced = await _co2Service.CalculateCO2DifferenceAsync();
+            var co2ReducedToday = await _co2Service.CalculateAndStoreCO2DifferenceAsync();
             //System.Diagnostics.Debug.WriteLine("here totalreduced calculate diff fired");
             //System.Diagnostics.Debug.WriteLine(Co2TotalReduced);
 
+            
+
+            // don't need to do that here do that in the co2 method
+            //await _userActivityLogDatabase.AddActivityLog(0, 0, co2ReducedProgress, 0);
+
         }
-        public async Task IncrementTree()
+
+        public async Task GetCO2ProgressBar()
         {
-            //System.Diagnostics.Debug.WriteLine("here totalreduced in increment tree");
-            //System.Diagnostics.Debug.WriteLine(Co2TotalReduced);
+            // gets reduced progress
+            Co2ReducedProgress = await _userActivityLogDatabase.GetTotalCO2ReducedProgress();
 
-            if (Co2TotalReduced >= 0 && Co2TotalReduced >= 200)
-            {
-                //System.Diagnostics.Debug.WriteLine("here totalreduced in increment tree2");
-                //System.Diagnostics.Debug.WriteLine(Co2TotalReduced);
-
-                await _userActivityLogDatabase.AddActivityLog(0, 0, 1);
-            }
-
+            //// if it's > 200 update
+            //if (Co2ReducedProgress >= 0 && Co2ReducedProgress >= 200)
+            //{
+            //    // Add tree
+            //    await _userActivityLogDatabase.AddActivityLog(0, 0, 0, 1);
+            //}
         }
+        //public async Task IncrementTree()
+        //{
+        //    // HERE
+        //    // this always calls total reduced to date so it will always update a tree as long as it's > 200
+        //    // how to isolate the tree increment to just the progress bar?
+        //    Co2ReducedProgress = await _userActivityLogDatabase.GetTotalCO2ReducedProgress();
+        //    //Co2TotalReduced = await _userActivityLogDatabase.GetCO2TotalReduced();
+
+
+        //    if (Co2ReducedProgress >= 0 && Co2ReducedProgress >= 200)
+        //    {
+        //        //System.Diagnostics.Debug.WriteLine("here totalreduced in increment tree2");
+        //        //System.Diagnostics.Debug.WriteLine(Co2TotalReduced);
+
+        //        await _userActivityLogDatabase.AddActivityLog(0, 0,0, 1);
+        //    }
+
+        //}
         public async Task GetTreesPlanted()
         {
 
@@ -89,7 +114,14 @@ namespace MauiScreenTime.ViewModels
             Co2TotalY = yesterdayTotalCO2Obj.CO2Total;
             Co2TotalDayBefore = dayBeforeYesterdayTotalCO2Obj.CO2Total;
 
+            Co2TotalReduced = await _userActivityLogDatabase.GetCO2TotalReduced();
 
+            var all = await _userActivityLogDatabase.GetAllActivitiesLogged();
+            foreach (var i in all )
+            {
+                System.Diagnostics.Debug.WriteLine(System.Text.Json.JsonSerializer.Serialize(i));
+
+            }
         }
     }
 }
