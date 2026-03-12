@@ -91,7 +91,7 @@ namespace MauiScreenTime.Services
             return CO2Total;
         }
 
-        public async Task<double> CalculateCO2DifferenceAsync()
+        public async Task<double> CalculateAndStoreCO2DifferenceAsync()
         {
 
             double yesterdayCO2Total;
@@ -115,7 +115,9 @@ namespace MauiScreenTime.Services
 
                     try
                     {
-                        await _userActivityLogDatabase.AddActivityLog(0, differenceSaved, 0);
+                        // stores co2 difference saved to progress bar
+                        var co2ReducedProgress = (int)differenceSaved;
+                        await _userActivityLogDatabase.AddActivityLog(0, 0, co2ReducedProgress, 0);
                         Console.WriteLine("diff saved successfully");
 
                     }
