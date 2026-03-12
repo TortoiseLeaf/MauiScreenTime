@@ -29,7 +29,7 @@ namespace MauiScreenTimeTests.CO2ServiceTests
         }
 
         [Fact]
-        public async Task CalculateCO2DifferenceAsync_WithPositiveDifference_ReturnsCorrectValue()
+        public async Task CalculateAndStoreCO2DifferenceAsync_WithPositiveDifference_ReturnsCorrectValue()
         {
             // Arrange
             var yesterday = DateTime.Now.Date.AddDays(-1);
@@ -38,18 +38,18 @@ namespace MauiScreenTimeTests.CO2ServiceTests
 
             _mockUserActivityLogDatabase.Setup(x => x.GetHighestCO2DailyTotalByDate(It.Is<DateTime>(d => d.Date == yesterday))).ReturnsAsync(new UserActivityLogModel { CO2Total = 50 });
             _mockUserActivityLogDatabase.Setup(x => x.GetHighestCO2DailyTotalByDate(It.Is<DateTime>(d => d.Date == dayBeforeYesterday))).ReturnsAsync(new UserActivityLogModel { CO2Total = 100 });
-            _mockUserActivityLogDatabase.Setup(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>())).Returns(Task.CompletedTask);
+            _mockUserActivityLogDatabase.Setup(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>())).Returns(Task.CompletedTask);
 
             // Act
-            var result = await _co2Service.CalculateCO2DifferenceAsync();
+            var result = await _co2Service.CalculateAndStoreCO2DifferenceAsync();
 
             // Assert
             Assert.Equal(50.0, result); // 100 - 50
-            _mockUserActivityLogDatabase.Verify(x => x.AddActivityLog(0, 50.0, 0), Times.Once);
+            _mockUserActivityLogDatabase.Verify(x => x.AddActivityLog(0, 0, 50, 0), Times.Once);
         }
 
         [Fact]
-        public async Task CalculateCO2DifferenceAsync_WithNegativeDifference_DoesNotCallAddLog()
+        public async Task CalculateAndStoreCO2DifferenceAsync_WithNegativeDifference_DoesNotCallAddLog()
         {
             // Arrange
             var yesterday = DateTime.Now.Date.AddDays(-1);
@@ -57,18 +57,18 @@ namespace MauiScreenTimeTests.CO2ServiceTests
 
             _mockUserActivityLogDatabase.Setup(x => x.GetHighestCO2DailyTotalByDate(It.Is<DateTime>(d => d.Date == yesterday))).ReturnsAsync(new UserActivityLogModel { CO2Total = 100 });
             _mockUserActivityLogDatabase.Setup(x => x.GetHighestCO2DailyTotalByDate(It.Is<DateTime>(d => d.Date == dayBeforeYesterday))).ReturnsAsync(new UserActivityLogModel { CO2Total = 50 });
-            _mockUserActivityLogDatabase.Setup(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>())).Returns(Task.CompletedTask);
+            _mockUserActivityLogDatabase.Setup(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>())).Returns(Task.CompletedTask);
 
             // Act
-            var result = await _co2Service.CalculateCO2DifferenceAsync();
+            var result = await _co2Service.CalculateAndStoreCO2DifferenceAsync();
 
             // Assert
-            Assert.Equal(-50.0, result); // 50 - 100
-            _mockUserActivityLogDatabase.Verify(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>()), Times.Never);
+            Assert.Equal(0, result); // 50 - 100 = -50 so should show as 0
+            _mockUserActivityLogDatabase.Verify(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
-        public async Task CalculateCO2DifferenceAsync_WithZeroDifference_DoesNotCallAddLog()
+        public async Task CalculateAndStoreCO2DifferenceAsync_WithZeroDifference_DoesNotCallAddLog()
         {
             // Arrange
             var yesterday = DateTime.Now.Date.AddDays(-1);
@@ -76,14 +76,14 @@ namespace MauiScreenTimeTests.CO2ServiceTests
 
 
             _mockUserActivityLogDatabase.Setup(x => x.GetHighestCO2DailyTotalByDate(It.IsAny<DateTime>())).ReturnsAsync(new UserActivityLogModel { CO2Total = 100 });
-            _mockUserActivityLogDatabase.Setup(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>())).Returns(Task.CompletedTask);
+            _mockUserActivityLogDatabase.Setup(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>())).Returns(Task.CompletedTask);
 
             // Act
-            var result = await _co2Service.CalculateCO2DifferenceAsync();
+            var result = await _co2Service.CalculateAndStoreCO2DifferenceAsync();
 
             // Assert
             Assert.Equal(0, result);
-            _mockUserActivityLogDatabase.Verify(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>()), Times.Never);
+            _mockUserActivityLogDatabase.Verify(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never);
         }
     }
 }

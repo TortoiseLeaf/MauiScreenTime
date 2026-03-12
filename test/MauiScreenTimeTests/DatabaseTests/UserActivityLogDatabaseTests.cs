@@ -11,7 +11,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace MauiScreenTimeTests.DatabaseTests
 {
     internal class MockDatabaseService : IDatabaseService
-    {        
+    {
         public Task<string> GetDatabasePathAsync(string dbName = "testDB")
         {
             //var testPath = Path.Combine(Path.GetTempPath(), dbName);
@@ -54,10 +54,11 @@ namespace MauiScreenTimeTests.DatabaseTests
             //Arrange            
             var co2Total = 10.5;
             var co2Saved = 100L;
+            var co2ReducedProgress = 0;
             var treesPlanted = 3;
 
             //Act
-            await _database.AddActivityLog(co2Total, co2Saved, treesPlanted);
+            await _database.AddActivityLog(co2Total, co2Saved, co2ReducedProgress, treesPlanted);
             var result = await _database.GetAllActivitiesLogged();
 
             //Assert
@@ -71,17 +72,19 @@ namespace MauiScreenTimeTests.DatabaseTests
         public async Task GetActivityById_ReturnsActivity_WithSpecifiedId()
         {
             //arrange
-            int id = 1;            
+            int id = 1;
             var co2Total = 10.5;
             var co2Saved = 100L;
+            var co2ReducedProgress = 0;
+
             var treesPlanted = 3;
-            await _database.AddActivityLog(co2Total, co2Saved, treesPlanted);
+            await _database.AddActivityLog(co2Total, co2Saved, co2ReducedProgress, treesPlanted);
 
             //act
             var result = await _database.GetActivityById(id);
 
             //assert
-            Assert.Equal(id, result.Id);            
+            Assert.Equal(id, result.Id);
             Assert.Equal(co2Total, result.CO2Total);
             Assert.Equal(co2Saved, result.CO2TotalReduced);
             Assert.Equal(treesPlanted, result.TreesPlanted);
@@ -93,8 +96,10 @@ namespace MauiScreenTimeTests.DatabaseTests
             int id = 1;
             var co2Total = 10.5;
             var co2Saved = 100L;
+            var co2ReducedProgress = 0;
+
             var treesPlanted = 3;
-            await _database.AddActivityLog(co2Total, co2Saved, treesPlanted);
+            await _database.AddActivityLog(co2Total, co2Saved, co2ReducedProgress, treesPlanted);
             var result = await _database.GetActivityById(id);
             var date = result.Date;
 
@@ -116,8 +121,10 @@ namespace MauiScreenTimeTests.DatabaseTests
             int id = 1;
             var co2Total = 10.5;
             var co2Saved = 100L;
+            var co2ReducedProgress = 0;
+
             var treesPlanted = 3;
-            await _database.AddActivityLog(co2Total, co2Saved, treesPlanted);
+            await _database.AddActivityLog(co2Total, co2Saved, co2ReducedProgress, treesPlanted);
 
             //act
             var result = await _database.GetHighestCO2DailyTotalByDate(todayDate);
@@ -133,12 +140,14 @@ namespace MauiScreenTimeTests.DatabaseTests
             int id = 1;
             var co2Total = 10.5;
             var co2Saved = 100L;
+            var co2ReducedProgress = 0;
+
             var treesPlanted = 3;
-            
-            await _database.AddActivityLog(co2Total, co2Saved, treesPlanted);
+
+            await _database.AddActivityLog(co2Total, co2Saved, co2ReducedProgress, treesPlanted);
 
             //act
-            await _database.AddActivityLog(0,0,4);
+            await _database.AddActivityLog(0, 0, 0, 4);
             var result = await _database.GetLatestTreesByDate(todayDate);
 
             //assert
@@ -153,8 +162,10 @@ namespace MauiScreenTimeTests.DatabaseTests
             int id = 1;
             var co2Total = 10.5;
             var co2Saved = 100L;
+            var co2ReducedProgress = 0;
+
             var treesPlanted = 3;
-            await _database.AddActivityLog(co2Total, co2Saved, treesPlanted);
+            await _database.AddActivityLog(co2Total, co2Saved, co2ReducedProgress, treesPlanted);
 
             var result = await _database.GetAllActivitiesLogged();
             Assert.Single(result);
@@ -163,6 +174,62 @@ namespace MauiScreenTimeTests.DatabaseTests
             result = await _database.GetAllActivitiesLogged();
             //assert
             Assert.Empty(result);
+        }
+
+
+        [Fact]
+        public async Task AddLog_InsertsEntry_WithCorrectValues()
+        {
+            // Arrange
+            DateTime todayDate = DateTime.UtcNow.Date;
+            int id = 1;
+            var co2Total = 10.5;
+            var co2Saved = 100L;
+            var co2ReducedProgress = 0;
+            var treesPlanted = 0;
+
+            // Act
+            await _database.AddActivityLog(co2Total, co2Saved, co2ReducedProgress, treesPlanted);
+            var result = await _database.GetActivityById(1);
+
+            // Assert
+            Assert.Equal(co2Total, result.CO2Total);
+            Assert.Equal(co2Saved, result.CO2TotalReduced);
+            Assert.Equal(co2ReducedProgress, result.CO2ReducedProgress);
+            Assert.Equal(treesPlanted, result.TreesPlanted);
+        }
+
+        [Fact]
+        public async Task AddLog_ResetsReduced_AndIncrementsTree_WhenTotalCO2ReducedProgressReaches200()
+        {
+            // Arrange - insert entries that bring Reduced to 200
+            await _database.AddActivityLog(0, 0, 100, 0);
+            await _database.AddActivityLog(0, 0, 100, 0);
+
+            // Act - this should trigger the reset
+            var entry1 = await _database.GetActivityById(1);
+            var entry2 = await _database.GetActivityById(2);
+
+
+
+            // Assert - Reduced should be reset to 0
+            Assert.Equal(0, entry1.CO2ReducedProgress);
+            Assert.Equal(0, entry2.CO2ReducedProgress);
+        }
+
+        [Fact]
+        public async Task AddLog_AddsTree_WhenTotalCO2ReducedProgressReaches200()
+        {
+            // Arrange
+            await _database.AddActivityLog(0, 0, 100, 0);
+            await _database.AddActivityLog(0, 0, 100, 0);
+
+            // Act
+            var progressEntry = await _database.GetActivityById(3);
+
+            // Assert
+            Assert.Equal(1, progressEntry.TreesPlanted);
+            Assert.Equal(200, progressEntry.CO2TotalReduced);
         }
     }
 }
