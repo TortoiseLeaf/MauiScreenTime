@@ -127,8 +127,7 @@ namespace MauiScreenTime.ViewModels
             await ShowCO2e();
 
 
-            await GetCO2Total();
-            await CalculateDifference();
+            await GetAndStoreCO2Total();
         }
 
         private async Task PopulateAppCO2ListAsync()
@@ -399,7 +398,7 @@ namespace MauiScreenTime.ViewModels
             }
         }
 
-        public async Task GetCO2Total()
+        public async Task GetAndStoreCO2Total()
         {
 
             try
@@ -407,7 +406,7 @@ namespace MauiScreenTime.ViewModels
                 // returns it directly on the fly
                 Co2Total = await _co2Service.CalculateCO2TotalAsync(_appUsageList);
                 // save todays total to db
-                await _userActivityLogDatabase.AddActivityLog(Co2Total, 0, 0);
+                await _userActivityLogDatabase.AddActivityLog(Co2Total, 0, 0, 0);
                 var TodayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now);
                 //Console.WriteLine("here saved co2total: " + TodayTotalCO2Obj.CO2Total);
 
@@ -424,10 +423,10 @@ namespace MauiScreenTime.ViewModels
 
         
 
-        public async Task CalculateDifference()
-        {
-            await _co2Service.CalculateCO2DifferenceAsync();
-        }
+        //public async Task CalculateDifference()
+        //{
+        //    await _co2Service.CalculateAndStoreCO2DifferenceAsync();
+        //}
 
         // just been using this for debugging
         public async Task GetAllActivity()
