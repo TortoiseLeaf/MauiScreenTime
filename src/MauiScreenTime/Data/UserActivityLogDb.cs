@@ -1,12 +1,13 @@
-﻿using SQLite;
+﻿using MauiScreenTime.Data.Interfaces;
+using MauiScreenTime.Services.Interfaces;
+using SQLite;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using MauiScreenTime.Services.Interfaces;
-using MauiScreenTime.Data.Interfaces;
-using System.Diagnostics.CodeAnalysis;
 
 namespace MauiScreenTime.Data
 {
@@ -18,6 +19,7 @@ namespace MauiScreenTime.Data
         public DateTime TimeStamp { get; set; }
         public double CO2Total { get; set; }
         public double CO2TotalReduced { get; set; }
+        public int CO2ReducedProgress { get; set; }
         public int TreesPlanted { get; set; }
     }
 
@@ -91,8 +93,16 @@ namespace MauiScreenTime.Data
                 .Where(a => a.Date == inputDate.Date)
                 .Sum(x => x.TreesPlanted);
         }
+        public async Task<int> GetTotalCO2ReducedProgress()
+        {
+            var connection = await GetConnectionAsync();
+            var allEntries = await connection.Table<UserActivityLogModel>().ToListAsync();
+            return allEntries
+                //.Where(a => a.Date == inputDate.Date)
+                .Sum(x => x.CO2ReducedProgress);
+        }
 
-        public async Task AddActivityLog(double CO2Total, double CO2TotalReduced, int treesPlanted)
+        public async Task AddActivityLog(double CO2Total, double CO2TotalReduced, int CO2ReducedProgress, int treesPlanted)
         {
             var connection = await GetConnectionAsync();
             var today = DateTime.UtcNow;
@@ -103,26 +113,39 @@ namespace MauiScreenTime.Data
                 TimeStamp = today,
                 CO2Total = (double)CO2Total,
                 CO2TotalReduced = CO2TotalReduced,
+                CO2ReducedProgress = CO2ReducedProgress,
                 TreesPlanted = treesPlanted
             }
             );
-        }
-        public async Task AddActivityLogDEBUG(double CO2Total, double CO2TotalReduced, int treesPlanted)
-        {
-            var connection = await GetConnectionAsync();
-            var today = DateTime.Now.AddDays(-1);
-            //var yesterday = today - new TimeSpan(1, 0, 0, 0);
 
-            await connection.InsertAsync(new UserActivityLogModel
+            var totalReducedProgress = await GetTotalCO2ReducedProgress();
+
+            if (totalReducedProgress >= 100)
             {
-                Date = today.Date,
-                TimeStamp = today,
-                CO2Total = (double)CO2Total,
-                CO2TotalReduced = CO2TotalReduced,
-                //TreesPlanted += treesPlanted
-            }
+                var all = await connection.Table<UserActivityLogModel>().ToListAsync();
+
+                // clear all ReducedProgress data
+                foreach (var entry in all)
+                {
+                    entry.CO2ReducedProgress = 0;
+                    await connection.UpdateAsync(entry);
+                }
+
+                // add 200 to CO2TotalReduced and increment trees
+                await connection.InsertAsync(new UserActivityLogModel
+                {
+                    Date = today.Date,
+                    TimeStamp = today,
+                    CO2Total = 0,
+                    CO2TotalReduced = CO2TotalReduced + 100,
+                    CO2ReducedProgress = 0,
+                    TreesPlanted = treesPlanted + 1
+                }
             );
+            }
+
         }
+
         public async Task DeleteAllActivitiesLogged() 
         {
             var connection = await GetConnectionAsync();

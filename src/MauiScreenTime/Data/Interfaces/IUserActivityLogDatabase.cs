@@ -8,7 +8,7 @@ namespace MauiScreenTime.Data.Interfaces
 {
     public interface IUserActivityLogDatabase
     {
-        Task AddActivityLog(double CO2Total, double CO2TotalReduced, int treesPlanted);
+        Task AddActivityLog(double CO2Total, double CO2TotalReduced, int CO2ReducedProgress, int treesPlanted);
 
         Task<UserActivityLogModel> GetHighestCO2DailyTotalByDate(DateTime inputDate);
 
@@ -20,7 +20,7 @@ namespace MauiScreenTime.Data.Interfaces
 
         Task<int> GetLatestTreesByDate(DateTime inputDate);
 
-        Task AddActivityLogDEBUG(double CO2Total, double CO2TotalReduced, int treesPlanted);
+        Task<int> GetTotalCO2ReducedProgress();
 
     }
 }
