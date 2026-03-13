@@ -32,21 +32,28 @@ namespace MauiScreenTime.ViewModels
             _userActivityLogDatabase = userActivityLogDatabase;
             _co2Service = co2Service;
 
+            //_ = CalculateAndStoreDifference();
+
             _ = InitialiseMethods();
+
+            //_ = GetAndUpdateCO2ProgressBar();
+
             _ = GetDataSoFar();
         }
 
         public async Task InitialiseMethods()
         {
-            await CalculateDifferenceAndUpdateProgressBar();
+            await CalculateAndStoreDifference();
+            await GetAndUpdateCO2ProgressBar();
             //await IncrementTree();
-            await GetCO2ProgressBar();
+
+            //await RunGetProgressBarOnceADay();
             await GetTreesPlanted();
         }
 
-        public async Task CalculateDifferenceAndUpdateProgressBar()
+        public async Task CalculateAndStoreDifference()
         {
-            var co2ReducedToday = await _co2Service.CalculateAndStoreCO2DifferenceAsync();
+            await _co2Service.CalculateAndStoreCO2DifferenceAsync();
             //System.Diagnostics.Debug.WriteLine("here totalreduced calculate diff fired");
             //System.Diagnostics.Debug.WriteLine(Co2TotalReduced);
 
@@ -57,10 +64,34 @@ namespace MauiScreenTime.ViewModels
 
         }
 
-        public async Task GetCO2ProgressBar()
+
+        private async Task RunGetProgressBarOnceADay()
         {
-            // gets reduced progress
-            Co2ReducedProgress = await _userActivityLogDatabase.GetTotalCO2ReducedProgress();
+            var lastRun = Preferences.Get("LastRunDate", DateTime.MinValue.ToString());
+            var lastRunDate = DateTime.Parse(lastRun);
+
+            if (lastRunDate.Date < DateTime.Today)
+            {
+                System.Diagnostics.Debug.WriteLine("here progressbar runs");
+
+                // your function here
+                await GetAndUpdateCO2ProgressBar();
+
+                Preferences.Set("LastRunDate", DateTime.Now.ToString());
+            }
+        }
+
+        // calls getTotalDifference just once a day
+        // gets difference between today and yesterday and saves to the progressbar
+        public async Task GetAndUpdateCO2ProgressBar()
+        {
+            Console.WriteLine("here updating progress bar from goalviewmodel");
+            // in db, runs logic on progress bar to see if it should update tree and totalreduced, should put remainder back into progressbar
+            await _userActivityLogDatabase.UpdateProgressBar();
+
+            // display progress bar value updated
+                Co2ReducedProgress = await _userActivityLogDatabase.GetLatestProgressBar();
+            
 
             //// if it's > 200 update
             //if (Co2ReducedProgress >= 0 && Co2ReducedProgress >= 200)
@@ -116,12 +147,12 @@ namespace MauiScreenTime.ViewModels
 
             Co2TotalReduced = await _userActivityLogDatabase.GetCO2TotalReduced();
 
-            var all = await _userActivityLogDatabase.GetAllActivitiesLogged();
-            foreach (var i in all )
-            {
-                System.Diagnostics.Debug.WriteLine(System.Text.Json.JsonSerializer.Serialize(i));
+            //var all = await _userActivityLogDatabase.GetAllActivitiesLogged();
+            //foreach (var i in all )
+            //{
+            //    System.Diagnostics.Debug.WriteLine(System.Text.Json.JsonSerializer.Serialize(i));
 
-            }
+            //}
         }
     }
 }
