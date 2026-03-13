@@ -3,6 +3,7 @@ using MauiScreenTime.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -195,41 +196,80 @@ namespace MauiScreenTimeTests.DatabaseTests
             // Assert
             Assert.Equal(co2Total, result.CO2Total);
             Assert.Equal(co2Saved, result.CO2TotalReduced);
-            Assert.Equal(co2ReducedProgress, result.CO2ReducedProgress);
+            Assert.Equal(co2ReducedProgress, result.ProgressBar);
             Assert.Equal(treesPlanted, result.TreesPlanted);
         }
 
         [Fact]
-        public async Task AddLog_ResetsReduced_AndIncrementsTree_WhenTotalCO2ReducedProgressReaches200()
+        public async Task Update_WhenValueBelow200_DoesNotInsertOrReset()
         {
-            // Arrange - insert entries that bring Reduced to 200
-            await _database.AddActivityLog(0, 0, 100, 0);
-            await _database.AddActivityLog(0, 0, 100, 0);
+            // Arrange
+            await _database.AddActivityLog(0, 0, 150, 0);
 
-            // Act - this should trigger the reset
-            var entry1 = await _database.GetActivityById(1);
-            var entry2 = await _database.GetActivityById(2);
+            // Act
+            await _database.UpdateProgressBar();
+            var result = await _database.GetLatestProgressBar();
 
-
-
-            // Assert - Reduced should be reset to 0
-            Assert.Equal(0, entry1.CO2ReducedProgress);
-            Assert.Equal(0, entry2.CO2ReducedProgress);
+            // Assert
+            Assert.True(result == 150);
         }
 
         [Fact]
-        public async Task AddLog_AddsTree_WhenTotalCO2ReducedProgressReaches200()
+        public async Task Update_WhenValueExactly200_ResetsBarToZero()
         {
             // Arrange
-            await _database.AddActivityLog(0, 0, 100, 0);
-            await _database.AddActivityLog(0, 0, 100, 0);
+            await _database.AddActivityLog(0, 0, 200, 0);
+
 
             // Act
-            var progressEntry = await _database.GetActivityById(3);
+            await _database.UpdateProgressBar();
+            var result = await _database.GetLatestProgressBar();
 
             // Assert
-            Assert.Equal(1, progressEntry.TreesPlanted);
-            Assert.Equal(200, progressEntry.CO2TotalReduced);
+            Assert.Equal(0, result);
+        }
+
+        [Fact]
+        public async Task Update_WhenValueAbove200_InsertsRemainderEntry()
+        {
+            // Arrange
+            await _database.AddActivityLog(0, 0, 250, 0);
+
+
+            // Act
+            await _database.UpdateProgressBar();
+            var result = await _database.GetLatestProgressBar();
+
+            // Assert
+            Assert.Equal(50, result);
+        }
+
+        [Fact]
+        public async Task Update_WhenValueAbove200_SetsPlantedTo1()
+        {
+            // Arrange
+            await _database.AddActivityLog(0, 0, 250, 0);
+
+            // Act
+            await _database.UpdateProgressBar();
+            var result = await _database.GetActivityById(2);
+            // Assert
+            Assert.Equal(1, result.TreesPlanted);
+        }
+
+        [Fact]
+        public async Task Update_WhenValueExactly200_DoesNotInsertRemainderEntry()
+        {
+            // Arrange
+            await _database.AddActivityLog(0, 0, 200, 0);
+
+
+            // Act
+            await _database.UpdateProgressBar();
+            var result = await _database.GetLatestProgressBar();
+
+            // Assert
+            Assert.Equal(0, result);
         }
     }
 }
