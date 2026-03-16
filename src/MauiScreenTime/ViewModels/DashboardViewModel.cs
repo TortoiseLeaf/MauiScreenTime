@@ -342,17 +342,6 @@ namespace MauiScreenTime.ViewModels
         public async void OnCO2eClicked() => await ShowCO2e();
         public async void OnGoalClicked() => await Shell.Current.GoToAsync(nameof(GoalPage));
 
-
-
-
-
-
-
-
-
-
-
-
         
 
         // gets usage data from service if permissions granted
@@ -422,39 +411,6 @@ namespace MauiScreenTime.ViewModels
             }
 
 
-        }
-
-        
-
-        //public async Task CalculateDifference()
-        //{
-        //    await _co2Service.CalculateAndStoreCO2DifferenceAsync();
-        //}
-
-        // just been using this for debugging
-        public async Task GetAllActivity()
-        {
-            //Console.WriteLine("all logs here");
-
-            //// add data to entries for debugging
-            //await _userActivityLogDatabase.AddActivityLog(0, 10, 0);
-            //await _userActivityLogDatabase.AddActivityLog(50, 0, 0);
-
-
-            //var xy = await _userActivityLogDatabase.GetAllActivitiesLogged();
-            //foreach (var i in xy) 
-            //{
-            //    if (i.Date == DateTime.Today)
-            //    {
-            //        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(i));
-            //    }
-            //}
-
-            //var yesterdayData = await _userActivityLogDatabase.GetActivityByDate(DateTime.Now.AddDays(-1));
-            //var todayData = await _userActivityLogDatabase.GetActivityByDate(DateTime.Now);
-            //Console.WriteLine("today and yesterdays data");
-            //Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(todayData));
-            //Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(yesterdayData));
         }
 
 
