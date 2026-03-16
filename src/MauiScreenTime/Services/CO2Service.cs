@@ -111,13 +111,13 @@ namespace MauiScreenTime.Services
 
                 if (differenceSaved > 0)
                 {
-                    System.Diagnostics.Debug.WriteLine("diff saved in calculateCO2Diff coservice here: " + differenceSaved);
+                    //System.Diagnostics.Debug.WriteLine("diff saved in calculateCO2Diff coservice here: " + differenceSaved);
 
                     try
                     {
                         // stores co2 difference saved to progress bar
                         var progressBar = (int)differenceSaved;
-                        Console.WriteLine("here progressbar: (should be the same as diff) " + progressBar);
+                        //Console.WriteLine("here progressbar: (should be the same as diff) " + progressBar);
                         await _userActivityLogDatabase.AddActivityLog(0, 0, progressBar, 0);
                         
 
@@ -138,8 +138,8 @@ namespace MauiScreenTime.Services
                     differenceSaved = 0;
                 }
 
-                var x = await _userActivityLogDatabase.GetLatestProgressBar();
-                Console.WriteLine("here progressbar GET into co2service: ", x);
+                //var x = await _userActivityLogDatabase.GetLatestProgressBar();
+                //Console.WriteLine("here progressbar GET into co2service: ", x);
             }
 
             return differenceSaved;
