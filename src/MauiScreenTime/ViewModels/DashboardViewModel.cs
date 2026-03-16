@@ -110,14 +110,21 @@ namespace MauiScreenTime.ViewModels
             Enumerable.Range(0, 10).Select(_ => new BarItem { Height = 0 })
         );
 
-            //OnAppearing();
+            //DEBUG();
             InitialiseAsync();
             _ = ShowScreenTime();
             //GetDataSoFar();
 
         }
 
-        // this can replace onappearing probably
+        public async Task DEBUG()
+        {
+            await _userActivityLogDatabase.DEBUG(30, 0, 0, 0);
+            await _userActivityLogDatabase.DEBUG2(250, 0, 0, 0); // 200 TOTAL DAY BEFORE AND 100 TOTAL TODAY
+            
+
+        }
+
         public async Task InitialiseAsync()
         {
             await PopulateAppCO2ListAsync();

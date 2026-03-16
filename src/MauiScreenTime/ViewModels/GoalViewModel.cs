@@ -39,15 +39,18 @@ namespace MauiScreenTime.ViewModels
             //_ = GetAndUpdateCO2ProgressBar();
 
             _ = GetDataSoFar();
+            _ = DisplayProgressBar();
         }
 
         public async Task InitialiseMethods()
         {
             await CalculateAndStoreDifference();
-            await GetAndUpdateCO2ProgressBar();
+            //await GetAndUpdateCO2ProgressBar();
             //await IncrementTree();
 
-            //await RunGetProgressBarOnceADay();
+            await RunGetAndUpdateCO2OnceADay();
+
+            
             await GetTreesPlanted();
         }
 
@@ -65,7 +68,16 @@ namespace MauiScreenTime.ViewModels
         }
 
 
-        private async Task RunGetProgressBarOnceADay()
+        public async Task DisplayProgressBar()
+        {
+            var reduced = await _userActivityLogDatabase.GetLatestProgressBar();
+            Co2ReducedProgress = reduced;
+
+            System.Diagnostics.Debug.WriteLine("here progressbar runs" + Co2ReducedProgress);
+        }
+
+
+        private async Task RunGetAndUpdateCO2OnceADay()
         {
             var lastRun = Preferences.Get("LastRunDate", DateTime.MinValue.ToString());
             var lastRunDate = DateTime.Parse(lastRun);
@@ -77,6 +89,7 @@ namespace MauiScreenTime.ViewModels
                 // your function here
                 await GetAndUpdateCO2ProgressBar();
 
+                Co2ReducedProgress = await _userActivityLogDatabase.GetLatestProgressBar();
                 Preferences.Set("LastRunDate", DateTime.Now.ToString());
             }
         }
@@ -87,11 +100,14 @@ namespace MauiScreenTime.ViewModels
         {
             Console.WriteLine("here updating progress bar from goalviewmodel");
             // in db, runs logic on progress bar to see if it should update tree and totalreduced, should put remainder back into progressbar
-            await _userActivityLogDatabase.UpdateProgressBar();
+
+            
+                await _userActivityLogDatabase.UpdateProgressBar();
+            
 
             // display progress bar value updated
-                Co2ReducedProgress = await _userActivityLogDatabase.GetLatestProgressBar();
-            
+
+
 
             //// if it's > 200 update
             //if (Co2ReducedProgress >= 0 && Co2ReducedProgress >= 200)
