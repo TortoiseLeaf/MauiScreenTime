@@ -1,6 +1,7 @@
 ﻿using MauiScreenTime.Data;
 using MauiScreenTime.Data.Interfaces;
 using MauiScreenTime.Services;
+using MauiScreenTime.Services.Interfaces;
 using Moq;
 using Moq.Language.Flow;
 using System;
@@ -23,7 +24,7 @@ namespace MauiScreenTimeTests.CO2ServiceTests
         {
             _mockConversionDatabase = new Mock<IConversionTableDatabase>();
             _mockAppUsageDatabase = new Mock<IAppUsageDatabase>();
-            _co2Service = new CO2Service(_mockConversionDatabase.Object, _mockAppUsageDatabase.Object);
+            _co2Service = new CO2Service(_mockConversionDatabase.Object, _mockAppUsageDatabase.Object, null);
         }
 
         [Fact]

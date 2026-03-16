@@ -1,6 +1,6 @@
 //using Android.AdServices.Common;
 using MauiScreenTime.Data.Interfaces;
-using MauiScreenTime.Services;
+using MauiScreenTime.Services.Interfaces;
 using SQLite;
 using System;
 using System.Collections.Generic;

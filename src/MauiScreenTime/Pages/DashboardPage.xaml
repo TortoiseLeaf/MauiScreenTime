@@ -9,6 +9,15 @@
         <BackButtonBehavior IsEnabled="False" IsVisible="False"/>
     </Shell.BackButtonBehavior>
 
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style TargetType="Label" ApplyToDerivedTypes="True">
+                <Setter Property="TextColor" Value="{AppThemeBinding Light=Black, Dark=Gray}"/>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView Margin="20">
     <VerticalStackLayout 
         Padding="20" 
         Spacing="20">
@@ -29,7 +38,7 @@
                 Clicked="OnScreenTimeClicked"
                 HeightRequest="60"
                 CornerRadius="14"
-                BackgroundColor="MediumPurple"
+                BackgroundColor="{Binding ButtonBackgroundColor}"
                 TextColor="White"
                 FontAttributes="Bold"
                 FontSize="16"/>
@@ -42,7 +51,7 @@
               Clicked="OnCO2eClicked"
               HeightRequest="60"
               CornerRadius="14"
-              BackgroundColor="MediumPurple"
+              BackgroundColor="{Binding ButtonBackgroundColor}"
               TextColor="White"
               FontAttributes="Bold"
               FontSize="16"/>
@@ -325,5 +334,58 @@
             TextColor="White"
             FontAttributes="Bold"
             FontSize="28"/>
+        <CollectionView ItemsSource="{Binding AppUsageListCO2}" Margin="20">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="10" Margin="0,5" BorderColor="LightGray">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackLayout Grid.Column="0">
+                                <Label Text="Mins"/>
+                                <Label Text="{Binding UsageTimeMinutes, TargetNullValue='0'}" 
+                                   FontAttributes="Bold"
+                                   FontSize="16"/>
+                                <Label Text="CO2e"/>
+                                <Label Text="{Binding CO2e}" 
+       FontAttributes="Bold"
+       FontSize="16"/>
+                                <Label Text="{Binding AppName}" 
+                                   FontSize="12"
+                                   TextColor="Gray"/>
+
+                            </StackLayout>
+
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <Label Text="increment to prove dailyworker is firing"
+               FontSize="12"
+TextColor="Gray"
+HorizontalTextAlignment="Center"
+HorizontalOptions="Center" />
+        <Label Text="{Binding LatestTrees}" 
+  FontSize="30"
+  TextColor="Gray"
+  HorizontalTextAlignment="Center"
+  HorizontalOptions="Center" />
+        <Label Text="Total Co2 Today:" 
+       FontSize="20"
+               HorizontalTextAlignment="Center"
+       TextColor="Gray"/>
+
+        <Label Text="{Binding Co2TotalToday}" 
+      FontSize="30"
+      TextColor="Gray"
+      HorizontalTextAlignment="Center"
+      HorizontalOptions="Center" />
+
+        <Label Text="Total Co2 reduced:" 
+FontSize="20"
+        HorizontalTextAlignment="Center"
+TextColor="Gray"/>
+        
+
     </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

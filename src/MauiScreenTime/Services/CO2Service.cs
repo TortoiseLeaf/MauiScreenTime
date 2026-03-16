@@ -1,10 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MauiScreenTime.Data;
 using MauiScreenTime.Data.Interfaces;
+using MauiScreenTime.Services.Interfaces;
+#if ANDROID
+using Android.Util;
+#endif
 
 namespace MauiScreenTime.Services
 {
@@ -12,9 +16,10 @@ namespace MauiScreenTime.Services
     {
         private readonly IConversionTableDatabase _conversionTableDatabase;
         private readonly IAppUsageDatabase _appUsageDatabase;
+        private readonly IUserActivityLogDatabase _userActivityLogDatabase;
 
 
-        public CO2Service(IConversionTableDatabase conversionTableDatabase, IAppUsageDatabase appUsageDatabase)
+        public CO2Service(IConversionTableDatabase conversionTableDatabase, IAppUsageDatabase appUsageDatabase, IUserActivityLogDatabase userActivityLogDatabase)
         {
             // how much is superfluous, is it worth having the null check? else retry the connection? how to prevent recursion?
                 //this is superfluous and will throw an err later, if the conversion table db IS null what happens?
@@ -26,6 +31,7 @@ namespace MauiScreenTime.Services
             }
 
             _appUsageDatabase = appUsageDatabase;
+            _userActivityLogDatabase = userActivityLogDatabase;
         }
         public async Task<AppUsageModel> CalculateCO2eAsync(AppUsageModel appData)
         {
@@ -53,6 +59,7 @@ namespace MauiScreenTime.Services
                 // write to the db or just do on the fly? performance/security 
                 appData.CO2e = CO2e;
                 appData.AppName = conversionTableEntry.AppName;
+                appData.Date = DateTime.UtcNow;
             }
             catch (Exception ex)
             {
@@ -74,12 +81,59 @@ namespace MauiScreenTime.Services
 
                     CO2Total += newData.CO2e;
                 }
+
             }
             else
             {
-                CO2Total = 0; //error message explaining appUsageList is empty.
+                CO2Total = 0;
             }
-                return CO2Total; // return this to frontend. Save it to ActivityLog in the WorkManager service
+           
+            return CO2Total;
+        }
+
+        public async Task<double> CalculateAndStoreCO2DifferenceAsync()
+        {
+
+            double yesterdayCO2Total;
+            double dayBeforeYesterdayCO2Total;
+            double differenceSaved = 0;
+
+
+            var yesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now.AddDays(-1));
+            yesterdayCO2Total = yesterdayTotalCO2Obj.CO2Total;
+
+            var dayBeforeYesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now.AddDays(-2));
+            dayBeforeYesterdayCO2Total = dayBeforeYesterdayTotalCO2Obj.CO2Total;
+
+            if (yesterdayCO2Total > 0)
+            {
+                differenceSaved = dayBeforeYesterdayCO2Total - yesterdayCO2Total;
+
+                if (differenceSaved > 0)
+                {
+
+                    try
+                    {
+                        // store difference to progress bar
+                        var progressBar = (int)differenceSaved;
+                        await _userActivityLogDatabase.AddActivityLog(0, 0, progressBar, 0);
+                        
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Error adding diff: ", ex.Message);
+
+                    }
+
+                }
+                else
+                {
+                    differenceSaved = 0;
+                }
+
+            }
+
+            return differenceSaved;
         }
     }
-}
+    }

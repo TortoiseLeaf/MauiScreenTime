@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MauiScreenTime.Services;
 using MauiScreenTime.ViewModels;
 using MauiScreenTime.Services;
+using MauiScreenTime.Services.Interfaces;
 
 namespace MauiScreenTimeTests.ViewModelsTests
 {

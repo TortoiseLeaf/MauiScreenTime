@@ -1,5 +1,5 @@
 ﻿using MauiScreenTime.Pages;
-using MauiScreenTime.Services;
+using MauiScreenTime.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MauiScreenTime.Data;
-using MauiScreenTime.Services;
+using MauiScreenTime.Services.Interfaces;
 
 namespace MauiScreenTimeTests.ViewModelsTests
 {
