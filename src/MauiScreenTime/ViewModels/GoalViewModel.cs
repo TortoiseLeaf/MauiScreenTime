@@ -32,11 +32,8 @@ namespace MauiScreenTime.ViewModels
             _userActivityLogDatabase = userActivityLogDatabase;
             _co2Service = co2Service;
 
-            //_ = CalculateAndStoreDifference();
 
             _ = InitialiseMethods();
-
-            //_ = GetAndUpdateCO2ProgressBar();
 
             _ = GetDataSoFar();
             _ = DisplayProgressBar();
@@ -45,8 +42,7 @@ namespace MauiScreenTime.ViewModels
         public async Task InitialiseMethods()
         {
             await CalculateAndStoreDifference();
-            //await GetAndUpdateCO2ProgressBar();
-            //await IncrementTree();
+            
 
             await RunGetAndUpdateCO2OnceADay();
 
@@ -57,13 +53,6 @@ namespace MauiScreenTime.ViewModels
         public async Task CalculateAndStoreDifference()
         {
             await _co2Service.CalculateAndStoreCO2DifferenceAsync();
-            //System.Diagnostics.Debug.WriteLine("here totalreduced calculate diff fired");
-            //System.Diagnostics.Debug.WriteLine(Co2TotalReduced);
-
-            
-
-            // don't need to do that here do that in the co2 method
-            //await _userActivityLogDatabase.AddActivityLog(0, 0, co2ReducedProgress, 0);
 
         }
 
@@ -106,8 +95,6 @@ namespace MauiScreenTime.ViewModels
         {
 
             TreesTotal = await _userActivityLogDatabase.GetLatestTreesByDate(DateTime.Now);
-            //System.Diagnostics.Debug.WriteLine("here treesplanted fired");
-            //System.Diagnostics.Debug.WriteLine(TreesTotal);
 
         }
 
