@@ -94,7 +94,7 @@ namespace MauiScreenTime.Data
                 .Where(a => a.Date == inputDate.Date)
                 .Sum(x => x.TreesPlanted);
         }
-        public async Task<int> GetLatestProgressBar()
+        public async Task<int> DisplayLatestProgressBar()
         {
             var connection = await GetConnectionAsync();
             var allEntries = await connection.Table<UserActivityLogModel>().ToListAsync();
@@ -110,6 +110,16 @@ namespace MauiScreenTime.Data
             }
 
             return 0;
+        }
+        public async Task<int> GetLatestProgressBar()
+        {
+            var connection = await GetConnectionAsync();
+            var allEntries = await connection.Table<UserActivityLogModel>().ToListAsync();
+            return allEntries
+                .Where(a => a.Date.Date == DateTime.UtcNow.Date)
+                .OrderByDescending(x => x.ProgressBar)
+                .FirstOrDefault()?.ProgressBar ?? 0;
+            
         }
         //public async Task<int> GetTotalCO2ReducedProgress()
         //{

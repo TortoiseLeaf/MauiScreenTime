@@ -26,6 +26,7 @@ namespace MauiScreenTime.Data.Interfaces
 
         Task UpdateProgressBar();
         Task <int> GetLatestProgressBar();
+        Task <int> DisplayLatestProgressBar();
 
     }
 }
