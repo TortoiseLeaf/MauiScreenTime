@@ -213,12 +213,6 @@ namespace MauiScreenTime.Data
             //  if totalbar is > 200                        if progress bar > 200, clear bar and add tree 
             if (progressBarValue >= 200)
             {
-
-                // set the remainder
-                var remainder = progressBarValue - 200;
-                Console.WriteLine("here remainder is : " + remainder);
-
-
                 // add bar to total with 200 to CO2TotalReduced and increment tree
                 await connection.InsertAsync(new UserActivityLogModel
                 {
@@ -226,9 +220,13 @@ namespace MauiScreenTime.Data
                     TimeStamp = today,
                     CO2Total = 0,
                     CO2TotalReduced = 200,
-                    ProgressBar = 0,
+                    //ProgressBar = 0,
                     TreesPlanted = 1
                 });
+                // set the remainder
+                var remainder = progressBarValue - 200;
+                Console.WriteLine("here remainder is : " + remainder);
+                
 
                 //// clear all ReducedProgress data
                 var all = await connection.Table<UserActivityLogModel>().ToListAsync();
