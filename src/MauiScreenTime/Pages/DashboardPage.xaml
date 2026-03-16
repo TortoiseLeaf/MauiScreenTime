@@ -4,6 +4,7 @@
              xmlns:vm="clr-namespace:MauiScreenTime.ViewModels"
              xmlns:models="clr-namespace:MauiScreenTime.Data"
              x:Class="MauiScreenTime.Pages.DashboardPage"
+             x:DataType="vm:DashboardViewModel"
              Title="DashboardPage">
     <Shell.BackButtonBehavior>
         <BackButtonBehavior IsEnabled="False" IsVisible="False"/>
@@ -334,10 +335,10 @@
             TextColor="White"
             FontAttributes="Bold"
             FontSize="28"/>
-        <CollectionView ItemsSource="{Binding AppUsageListCO2}" Margin="20">
+            <CollectionView ItemsSource="{Binding AppUsageListCO2}" x:DataType="vm:DashboardViewModel" Margin="20">
             <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Frame Padding="10" Margin="0,5" BorderColor="LightGray">
+                    <DataTemplate x:DataType="vm:DashboardViewModel">
+                    <Border Padding="10" Margin="0,5" Stroke="LightGray">
                         <Grid ColumnDefinitions="*,Auto">
                             <StackLayout Grid.Column="0">
                                 <Label Text="Mins"/>
@@ -355,7 +356,7 @@
                             </StackLayout>
 
                         </Grid>
-                    </Frame>
+                    </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
