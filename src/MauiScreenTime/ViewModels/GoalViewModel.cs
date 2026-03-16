@@ -70,13 +70,14 @@ namespace MauiScreenTime.ViewModels
 
         public async Task DisplayProgressBar()
         {
-            var reduced = await _userActivityLogDatabase.GetLatestProgressBar();
+            var reduced = await _userActivityLogDatabase.DisplayLatestProgressBar();
             Co2ReducedProgress = reduced;
 
             System.Diagnostics.Debug.WriteLine("here progressbar runs" + Co2ReducedProgress);
         }
 
 
+        // update Progress bar once a day
         private async Task RunGetAndUpdateCO2OnceADay()
         {
             var lastRun = Preferences.Get("LastRunDate", DateTime.MinValue.ToString());
@@ -86,7 +87,6 @@ namespace MauiScreenTime.ViewModels
             {
                 System.Diagnostics.Debug.WriteLine("here progressbar runs");
 
-                // your function here
                 await GetAndUpdateCO2ProgressBar();
 
                 Co2ReducedProgress = await _userActivityLogDatabase.GetLatestProgressBar();
@@ -94,46 +94,14 @@ namespace MauiScreenTime.ViewModels
             }
         }
 
-        // calls getTotalDifference just once a day
-        // gets difference between today and yesterday and saves to the progressbar
         public async Task GetAndUpdateCO2ProgressBar()
         {
-            Console.WriteLine("here updating progress bar from goalviewmodel");
-            // in db, runs logic on progress bar to see if it should update tree and totalreduced, should put remainder back into progressbar
-
             
                 await _userActivityLogDatabase.UpdateProgressBar();
             
 
-            // display progress bar value updated
-
-
-
-            //// if it's > 200 update
-            //if (Co2ReducedProgress >= 0 && Co2ReducedProgress >= 200)
-            //{
-            //    // Add tree
-            //    await _userActivityLogDatabase.AddActivityLog(0, 0, 0, 1);
-            //}
         }
-        //public async Task IncrementTree()
-        //{
-        //    // HERE
-        //    // this always calls total reduced to date so it will always update a tree as long as it's > 200
-        //    // how to isolate the tree increment to just the progress bar?
-        //    Co2ReducedProgress = await _userActivityLogDatabase.GetTotalCO2ReducedProgress();
-        //    //Co2TotalReduced = await _userActivityLogDatabase.GetCO2TotalReduced();
-
-
-        //    if (Co2ReducedProgress >= 0 && Co2ReducedProgress >= 200)
-        //    {
-        //        //System.Diagnostics.Debug.WriteLine("here totalreduced in increment tree2");
-        //        //System.Diagnostics.Debug.WriteLine(Co2TotalReduced);
-
-        //        await _userActivityLogDatabase.AddActivityLog(0, 0,0, 1);
-        //    }
-
-        //}
+        
         public async Task GetTreesPlanted()
         {
 
@@ -154,21 +122,12 @@ namespace MauiScreenTime.ViewModels
             var yesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(yesterday);
             var dayBeforeYesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(dayBeforeYesterday);
 
-            //LatestTrees = await _userActivityLogDatabase.GetLatestTreesByDate(dayBeforeYesterday);
-
-            //Co2TotalReduced = await _userActivityLogDatabase.GetCO2TotalReduced();
 
             Co2TotalY = yesterdayTotalCO2Obj.CO2Total;
             Co2TotalDayBefore = dayBeforeYesterdayTotalCO2Obj.CO2Total;
 
             Co2TotalReduced = await _userActivityLogDatabase.GetCO2TotalReduced();
 
-            //var all = await _userActivityLogDatabase.GetAllActivitiesLogged();
-            //foreach (var i in all )
-            //{
-            //    System.Diagnostics.Debug.WriteLine(System.Text.Json.JsonSerializer.Serialize(i));
-
-            //}
         }
     }
 }

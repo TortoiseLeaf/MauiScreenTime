@@ -36,7 +36,6 @@ namespace MauiScreenTime
 
             builder.Services.AddSingleton<App>();
             
-            //builder.Services.AddTransient<ConsentDatabase>();
 
             builder.Services.AddTransient<DashboardViewModel>();
             builder.Services.AddTransient<GoalViewModel>();

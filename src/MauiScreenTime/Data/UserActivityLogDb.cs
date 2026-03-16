@@ -121,14 +121,7 @@ namespace MauiScreenTime.Data
                 .FirstOrDefault()?.ProgressBar ?? 0;
             
         }
-        //public async Task<int> GetTotalCO2ReducedProgress()
-        //{
-        //    var connection = await GetConnectionAsync();
-        //    var allEntries = await connection.Table<UserActivityLogModel>().ToListAsync();
-        //    return allEntries
-        //        //.Where(a => a.Date == inputDate.Date)
-        //        .Sum(x => x.ProgressBar);
-        //}
+       
         public async Task<List<UserActivityLogModel>> GetAllCO2ReducedProgressEntries()
         {
             var connection = await GetConnectionAsync();
@@ -211,24 +204,9 @@ namespace MauiScreenTime.Data
             var connection = await GetConnectionAsync();
             var today = DateTime.UtcNow;
 
-            // get progress bar data (int) or something
             var progressBarValue = await GetLatestProgressBar();
 
-            // checks if today has an entry with a remainder added to the progress 
-            //var todayHasReducedProgress = allReducedProgressEntries.Any(a => a.Date == today.Date && a.TimeStamp == null);
-            //System.Diagnostics.Debug.WriteLine("Here remainder: " + todayHasReducedProgress);
 
-            //if (totalReducedBarProgress < 200)
-            //{
-            //    await connection.InsertAsync(new UserActivityLogModel
-            //    {
-            //        Date = today.Date,
-            //        CO2ReducedProgress = totalReducedBarProgress,
-            //    });
-            //}
-            Console.WriteLine("here progressbar in db is: " + progressBarValue);
-
-            //  if totalbar is > 200                        if progress bar > 200, clear bar and add tree 
             if (progressBarValue >= 200)
             {
                 // add bar to total with 200 to CO2TotalReduced and increment tree
@@ -241,12 +219,11 @@ namespace MauiScreenTime.Data
                     //ProgressBar = 0,
                     TreesPlanted = 1
                 });
+
                 // set the remainder
                 var remainder = progressBarValue - 200;
-                Console.WriteLine("here remainder is : " + remainder);
                 
-
-                //// clear all ReducedProgress data
+                //// clear the progress bar
                 var all = await connection.Table<UserActivityLogModel>().ToListAsync();
 
                 foreach (var entry in all)
@@ -269,11 +246,6 @@ namespace MauiScreenTime.Data
 
 
             }
-            //else
-            //{
-            //    System.Diagnostics.Debug.WriteLine("Here has remainder already");
-
-            //}
 
         }
 

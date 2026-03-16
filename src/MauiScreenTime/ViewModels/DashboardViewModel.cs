@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MauiScreenTime.Data;
 using MauiScreenTime.Data.Interfaces;
-using MauiScreenTime.Helpers;
 using MauiScreenTime.Services.Interfaces;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -339,11 +338,8 @@ namespace MauiScreenTime.ViewModels
             }
         }
 
-        // Event handlers have to be async void
         public async void OnScreenTimeClicked() => await ShowScreenTime();
         public async void OnCO2eClicked() => await ShowCO2e();
-
-        //Switch to GoalPage
         public async void OnGoalClicked() => await Shell.Current.GoToAsync(nameof(GoalPage));
 
 
