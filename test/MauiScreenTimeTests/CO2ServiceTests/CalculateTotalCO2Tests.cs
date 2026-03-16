@@ -18,7 +18,6 @@ namespace MauiScreenTimeTests.CO2ServiceTests
         private readonly Mock<IAppUsageDatabase> _mockAppUsageDatabase;
         private readonly Mock<IUserActivityLogDatabase> _mockUserActivityLogDatabase;
         private readonly ICO2Service _co2Service;
-        private AppUsageModel mockAppData;
 
         public CalculateTotalCO2Tests()
         {
@@ -34,9 +33,9 @@ namespace MauiScreenTimeTests.CO2ServiceTests
             // Arrange
             var mockList = new List<AppUsageModel>
     {
-        new AppUsageModel { PackageName = "Item1", UsageTimeMinutes = 5 },
-        new AppUsageModel { PackageName = "Item2", UsageTimeMinutes = 10 },
-        new AppUsageModel { PackageName = "Item3", UsageTimeMinutes = 15 }
+        new() { PackageName = "Item1", UsageTimeMinutes = 5 },
+        new() { PackageName = "Item2", UsageTimeMinutes = 10 },
+        new() { PackageName = "Item3", UsageTimeMinutes = 15 }
     };
 
             _mockConversionDatabase
@@ -60,7 +59,7 @@ namespace MauiScreenTimeTests.CO2ServiceTests
         public async Task CalculateCO2TotalAsync_WithNullList_ReturnsZero()
         {
             // Arrange
-            List<AppUsageModel> mockList = null;
+            List<AppUsageModel>? mockList = null;
 
             // Act
             var result = await _co2Service.CalculateCO2TotalAsync(mockList);

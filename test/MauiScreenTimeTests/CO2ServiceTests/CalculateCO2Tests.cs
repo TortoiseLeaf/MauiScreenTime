@@ -18,7 +18,6 @@ namespace MauiScreenTimeTests.CO2ServiceTests
         private readonly Mock<IAppUsageDatabase> _mockAppUsageDatabase;
         //private readonly Mock<ICO2Service> _co2Service;
         private readonly ICO2Service _co2Service;
-        private AppUsageModel mockAppData;
 
         public CalculateCO2Tests()
         {

@@ -79,11 +79,10 @@
                         Grid.RowSpan="5"
                         BindableLayout.ItemsSource="{Binding YAxisLabels}"
                         VerticalOptions="Fill"
-                        x:DataType="vm:DashboardViewModel"
                         Spacing="0">
 
                         <BindableLayout.ItemTemplate>
-                                <DataTemplate x:DataType="vm:DashboardViewModel">
+                                <DataTemplate x:DataType="{x:Type x:String}">
                                 <Grid HeightRequest="44">
                                     <Label Text="{Binding}"
                                            FontSize="10"
@@ -339,7 +338,7 @@
             FontSize="28"/>
             <CollectionView ItemsSource="{Binding AppUsageListCO2}" x:DataType="vm:DashboardViewModel" Margin="20">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="vm:DashboardViewModel">
+                    <DataTemplate x:DataType="{x:Type x:String}">
                         <Border Padding="10" Margin="0,5" Stroke="LightGray">
                             <Grid ColumnDefinitions="*,Auto">
                                 <StackLayout Grid.Column="0">
