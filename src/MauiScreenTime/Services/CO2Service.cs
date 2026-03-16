@@ -111,15 +111,13 @@ namespace MauiScreenTime.Services
 
                 if (differenceSaved > 0)
                 {
-                    System.Diagnostics.Debug.WriteLine("This is the difference saved here: " + differenceSaved);
 
                     try
                     {
-                        // stores co2 difference saved to progress bar
-                        var co2ReducedProgress = (int)differenceSaved;
-                        await _userActivityLogDatabase.AddActivityLog(0, 0, co2ReducedProgress, 0);
-                        Console.WriteLine("diff saved successfully");
-
+                        // store difference to progress bar
+                        var progressBar = (int)differenceSaved;
+                        await _userActivityLogDatabase.AddActivityLog(0, 0, progressBar, 0);
+                        
                     }
                     catch (Exception ex)
                     {
@@ -127,15 +125,12 @@ namespace MauiScreenTime.Services
 
                     }
 
-#if ANDROID
-                    Log.Debug("CO2Service", "here successfully CO2 difference saved to log");
-#endif
-
                 }
                 else
                 {
                     differenceSaved = 0;
                 }
+
             }
 
             return differenceSaved;

@@ -38,8 +38,7 @@ namespace MauiScreenTime.ViewModels
             DeleteAllCommand = new Command(async () => await DeleteAll());
 
             _ = LoadTermsAndConditions();
-            //Task<bool> hasPermission = CheckAndroidPermissions();
-            PageAppearing();
+             PageAppearing();
         }
 
         [RelayCommand]

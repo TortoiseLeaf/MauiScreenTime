@@ -54,6 +54,8 @@ HorizontalOptions="Center" />
 FontSize="20"
         HorizontalTextAlignment="Center"
 TextColor="Gray"/>
+        
+        
         <Label Text="{Binding Co2TotalReduced}" 
 FontSize="30"
 TextColor="Gray"

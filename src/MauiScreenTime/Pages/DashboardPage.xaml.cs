@@ -1,5 +1,4 @@
-﻿using MauiScreenTime.Helpers;
-using MauiScreenTime.ViewModels;
+﻿using MauiScreenTime.ViewModels;
 using Microsoft.Maui.Graphics;
 using System.Collections.ObjectModel;
 using System.Linq;

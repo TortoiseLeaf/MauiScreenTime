@@ -9,6 +9,14 @@
         <BackButtonBehavior IsEnabled="False" IsVisible="False"/>
     </Shell.BackButtonBehavior>
 
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style TargetType="Label" ApplyToDerivedTypes="True">
+                <Setter Property="TextColor" Value="{AppThemeBinding Light=Black, Dark=Gray}"/>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
     <ScrollView Margin="20">
     <VerticalStackLayout 
         Padding="20" 

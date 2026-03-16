@@ -1,4 +1,4 @@
-﻿using MauiScreenTime.Data.Interfaces;
+using MauiScreenTime.Data.Interfaces;
 using MauiScreenTime.Services.Interfaces;
 using SQLite;
 using System;
@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.Maui.ApplicationModel.Permissions;
 
 namespace MauiScreenTime.Data
 {
@@ -16,10 +17,10 @@ namespace MauiScreenTime.Data
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public DateTime Date { get; set; }
-        public DateTime TimeStamp { get; set; }
+        public DateTime? TimeStamp { get; set; }
         public double CO2Total { get; set; }
         public double CO2TotalReduced { get; set; }
-        public int CO2ReducedProgress { get; set; }
+        public int ProgressBar { get; set; }
         public int TreesPlanted { get; set; }
     }
 
@@ -93,16 +94,75 @@ namespace MauiScreenTime.Data
                 .Where(a => a.Date == inputDate.Date)
                 .Sum(x => x.TreesPlanted);
         }
-        public async Task<int> GetTotalCO2ReducedProgress()
+        public async Task<int> DisplayLatestProgressBar()
+        {
+            var connection = await GetConnectionAsync();
+            var allEntries = await connection.Table<UserActivityLogModel>().ToListAsync();
+            var todaysEntries = allEntries
+                .Where(a => a.Date.Date == DateTime.UtcNow.Date)
+                .OrderByDescending(x => x.ProgressBar)
+                .ToList();
+
+            foreach (var entry in todaysEntries)
+            {
+                if (entry.ProgressBar < 200)
+                    return entry.ProgressBar;
+            }
+
+            return 0;
+        }
+        public async Task<int> GetLatestProgressBar()
         {
             var connection = await GetConnectionAsync();
             var allEntries = await connection.Table<UserActivityLogModel>().ToListAsync();
             return allEntries
-                //.Where(a => a.Date == inputDate.Date)
-                .Sum(x => x.CO2ReducedProgress);
+                .Where(a => a.Date.Date == DateTime.UtcNow.Date)
+                .OrderByDescending(x => x.ProgressBar)
+                .FirstOrDefault()?.ProgressBar ?? 0;
+            
+        }
+       
+        public async Task<List<UserActivityLogModel>> GetAllCO2ReducedProgressEntries()
+        {
+            var connection = await GetConnectionAsync();
+            var allEntries = await connection.Table<UserActivityLogModel>().ToListAsync();
+            return allEntries;
+                
         }
 
-        public async Task AddActivityLog(double CO2Total, double CO2TotalReduced, int CO2ReducedProgress, int treesPlanted)
+        public async Task DEBUG(double CO2Total, double CO2TotalReduced, int ProgressBar, int treesPlanted)
+        {
+            var connection = await GetConnectionAsync();
+            var today = DateTime.Now.AddDays(-1);
+
+            await connection.InsertAsync(new UserActivityLogModel
+            {
+                Date = today.Date,
+                TimeStamp = today,
+                CO2Total = (double)CO2Total,
+                CO2TotalReduced = CO2TotalReduced,
+                ProgressBar = ProgressBar,
+                TreesPlanted = treesPlanted
+            }
+            );
+        }
+        public async Task DEBUG2(double CO2Total, double CO2TotalReduced, int ProgressBar, int treesPlanted)
+        {
+            var connection = await GetConnectionAsync();
+            var today = DateTime.Now.AddDays(-2);
+
+            await connection.InsertAsync(new UserActivityLogModel
+            {
+                Date = today.Date,
+                TimeStamp = today,
+                CO2Total = (double)CO2Total,
+                CO2TotalReduced = CO2TotalReduced,
+                ProgressBar = ProgressBar,
+                TreesPlanted = treesPlanted
+            }
+            );
+        }
+        public async Task AddActivityLog(double CO2Total, double CO2TotalReduced, int ProgressBar, int treesPlanted)
         {
             var connection = await GetConnectionAsync();
             var today = DateTime.UtcNow;
@@ -113,35 +173,78 @@ namespace MauiScreenTime.Data
                 TimeStamp = today,
                 CO2Total = (double)CO2Total,
                 CO2TotalReduced = CO2TotalReduced,
-                CO2ReducedProgress = CO2ReducedProgress,
+                ProgressBar = ProgressBar,
                 TreesPlanted = treesPlanted
             }
             );
 
-            var totalReducedProgress = await GetTotalCO2ReducedProgress();
+        }
+        public async Task AddActivityLogDEBUG(double CO2Total, double CO2TotalReduced, int ProgressBar, int treesPlanted)
+        {
+            var connection = await GetConnectionAsync();
+            var yesterday = DateTime.UtcNow.AddDays(-1);
 
-            if (totalReducedProgress >= 200)
+            await connection.InsertAsync(new UserActivityLogModel
             {
-                var all = await connection.Table<UserActivityLogModel>().ToListAsync();
+                Date = yesterday.Date,
+                TimeStamp = yesterday,
+                CO2Total = (double)CO2Total,
+                CO2TotalReduced = CO2TotalReduced,
+                ProgressBar = ProgressBar,
+                TreesPlanted = treesPlanted
+            }
+            );
 
-                // clear all ReducedProgress data
-                foreach (var entry in all)
-                {
-                    entry.CO2ReducedProgress = 0;
-                    await connection.UpdateAsync(entry);
-                }
+        }
 
-                // add 200 to CO2TotalReduced and increment trees
+        public async Task UpdateProgressBar() {
+
+            Console.WriteLine("here updating progress bar from user db");
+
+            var connection = await GetConnectionAsync();
+            var today = DateTime.UtcNow;
+
+            var progressBarValue = await GetLatestProgressBar();
+
+
+            if (progressBarValue >= 200)
+            {
+                // add bar to total with 200 to CO2TotalReduced and increment tree
                 await connection.InsertAsync(new UserActivityLogModel
                 {
                     Date = today.Date,
                     TimeStamp = today,
                     CO2Total = 0,
-                    CO2TotalReduced = CO2TotalReduced + 200,
-                    CO2ReducedProgress = 0,
-                    TreesPlanted = treesPlanted + 1
+                    CO2TotalReduced = 200,
+                    //ProgressBar = 0,
+                    TreesPlanted = 1
+                });
+
+                // set the remainder
+                var remainder = progressBarValue - 200;
+                
+                //// clear the progress bar
+                var all = await connection.Table<UserActivityLogModel>().ToListAsync();
+
+                foreach (var entry in all)
+                {
+                    entry.ProgressBar = 0;
+                    await connection.UpdateAsync(entry);
                 }
-            );
+
+                // Save remainder back to progress bar
+                if (remainder > 0)
+                {
+                    await connection.InsertAsync(new UserActivityLogModel
+                    {
+                        Date = today.Date,
+                        ProgressBar = remainder,
+                    });
+                    Console.WriteLine("here remainder added to progressbar: " + remainder);
+
+                }
+
+
             }
 
         }
