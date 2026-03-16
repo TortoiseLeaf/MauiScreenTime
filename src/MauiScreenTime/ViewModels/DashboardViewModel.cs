@@ -23,9 +23,9 @@ namespace MauiScreenTime.ViewModels
     public class BarItem
     {
         public double Height { get; set; }
-        public string Label { get; set; }
+        public string? Label { get; set; }
         public double Value { get; set; }
-        public Color BarColor { get; set; }
+        public Color? BarColor { get; set; }
     }
 
     public partial class DashboardViewModel : ObservableObject, INotifyPropertyChanged
@@ -42,9 +42,9 @@ namespace MauiScreenTime.ViewModels
         public bool hasPermission;
 
         [ObservableProperty]
-        private List<AppUsageModel> _appUsageList = new();
+        private List<AppUsageModel> _appUsageList = [];
         [ObservableProperty]
-        private ObservableCollection<AppUsageModel> _appUsageListCO2 = new();
+        private ObservableCollection<AppUsageModel> _appUsageListCO2 = [];
         [ObservableProperty]
         private double _co2Total = new();
         [ObservableProperty]
@@ -61,7 +61,7 @@ namespace MauiScreenTime.ViewModels
         public ObservableCollection<BarItem> CurrentChart { get; set; }
 
         // Dynamic Y axis labels
-        public ObservableCollection<string> YAxisLabels { get; set; } = new();
+        public ObservableCollection<string> YAxisLabels { get; set; } = [];
 
         private List<BarItem> ScreenTimeData;
         private List<BarItem> CO2eData;
@@ -110,7 +110,7 @@ namespace MauiScreenTime.ViewModels
         );
 
             //DEBUG();
-            InitialiseAsync();
+            _ = InitialiseAsync();
             _ = ShowScreenTime();
             //GetDataSoFar();
 
@@ -128,7 +128,7 @@ namespace MauiScreenTime.ViewModels
         {
             await PopulateAppCO2ListAsync();
             await LoadData();
-            CalculateTotals();
+            await CalculateTotals();
             await ShowScreenTime();
             await ShowCO2e();
 
@@ -155,21 +155,21 @@ namespace MauiScreenTime.ViewModels
         async Task LoadData()
         {
             
-            ScreenTimeData = _appUsageListCO2.Select(obj => new BarItem
+            ScreenTimeData = [.. AppUsageListCO2.Select(obj => new BarItem
             {
                 Label = obj.AppName.Length >= 3 ? obj.AppName[..3] : obj.AppName,
                 Value = obj.UsageTimeMinutes
-            }).ToList();
+            })];
 
-            CO2eData = _appUsageListCO2.Select(obj => new BarItem
+            CO2eData = [.. AppUsageListCO2.Select(obj => new BarItem
             {
                 Label = obj.AppName.Length >= 3 ? obj.AppName[..3] : obj.AppName,
 
                 Value = obj.CO2e
-            }).ToList();
+            })];
 
 
-            CalculateTotals();
+            await CalculateTotals();
         }
 
         // Scales raw data to visual bar heights - keeps the chart proportional regardless of values

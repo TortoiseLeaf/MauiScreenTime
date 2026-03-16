@@ -60,15 +60,15 @@
         </Grid>
 
         <!-- Chart Container -->
-        <Frame
+        <Border
             BackgroundColor="#F5F7FA"
-            CornerRadius="20"
+            StrokeShape="20"
             Padding="0">
 
             <!-- OUTER GRID: Y AXIS + CHART -->
             <Grid ColumnDefinitions="40,*"
                   HeightRequest="230"
-                  HorizontalOptions="FillAndExpand">
+                  HorizontalOptions="Fill">
 
                 <!-- ================= Y AXIS ================= -->
                 <Grid Grid.Column="0"
@@ -78,11 +78,12 @@
                     <VerticalStackLayout
                         Grid.RowSpan="5"
                         BindableLayout.ItemsSource="{Binding YAxisLabels}"
-                        VerticalOptions="FillAndExpand"
+                        VerticalOptions="Fill"
+                        x:DataType="vm:DashboardViewModel"
                         Spacing="0">
 
                         <BindableLayout.ItemTemplate>
-                            <DataTemplate>
+                                <DataTemplate x:DataType="vm:DashboardViewModel">
                                 <Grid HeightRequest="44">
                                     <Label Text="{Binding}"
                                            FontSize="10"
@@ -98,12 +99,13 @@
 
                 <!-- ================= CHART AREA ================= -->
                 <Grid Grid.Column="1"
-                      HorizontalOptions="FillAndExpand">
+                      x:DataType="vm:DashboardViewModel"
+                      HorizontalOptions="Fill">
 
                     <!-- GRID LINES (BACKGROUND) -->
                     <Grid RowDefinitions="*,*,*,*,*"
                           ColumnDefinitions="*,*,*,*,*,*,*,*,*,*,1*"
-                          VerticalOptions="FillAndExpand">
+                          VerticalOptions="Fill">
 
                         <BoxView Grid.Row="0" Grid.ColumnSpan="10" HeightRequest="1" BackgroundColor="Black"/>
                         <BoxView Grid.Row="1" Grid.ColumnSpan="10" HeightRequest="1" BackgroundColor="Black"/>
@@ -116,7 +118,7 @@
 
                     <!-- BAR CHART -->
                     <Grid ColumnSpacing="5"
-                          HorizontalOptions="FillAndExpand">
+                          HorizontalOptions="Fill">
 
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -298,12 +300,12 @@
                     </Grid>
                 </Grid>
             </Grid>
-        </Frame>
+        </Border>
 
         <!-- Totals Container -->
-        <Frame
+        <Border
             BackgroundColor="#F5F7FA"
-            CornerRadius="20"
+            StrokeShape="20"
             Padding="0">
             <VerticalStackLayout Spacing="4">
                 <!-- Display Totals -->
@@ -318,7 +320,7 @@
                     FontAttributes="Bold"
                     HorizontalOptions="Center"/>
             </VerticalStackLayout>
-        </Frame>
+        </Border>
 
         <Grid VerticalOptions="Fill"/>
         <Grid VerticalOptions="Fill"/>
@@ -336,57 +338,31 @@
             FontAttributes="Bold"
             FontSize="28"/>
             <CollectionView ItemsSource="{Binding AppUsageListCO2}" x:DataType="vm:DashboardViewModel" Margin="20">
-            <CollectionView.ItemTemplate>
+                <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="vm:DashboardViewModel">
-                    <Border Padding="10" Margin="0,5" Stroke="LightGray">
-                        <Grid ColumnDefinitions="*,Auto">
-                            <StackLayout Grid.Column="0">
-                                <Label Text="Mins"/>
-                                <Label Text="{Binding UsageTimeMinutes, TargetNullValue='0'}" 
+                        <Border Padding="10" Margin="0,5" Stroke="LightGray">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackLayout Grid.Column="0">
+                                    <Label Text="Mins"/>
+                                    <Label Text="{Binding UsageTimeMinutes, TargetNullValue='0'}" 
                                    FontAttributes="Bold"
                                    FontSize="16"/>
-                                <Label Text="CO2e"/>
-                                <Label Text="{Binding CO2e}" 
+                                    <Label Text="CO2e"/>
+                                    <Label Text="{Binding CO2e}" 
        FontAttributes="Bold"
        FontSize="16"/>
-                                <Label Text="{Binding AppName}" 
+                                    <Label Text="{Binding AppName}" 
                                    FontSize="12"
                                    TextColor="Gray"/>
 
-                            </StackLayout>
+                                </StackLayout>
 
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-        <Label Text="increment to prove dailyworker is firing"
-               FontSize="12"
-TextColor="Gray"
-HorizontalTextAlignment="Center"
-HorizontalOptions="Center" />
-        <Label Text="{Binding LatestTrees}" 
-  FontSize="30"
-  TextColor="Gray"
-  HorizontalTextAlignment="Center"
-  HorizontalOptions="Center" />
-        <Label Text="Total Co2 Today:" 
-       FontSize="20"
-               HorizontalTextAlignment="Center"
-       TextColor="Gray"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
 
-        <Label Text="{Binding Co2TotalToday}" 
-      FontSize="30"
-      TextColor="Gray"
-      HorizontalTextAlignment="Center"
-      HorizontalOptions="Center" />
-
-        <Label Text="Total Co2 reduced:" 
-FontSize="20"
-        HorizontalTextAlignment="Center"
-TextColor="Gray"/>
-        
-
-    </VerticalStackLayout>
+        </VerticalStackLayout>
     </ScrollView>
 </ContentPage>
