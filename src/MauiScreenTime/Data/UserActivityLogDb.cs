@@ -98,10 +98,18 @@ namespace MauiScreenTime.Data
         {
             var connection = await GetConnectionAsync();
             var allEntries = await connection.Table<UserActivityLogModel>().ToListAsync();
-            return allEntries
+            var todaysEntries = allEntries
                 .Where(a => a.Date.Date == DateTime.UtcNow.Date)
                 .OrderByDescending(x => x.ProgressBar)
-                .FirstOrDefault()?.ProgressBar ?? 0;
+                .ToList();
+
+            foreach (var entry in todaysEntries)
+            {
+                if (entry.ProgressBar < 200)
+                    return entry.ProgressBar;
+            }
+
+            return 0;
         }
         //public async Task<int> GetTotalCO2ReducedProgress()
         //{
