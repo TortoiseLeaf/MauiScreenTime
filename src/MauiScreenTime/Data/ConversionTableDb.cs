@@ -1,4 +1,5 @@
-﻿using SQLite;
+﻿using MauiScreenTime.Data.Interfaces;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace MauiScreenTime.Data
         public double CO2Mins { get; set; }
     }
 
-    public class ConversionTableDatabase
+    public class ConversionTableDatabase : IConversionTableDatabase
     {
         private readonly SQLiteAsyncConnection _database;
 
@@ -28,11 +29,12 @@ namespace MauiScreenTime.Data
                 _database.CreateTableAsync<ConversionTableModel>().Wait();
 
                 SeedDataIfEmpty();
-            } catch (SQLiteException ex) 
+            }
+            catch (SQLiteException ex)
             {
                 Console.WriteLine("Error creating Co2Conversion Table: ", ex.Message);
             }
-            
+
         }
 
 
@@ -59,7 +61,13 @@ namespace MauiScreenTime.Data
 
             }
         }
-        
-    }
 
+        public async Task<ConversionTableModel> GetConversionTableEntryByPackageName(string packageName)
+        {
+            var entry = await _database.Table<ConversionTableModel>()
+                        .Where(c => c.PackageName == packageName)
+                        .FirstOrDefaultAsync();
+            return entry;
+        }
+    }
 }

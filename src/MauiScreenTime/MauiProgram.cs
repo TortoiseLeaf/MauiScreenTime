@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls;
 using MauiScreenTime.Data;
 using MauiScreenTime.Data.Interfaces;
 using MauiScreenTime.ViewModels;
 using MauiScreenTime.Pages;
 using MauiScreenTime.Services;
-
+using MauiScreenTime.Services.Interfaces;
 
 
 namespace MauiScreenTime
@@ -24,21 +24,27 @@ namespace MauiScreenTime
                 });
 
             builder.Services.AddSingleton<IConsentDatabase, ConsentDatabase>();
-            builder.Services.AddSingleton(s => new ConversionTableDatabase());
-            builder.Services.AddSingleton<IStartupService, StartupService>();
+            builder.Services.AddSingleton<IAppUsageDatabase, AppUsageDatabase>();
+            builder.Services.AddSingleton<IConversionTableDatabase, ConversionTableDatabase>();
+            builder.Services.AddSingleton<IUserActivityLogDatabase, UserActivityLogDatabase>();
+            
 
+            builder.Services.AddSingleton<IStartupService, StartupService>();
+            builder.Services.AddSingleton<ICO2Service, CO2Service>();
+            builder.Services.AddSingleton<IDatabaseService, DatabaseService>();
             builder.Services.AddSingleton<IUsageStatsService, UsageStatsService>();
 
             builder.Services.AddSingleton<App>();
             
-            //builder.Services.AddTransient<ConsentDatabase>();
 
             builder.Services.AddTransient<DashboardViewModel>();
+            builder.Services.AddTransient<GoalViewModel>();
             builder.Services.AddTransient<ConsentViewModel>();
             builder.Services.AddTransient<MainViewModel>();
 
 
             builder.Services.AddTransient<DashboardPage>();
+            builder.Services.AddTransient<GoalPage>();
             builder.Services.AddTransient<ConsentPage>();
             builder.Services.AddTransient<MainPage>();
 

@@ -1,4 +1,5 @@
 ﻿using MauiScreenTime.Data;
+using MauiScreenTime.Services.Interfaces;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using static Microsoft.Maui.ApplicationModel.Permissions;
+
 
 #if ANDROID
 using Android.Content.PM;
@@ -26,7 +28,7 @@ namespace MauiScreenTime.Services
 {
     public class UsageStatsService : IUsageStatsService
     {
-        public List<string> appWhiteList = ["com.google.android.gm", "com.android.settings", "com.android.launcher", "com.zhiliaoapp.musically", "com.reddit.frontpage", "com.facebook.katana", "com.instagram.android", "com.twitter.android", "com.snapchat.android", "com.google.android.youtube"];
+        public List<string> appWhiteList = ["com.zhiliaoapp.musically", "com.reddit.frontpage", "com.facebook.katana", "com.instagram.android", "com.twitter.android", "tv.twitch.android.app", "com.snapchat.android", "com.pinterest", "com.google.android.youtube", "package.android.youtube"];
         private Task<List<AppUsageModel>>? usageData;
 
 #if ANDROID
@@ -97,90 +99,103 @@ namespace MauiScreenTime.Services
             var installedWhitelistPackageNames = new List<string>();
 
 #if ANDROID
-        try {
-        _context = Android.App.Application.Context;
+            try
+            {
+                _context = Android.App.Application.Context;
 
-            var packageManager = _context.PackageManager;
-            var packages = packageManager.GetInstalledPackages(PackageInfoFlags.MatchAll);
+                var packageManager = _context.PackageManager;
+                var packages = packageManager.GetInstalledPackages(PackageInfoFlags.MatchAll);
 
-            foreach (var package in packages) {
-                foreach (var app in appWhiteList) {
-                    if (app == package.PackageName) {
-                    
-                    installedWhitelistPackageNames.Add(package.PackageName);
+                foreach (var package in packages)
+                {
+                    foreach (var app in appWhiteList)
+                    {
+                        if (app == package.PackageName)
+                        {
+
+                            installedWhitelistPackageNames.Add(package.PackageName);
+                        }
                     }
-                    }
-                    }
-                    return installedWhitelistPackageNames;
-                    
-                    } catch (Exception Ex) {
-                    System.Diagnostics.Debug.WriteLine($"Error getting installed whitelist apps: ", Ex.Message);
+                }
+                return installedWhitelistPackageNames;
+
+            }
+            catch (Exception Ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error getting installed whitelist apps: ", Ex.Message);
 
             }
 #endif
             return installedWhitelistPackageNames;
         }
 
+
+
         // get app usage data from installed whitelisted apps
-        public async Task<List<AppUsageModel>> GetAppUsageAsync() 
+        public async Task<List<AppUsageModel>> GetAppUsageAsync()
         {
 
-        IList<string> installedWhitelistPackageNames = GetInstalledPackages();
-            
-        return await Task.Run(() =>
+            IList<string> installedWhitelistPackageNames = GetInstalledPackages();
 
-        {
+            return await Task.Run(() =>
+
+            {
 #if ANDROID
-            _context = Android.App.Application.Context;
-            var usageStatsManager = (UsageStatsManager)_context.GetSystemService(Context.UsageStatsService);
+                _context = Android.App.Application.Context;
+                var usageStatsManager = (UsageStatsManager)_context.GetSystemService(Context.UsageStatsService);
 
-            // interval starts at midnight today, ends with right now
-            DateTime endTime = DateTime.Now;
-            DateTime startTime = DateTime.Today;
+                // interval starts at midnight today, ends with right now
+                DateTime endTime = DateTime.Now;
+                DateTime startTime = DateTime.Today;
 
-            long startTimeMillis = new DateTimeOffset(startTime).ToUnixTimeMilliseconds();
-            long endTimeMillis = new DateTimeOffset(endTime).ToUnixTimeMilliseconds();
+                long startTimeMillis = new DateTimeOffset(startTime).ToUnixTimeMilliseconds();
+                long endTimeMillis = new DateTimeOffset(endTime).ToUnixTimeMilliseconds();
 
-            var usageStatsList = usageStatsManager.QueryUsageStats(
-                UsageStatsInterval.Daily,
+                //var usageStatsList = usageStatsManager.QueryUsageStats(
+                //    UsageStatsInterval.Daily,
+                //    startTimeMillis,
+                //    endTimeMillis
+                //);
+
+                var aggregatedStats = usageStatsManager.QueryAndAggregateUsageStats(
                 startTimeMillis,
                 endTimeMillis
             );
 
-            var DeviceAppUsageList = new List<AppUsageModel>();
+                var DeviceAppUsageList = new List<AppUsageModel>();
 
-            if (usageStatsList != null)
-            {
-                foreach (var usageObj in usageStatsList)
-                {    
-                    if (usageObj.TotalTimeInForeground > 0 && installedWhitelistPackageNames.Contains(usageObj.PackageName))
+                if (aggregatedStats != null)
+                {
+                    foreach (var entry in aggregatedStats)
                     {
-                        DeviceAppUsageList.Add(new AppUsageModel
+                        var packageName = entry.Key;
+                        var usageObj = entry.Value;
+
+                        //    if (usageStatsList != null)
+                        //{
+                        //    foreach (var usageObj in usageStatsList)
+                        //    {    
+
+                        if (usageObj.TotalTimeInForeground > 0 && installedWhitelistPackageNames.Contains(usageObj.PackageName))
                         {
-                            PackageName = usageObj.PackageName,
-                            //AppName =  usageObj.ApplicationInfo.LoadLabel(packageManager),
-                            UsageTimeMilliseconds = TimeSpan.FromMilliseconds(usageObj.TotalTimeInForeground),
-                            
-                        });
+                            DeviceAppUsageList.Add(new AppUsageModel
+                            {
+                                PackageName = usageObj.PackageName,
+                                UsageTimeMilliseconds = TimeSpan.FromMilliseconds(usageObj.TotalTimeInForeground),
+                                UsageTimeMinutes = usageObj.TotalTimeInForeground / 60000,
+
+                            });
+                        }
                     }
                 }
-            }
 
-            var usageData = DeviceAppUsageList.OrderByDescending(a => a.UsageTimeMilliseconds).ToList();
+                var usageData = DeviceAppUsageList.OrderByDescending(a => a.UsageTimeMinutes).ToList();
 #endif
-            return usageData;
+                return usageData;
 
             });
-
         }
-
-
-
-
-
-
-
-
     }
-
 }
+
+

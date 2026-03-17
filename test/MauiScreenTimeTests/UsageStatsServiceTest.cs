@@ -1,6 +1,6 @@
 ﻿using MauiScreenTime.Data;
 //using Microsoft.Maui.Controls.PlatformConfiguration.Android.Content.PM;
-using MauiScreenTime.Services;
+using MauiScreenTime.Services.Interfaces;
 using MauiScreenTime.ViewModels;
 using Moq;
 using System.Collections.Generic;
@@ -144,7 +144,7 @@ namespace MauiScreenTimeTests
         public void HasPermission_WhenSet_ShouldReturnCorrectValue()
         {
             // Arrange
-            var viewModel = new DashboardViewModel(null);
+            var viewModel = new DashboardViewModel(null, null, null);
 
             // Act
             viewModel.hasPermission = true;

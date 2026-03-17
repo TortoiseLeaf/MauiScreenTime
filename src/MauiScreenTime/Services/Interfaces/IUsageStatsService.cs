@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MauiScreenTime.Data;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 
-namespace MauiScreenTime.Services
+namespace MauiScreenTime.Services.Interfaces
 {
     public interface IUsageStatsService
     {

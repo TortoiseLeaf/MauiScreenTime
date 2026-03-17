@@ -2,7 +2,7 @@
 using MauiScreenTime.Data;
 using MauiScreenTime.Data.Interfaces;
 using MauiScreenTime.Pages;
-using MauiScreenTime.Services;
+using MauiScreenTime.Services.Interfaces;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -38,8 +38,7 @@ namespace MauiScreenTime.ViewModels
             DeleteAllCommand = new Command(async () => await DeleteAll());
 
             _ = LoadTermsAndConditions();
-            //Task<bool> hasPermission = CheckAndroidPermissions();
-            PageAppearing();
+             PageAppearing();
         }
 
         [RelayCommand]
@@ -86,6 +85,7 @@ namespace MauiScreenTime.ViewModels
         private async Task DeleteAll()
         {
             await _db.DeleteAllConsents();
+            HasConsent = false;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
