@@ -119,7 +119,7 @@ namespace MauiScreenTimeTests.DatabaseTests
         {
             //arrange
             DateTime todayDate = DateTime.UtcNow.Date;
-            int id = 1;
+            //int id = 1;
             var co2Total = 10.5;
             var co2Saved = 100L;
             var co2ReducedProgress = 0;
@@ -138,7 +138,7 @@ namespace MauiScreenTimeTests.DatabaseTests
         {
             //arrange
             DateTime todayDate = DateTime.UtcNow.Date;
-            int id = 1;
+            //int id = 1;
             var co2Total = 10.5;
             var co2Saved = 100L;
             var co2ReducedProgress = 0;
@@ -160,7 +160,7 @@ namespace MauiScreenTimeTests.DatabaseTests
         {
             //arrange
             DateTime todayDate = DateTime.UtcNow.Date;
-            int id = 1;
+            //int id = 1;
             var co2Total = 10.5;
             var co2Saved = 100L;
             var co2ReducedProgress = 0;
@@ -183,7 +183,7 @@ namespace MauiScreenTimeTests.DatabaseTests
         {
             // Arrange
             DateTime todayDate = DateTime.UtcNow.Date;
-            int id = 1;
+            //int id = 1;
             var co2Total = 10.5;
             var co2Saved = 100L;
             var co2ReducedProgress = 0;

@@ -1,4 +1,4 @@
-﻿using MauiScreenTime.Data.Interfaces;
+using MauiScreenTime.Data.Interfaces;
 using MauiScreenTime.Services.Interfaces;
 using SQLite;
 using System;
@@ -91,7 +91,7 @@ namespace MauiScreenTime.Data
             var connection = await GetConnectionAsync();
             var allEntries = await connection.Table<UserActivityLogModel>().ToListAsync();
             return allEntries
-                .Where(a => a.Date == inputDate.Date)
+                //.Where(a => a.Date == inputDate.Date)
                 .Sum(x => x.TreesPlanted);
         }
         public async Task<int> DisplayLatestProgressBar()
@@ -99,7 +99,7 @@ namespace MauiScreenTime.Data
             var connection = await GetConnectionAsync();
             var allEntries = await connection.Table<UserActivityLogModel>().ToListAsync();
             var todaysEntries = allEntries
-                .Where(a => a.Date.Date == DateTime.UtcNow.Date)
+                //.Where(a => a.Date.Date == DateTime.UtcNow.Date)
                 .OrderByDescending(x => x.ProgressBar)
                 .ToList();
 
@@ -116,7 +116,7 @@ namespace MauiScreenTime.Data
             var connection = await GetConnectionAsync();
             var allEntries = await connection.Table<UserActivityLogModel>().ToListAsync();
             return allEntries
-                .Where(a => a.Date.Date == DateTime.UtcNow.Date)
+                //.Where(a => a.Date.Date == DateTime.UtcNow.Date)
                 .OrderByDescending(x => x.ProgressBar)
                 .FirstOrDefault()?.ProgressBar ?? 0;
             
