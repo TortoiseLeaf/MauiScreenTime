@@ -105,6 +105,7 @@ namespace MauiScreenTime.ViewModels
             _userActivityLogDatabase = userActivityLogDatabase;
             _co2Service = co2Service;
 
+
             CurrentChart = new ObservableCollection<BarItem>(
             Enumerable.Range(0, 10).Select(_ => new BarItem { Height = 0 })
         );
@@ -112,6 +113,7 @@ namespace MauiScreenTime.ViewModels
             //DEBUG();
             _ = InitialiseAsync();
             _ = ShowScreenTime();
+            
             //GetDataSoFar();
 
         }
@@ -119,7 +121,7 @@ namespace MauiScreenTime.ViewModels
         public async Task DEBUG()
         {
             await _userActivityLogDatabase.DEBUG(30, 0, 0, 0);
-            await _userActivityLogDatabase.DEBUG2(250, 0, 0, 0); // 200 TOTAL DAY BEFORE AND 100 TOTAL TODAY
+            await _userActivityLogDatabase.DEBUG2(110, 0, 0, 0); // 200 TOTAL DAY BEFORE AND 100 TOTAL TODAY
             
 
         }
@@ -283,16 +285,25 @@ namespace MauiScreenTime.ViewModels
 
             UpdateYAxis();
 
-            var scaled = ScaleData(ScreenTimeData, ScreenTimeBarColor, ScreenTimeAxisMax);
+            try {
+                
+                    var scaled = ScaleData(ScreenTimeData, ScreenTimeBarColor, ScreenTimeAxisMax);
 
-            // Animate from current state ? new state
-            //await AnimateBarsAsync(scaled, isFirstLoad ? ScreenTimeBarColor : CO2eBarColor, ScreenTimeBarColor);
+                    // Animate from current state ? new state
+                    //await AnimateBarsAsync(scaled, isFirstLoad ? ScreenTimeBarColor : CO2eBarColor, ScreenTimeBarColor);
 
-            // Update binding source after animation
-            CurrentChart = new ObservableCollection<BarItem>(scaled);
-            OnPropertyChanged(nameof(CurrentChart));
+                    // Update binding source after animation
+                    CurrentChart = new ObservableCollection<BarItem>(scaled);
+                    OnPropertyChanged(nameof(CurrentChart));
 
-            UpdateButton(true);
+                    UpdateButton(true);
+                
+            } catch (Exception ex)
+            {
+
+                System.Diagnostics.Debug.WriteLine($"Error getting usage data, possibly none: {ex}");
+
+            }
         }
 
 
@@ -303,16 +314,23 @@ namespace MauiScreenTime.ViewModels
 
             UpdateYAxis();
 
-            var scaled = ScaleData(CO2eData, CO2eBarColor, CO2AxisMax);
+            try { 
+                var scaled = ScaleData(CO2eData, CO2eBarColor, CO2AxisMax);
 
-            // Animate from current state ? new state
-            //await AnimateBarsAsync(scaled, ScreenTimeBarColor, CO2eBarColor);
+                // Animate from current state ? new state
+                //await AnimateBarsAsync(scaled, ScreenTimeBarColor, CO2eBarColor);
 
-            // Update binding source after animation
-            CurrentChart = new ObservableCollection<BarItem>(scaled);
-            OnPropertyChanged(nameof(CurrentChart));
+                // Update binding source after animation
+                CurrentChart = new ObservableCollection<BarItem>(scaled);
+                OnPropertyChanged(nameof(CurrentChart));
 
-            UpdateButton(false);
+                UpdateButton(false);
+            } catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error getting usage data, possibly none: {ex}");
+
+            }
+
         }
 
         // Alternate Y axis values depending on which chart is displayed
@@ -361,6 +379,13 @@ namespace MauiScreenTime.ViewModels
                         {
                             AppUsageList.Add(app);
                         }
+                    } 
+                    else
+                    {
+                        AppUsageList =
+                        [
+                            new() { UsageTimeMinutes = 0 },
+                        ];
                     }
                 }
                 catch (Exception ex)
