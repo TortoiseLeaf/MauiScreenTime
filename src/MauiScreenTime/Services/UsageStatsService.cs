@@ -144,18 +144,12 @@ namespace MauiScreenTime.Services
                 _context = Android.App.Application.Context;
                 var usageStatsManager = (UsageStatsManager)_context.GetSystemService(Context.UsageStatsService);
 
-                // interval starts at midnight today, ends with right now
                 DateTime endTime = DateTime.Now;
                 DateTime startTime = DateTime.Today;
 
                 long startTimeMillis = new DateTimeOffset(startTime).ToUnixTimeMilliseconds();
                 long endTimeMillis = new DateTimeOffset(endTime).ToUnixTimeMilliseconds();
 
-                //var usageStatsList = usageStatsManager.QueryUsageStats(
-                //    UsageStatsInterval.Daily,
-                //    startTimeMillis,
-                //    endTimeMillis
-                //);
 
                 var aggregatedStats = usageStatsManager.QueryAndAggregateUsageStats(
                 startTimeMillis,
@@ -170,11 +164,7 @@ namespace MauiScreenTime.Services
                     {
                         var packageName = entry.Key;
                         var usageObj = entry.Value;
-
-                        //    if (usageStatsList != null)
-                        //{
-                        //    foreach (var usageObj in usageStatsList)
-                        //    {    
+   
 
                         if (usageObj.TotalTimeInForeground > 0 && installedWhitelistPackageNames.Contains(usageObj.PackageName))
                         {
@@ -187,9 +177,21 @@ namespace MauiScreenTime.Services
                             });
                         }
                     }
+                } 
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"Here app usage defaulted");
+
+                    DeviceAppUsageList.Add(new AppUsageModel
+                    {
+                        PackageName = "Default",
+                        UsageTimeMilliseconds = TimeSpan.FromMilliseconds(0),
+                        UsageTimeMinutes = 0,
+
+                    });
                 }
 
-                var usageData = DeviceAppUsageList.OrderByDescending(a => a.UsageTimeMinutes).ToList();
+                    var usageData = DeviceAppUsageList.OrderByDescending(a => a.UsageTimeMinutes).ToList();
 #endif
                 return usageData;
 
