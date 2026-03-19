@@ -46,7 +46,7 @@ namespace MauiScreenTime.Data
 
                 await _database.InsertAllAsync(new[]
                 {
-                    new ConversionTableModel { AppName = "Youtube", CO2Mins = 0.46, PackageName = "package.android.youtube" },
+                    new ConversionTableModel { AppName = "Youtube", CO2Mins = 0.46, PackageName = "com.google.android.youtube" },
                     new ConversionTableModel { AppName = "Twitch", CO2Mins = 0.55, PackageName = "tv.twitch.android.app" },
                     new ConversionTableModel { AppName = "Twitter", CO2Mins = 0.6, PackageName = "com.twitter.android" },
                     new ConversionTableModel { AppName = "LinkedIn", CO2Mins = 0.71, PackageName = "com.linkedin.android" },
