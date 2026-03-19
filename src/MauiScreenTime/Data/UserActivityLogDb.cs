@@ -94,7 +94,7 @@ namespace MauiScreenTime.Data
                 //.Where(a => a.Date == inputDate.Date)
                 .Sum(x => x.TreesPlanted);
         }
-        public async Task<int> DisplayLatestProgressBar()
+        /*public async Task<int> DisplayLatestProgressBar()
         {
             var connection = await GetConnectionAsync();
             var allEntries = await connection.Table<UserActivityLogModel>().ToListAsync();
@@ -110,6 +110,11 @@ namespace MauiScreenTime.Data
             }
 
             return 0;
+        } */
+
+        public async Task<int> DisplayLatestProgressBar()
+        {
+            return await GetLatestProgressBar();
         }
         public async Task<int> GetLatestProgressBar()
         {
@@ -117,7 +122,7 @@ namespace MauiScreenTime.Data
             var allEntries = await connection.Table<UserActivityLogModel>().ToListAsync();
             return allEntries
                 //.Where(a => a.Date.Date == DateTime.UtcNow.Date)
-                .OrderByDescending(x => x.ProgressBar)
+                .OrderByDescending(x => x.TimeStamp)
                 .FirstOrDefault()?.ProgressBar ?? 0;
             
         }
@@ -216,34 +221,33 @@ namespace MauiScreenTime.Data
                     TimeStamp = today,
                     CO2Total = 0,
                     CO2TotalReduced = 200,
-                    //ProgressBar = 0,
+                    ProgressBar = progressBarValue - 200,
                     TreesPlanted = 1
                 });
-
-                // set the remainder
-                var remainder = progressBarValue - 200;
                 
-                //// clear the progress bar
-                var all = await connection.Table<UserActivityLogModel>().ToListAsync();
+                // set the remainder
+                //var remainder = progressBarValue - 200;
+                
+                //// clear the progress bar - FIX NO NEED TO CLEAR ROWS OUT ANYMORE
+                //var all = await connection.Table<UserActivityLogModel>().ToListAsync();
 
-                foreach (var entry in all)
-                {
-                    entry.ProgressBar = 0;
-                    await connection.UpdateAsync(entry);
-                }
+                //foreach (var entry in all)
+                //{
+                //    entry.ProgressBar = 0;
+                //    await connection.UpdateAsync(entry);
+                //}
 
                 // Save remainder back to progress bar
-                if (remainder > 0)
+                /*if (remainder > 0)
                 {
                     await connection.InsertAsync(new UserActivityLogModel
                     {
                         Date = today.Date,
-                        ProgressBar = remainder,
+                        ProgressBar =+ remainder,
                     });
                     Console.WriteLine("here remainder added to progressbar: " + remainder);
 
-                }
-
+                }*/
 
             }
 

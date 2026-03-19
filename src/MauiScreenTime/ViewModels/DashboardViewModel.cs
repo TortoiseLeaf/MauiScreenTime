@@ -420,8 +420,10 @@ namespace MauiScreenTime.ViewModels
 
             try
             {
+
                 Co2Total = await _co2Service.CalculateCO2TotalAsync(AppUsageList);
-                await _userActivityLogDatabase.AddActivityLog(Co2Total, 0, 0, 0);
+                var lastProgressBar = await _userActivityLogDatabase.GetLatestProgressBar(); //check last progress bar value, use it for new entry
+                await _userActivityLogDatabase.AddActivityLog(Co2Total, 0, lastProgressBar, 0);
 
                 var TodayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now);
 

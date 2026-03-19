@@ -115,8 +115,10 @@ namespace MauiScreenTime.Services
                     try
                     {
                         // store difference to progress bar
-                        var progressBar = (int)differenceSaved;
-                        await _userActivityLogDatabase.AddActivityLog(0, 0, progressBar, 0);
+                        var lastProgressBar = await _userActivityLogDatabase.GetLatestProgressBar();
+                        var newProgressBar = lastProgressBar + (int)differenceSaved;
+                        //var progressBar = (int)differenceSaved;
+                        await _userActivityLogDatabase.AddActivityLog(0, 0, newProgressBar, 0);
                         
                     }
                     catch (Exception ex)

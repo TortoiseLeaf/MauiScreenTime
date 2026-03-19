@@ -36,10 +36,10 @@ namespace MauiScreenTime.Services
                 "com.twitter.android", 
                 "tv.twitch.android.app", 
                 "com.snapchat.android", 
-                "com.pinterest", 
-                "com.google.android.youtube",
+                "com.pinterest",                
                 "com.linkedin.android",
-                /* "package.android.youtube"*/
+                //"com.google.android.youtube",
+                //"package.android.youtube"
         ];
         private Task<List<AppUsageModel>>? usageData;
 

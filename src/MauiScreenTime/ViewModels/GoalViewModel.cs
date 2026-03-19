@@ -36,7 +36,7 @@ namespace MauiScreenTime.ViewModels
             _ = InitialiseMethods();
 
             _ = GetDataSoFar();
-            _ = DisplayProgressBar();
+            
         }
 
         public async Task InitialiseMethods()
@@ -48,6 +48,8 @@ namespace MauiScreenTime.ViewModels
 
             
             await GetTreesPlanted();
+
+            await DisplayProgressBar();
         }
 
         public async Task CalculateAndStoreDifference()
