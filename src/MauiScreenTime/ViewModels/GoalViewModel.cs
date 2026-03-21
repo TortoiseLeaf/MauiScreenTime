@@ -36,17 +36,18 @@ namespace MauiScreenTime.ViewModels
             _ = InitialiseMethods();
 
             _ = GetDataSoFar();
-            _ = DisplayProgressBar();
+            //_ = DisplayProgressBar();
         }
 
         public async Task InitialiseMethods()
         {
             await CalculateAndStoreDifference();
-            
 
-            await RunGetAndUpdateCO2OnceADay();
+            await UpdateCO2ProgressBar();
 
-            
+            //await RunGetAndUpdateCO2OnceADay();
+
+
             await GetTreesPlanted();
         }
 
@@ -59,7 +60,8 @@ namespace MauiScreenTime.ViewModels
 
         public async Task DisplayProgressBar()
         {
-            var reduced = await _userActivityLogDatabase.DisplayLatestProgressBar();
+            //var reduced = await _userActivityLogDatabase.DisplayLatestProgressBar();
+            var reduced = await _userActivityLogDatabase.GetTotalProgressBar();
             Co2ReducedProgress = reduced;
 
             System.Diagnostics.Debug.WriteLine("here progressbar runs" + Co2ReducedProgress);
@@ -67,7 +69,7 @@ namespace MauiScreenTime.ViewModels
 
 
         // update Progress bar once a day
-        private async Task RunGetAndUpdateCO2OnceADay()
+        private async Task RunUpdateCO2OnceADay()
         {
             var lastRun = Preferences.Get("LastRunDate", DateTime.MinValue.ToString());
             var lastRunDate = DateTime.Parse(lastRun);
@@ -76,19 +78,20 @@ namespace MauiScreenTime.ViewModels
             {
                 System.Diagnostics.Debug.WriteLine("here progressbar runs");
 
-                await GetAndUpdateCO2ProgressBar();
+                await UpdateCO2ProgressBar();
 
                 Co2ReducedProgress = await _userActivityLogDatabase.GetLatestProgressBar();
                 Preferences.Set("LastRunDate", DateTime.Now.ToString());
             }
         }
 
-        public async Task GetAndUpdateCO2ProgressBar()
+        public async Task UpdateCO2ProgressBar()
         {
             
                 await _userActivityLogDatabase.UpdateProgressBar();
-            
 
+            var reduced = await _userActivityLogDatabase.GetTotalProgressBar();
+            Co2ReducedProgress = reduced;
         }
         
         public async Task GetTreesPlanted()

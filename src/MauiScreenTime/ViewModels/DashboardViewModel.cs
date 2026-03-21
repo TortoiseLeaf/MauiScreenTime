@@ -110,7 +110,8 @@ namespace MauiScreenTime.ViewModels
             Enumerable.Range(0, 10).Select(_ => new BarItem { Height = 0 })
         );
 
-            //DEBUG();
+DEBUG();
+//DEBUG1();
             _ = InitialiseAsync();
             _ = ShowScreenTime();
             
@@ -118,9 +119,15 @@ namespace MauiScreenTime.ViewModels
 
         }
 
+
+        public async Task DEBUG1()
+        {
+            await _userActivityLogDatabase.AddActivityLog(0, 0, 40, 0);
+
+        }
         public async Task DEBUG()
         {
-            await _userActivityLogDatabase.DEBUG(30, 0, 0, 0);
+            await _userActivityLogDatabase.DEBUG(50, 0, 0, 0);
             await _userActivityLogDatabase.DEBUG2(110, 0, 0, 0); // 200 TOTAL DAY BEFORE AND 100 TOTAL TODAY
             
 
