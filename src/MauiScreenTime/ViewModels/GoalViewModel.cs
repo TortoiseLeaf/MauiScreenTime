@@ -43,6 +43,7 @@ namespace MauiScreenTime.ViewModels
         {
             //await CalculateAndStoreDifference();
             
+            await GetAndUpdateCO2ProgressBar();
 
             await RunGetAndUpdateCO2OnceADay();
 
@@ -55,6 +56,7 @@ namespace MauiScreenTime.ViewModels
         //    await _co2Service.CalculateAndStoreCO2DifferenceAsync();
 
         //}
+
 
 
         public async Task DisplayProgressBar()
@@ -85,14 +87,14 @@ namespace MauiScreenTime.ViewModels
             }
         }
 
-        //public async Task GetAndUpdateCO2ProgressBar()
-        //{
-            
-        //        await _userActivityLogDatabase.UpdateProgressBar();
-            
+        public async Task GetAndUpdateCO2ProgressBar()
+        {
 
-        //}
-        
+            await _userActivityLogDatabase.UpdateProgressBar();
+
+
+        }
+
         public async Task GetTreesPlanted()
         {
 

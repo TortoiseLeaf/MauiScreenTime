@@ -113,7 +113,7 @@ namespace MauiScreenTime.ViewModels
             //DEBUG();
             _ = InitialiseAsync();
             _ = ShowScreenTime();
-            
+            _ = DisplayLogs();
             //GetDataSoFar();
 
         }
@@ -126,7 +126,7 @@ namespace MauiScreenTime.ViewModels
         }
         public async Task DEBUG1()
         {
-            await _userActivityLogDatabase.AddActivityLog(0,0,50,0);
+            await _userActivityLogDatabase.AddActivityLog(0, 0, 66, 0);
 
         }
 
@@ -139,7 +139,7 @@ namespace MauiScreenTime.ViewModels
             await ShowCO2e();
 
             //DEBUG1();
-            DEBUG();
+            //DEBUG();
 
             await GetAndStoreCO2Total();
         }
@@ -149,6 +149,22 @@ namespace MauiScreenTime.ViewModels
             await GetUsageData();
             await GetCO2Coversion();
             
+
+        }
+
+        public async Task DisplayLogs()
+        {
+            var x = await _userActivityLogDatabase.GetAllActivitiesLogged();
+            System.Diagnostics.Debug.WriteLine("here items");
+
+            foreach (var item in x)
+            {
+                var xx = System.Text.Json.JsonSerializer.Serialize(item);
+#if ANDROID
+                Log.Debug("here", xx);
+#endif
+                System.Diagnostics.Debug.WriteLine(xx);
+            }
 
         }
 
