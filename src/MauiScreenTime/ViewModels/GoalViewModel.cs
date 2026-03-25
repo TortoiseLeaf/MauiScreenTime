@@ -41,7 +41,7 @@ namespace MauiScreenTime.ViewModels
 
         public async Task InitialiseMethods()
         {
-            await CalculateAndStoreDifference();
+            //await CalculateAndStoreDifference();
             
 
             await RunGetAndUpdateCO2OnceADay();
@@ -50,16 +50,16 @@ namespace MauiScreenTime.ViewModels
             await GetTreesPlanted();
         }
 
-        public async Task CalculateAndStoreDifference()
-        {
-            await _co2Service.CalculateAndStoreCO2DifferenceAsync();
+        //public async Task CalculateAndStoreDifference()
+        //{
+        //    await _co2Service.CalculateAndStoreCO2DifferenceAsync();
 
-        }
+        //}
 
 
         public async Task DisplayProgressBar()
         {
-            var reduced = await _userActivityLogDatabase.DisplayLatestProgressBar();
+            var reduced = await _userActivityLogDatabase.GetTotalProgressBar();
             Co2ReducedProgress = reduced;
 
             System.Diagnostics.Debug.WriteLine("here progressbar runs" + Co2ReducedProgress);
@@ -76,20 +76,22 @@ namespace MauiScreenTime.ViewModels
             {
                 System.Diagnostics.Debug.WriteLine("here progressbar runs");
 
-                await GetAndUpdateCO2ProgressBar();
+                await _co2Service.CalculateAndStoreCO2DifferenceAsync();
 
-                Co2ReducedProgress = await _userActivityLogDatabase.GetLatestProgressBar();
+                await _userActivityLogDatabase.UpdateProgressBar();
+
+                //Co2ReducedProgress = await _userActivityLogDatabase.GetLatestProgressBar();
                 Preferences.Set("LastRunDate", DateTime.Now.ToString());
             }
         }
 
-        public async Task GetAndUpdateCO2ProgressBar()
-        {
+        //public async Task GetAndUpdateCO2ProgressBar()
+        //{
             
-                await _userActivityLogDatabase.UpdateProgressBar();
+        //        await _userActivityLogDatabase.UpdateProgressBar();
             
 
-        }
+        //}
         
         public async Task GetTreesPlanted()
         {
