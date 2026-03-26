@@ -121,6 +121,15 @@ namespace MauiScreenTime.Data
                 .FirstOrDefault()?.ProgressBar ?? 0;
             
         }
+        public async Task<int> GetTotalProgressBar()
+        {
+            var connection = await GetConnectionAsync();
+            var allEntries = await connection.Table<UserActivityLogModel>().ToListAsync();
+            return allEntries
+                //.Where(a => a.Date.Date == DateTime.UtcNow.Date)
+                .Sum(x => x.ProgressBar);
+            
+        }
        
         public async Task<List<UserActivityLogModel>> GetAllCO2ReducedProgressEntries()
         {
@@ -204,7 +213,7 @@ namespace MauiScreenTime.Data
             var connection = await GetConnectionAsync();
             var today = DateTime.UtcNow;
 
-            var progressBarValue = await GetLatestProgressBar();
+            var progressBarValue = await GetTotalProgressBar();
 
 
             if (progressBarValue >= 200)
@@ -235,15 +244,15 @@ namespace MauiScreenTime.Data
                 // Save remainder back to progress bar
                 if (remainder > 0)
                 {
-                    await connection.InsertAsync(new UserActivityLogModel
-                    {
-                        Date = today.Date,
-                        ProgressBar = remainder,
-                    });
+                    await AddActivityLog(0,0, remainder, 0);
+                    //await connection.InsertAsync(new UserActivityLogModel
+                    //{
+                    //    Date = today.Date,
+                    //    ProgressBar = remainder,
+                    //});
                     Console.WriteLine("here remainder added to progressbar: " + remainder);
 
                 }
-
 
             }
 
@@ -263,6 +272,7 @@ namespace MauiScreenTime.Data
                 _connection = null;
             }
         }
+
     }
 }
 

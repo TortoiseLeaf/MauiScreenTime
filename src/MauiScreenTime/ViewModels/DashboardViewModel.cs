@@ -113,18 +113,21 @@ namespace MauiScreenTime.ViewModels
             //DEBUG();
             _ = InitialiseAsync();
             _ = ShowScreenTime();
-            
-            //GetDataSoFar();
+            //_ = DisplayLogs();
 
         }
 
-        public async Task DEBUG()
-        {
-            await _userActivityLogDatabase.DEBUG(30, 0, 0, 0);
-            await _userActivityLogDatabase.DEBUG2(110, 0, 0, 0); // 200 TOTAL DAY BEFORE AND 100 TOTAL TODAY
-            
+        //public async Task DEBUG()
+        //{
+        //    await _userActivityLogDatabase.DEBUG(200, 0, 0, 0);
+        //    await _userActivityLogDatabase.DEBUG2(350, 0, 0, 0); // 200 TOTAL DAY BEFORE AND 100 TOTAL TODAY 
+        //}
 
-        }
+        //public async Task DEBUG1()
+        //{
+        //    await _userActivityLogDatabase.AddActivityLog(0, 0, 66, 0);
+
+        //}
 
         public async Task InitialiseAsync()
         {
@@ -134,6 +137,8 @@ namespace MauiScreenTime.ViewModels
             await ShowScreenTime();
             await ShowCO2e();
 
+            //DEBUG1();
+            //DEBUG();
 
             await GetAndStoreCO2Total();
         }
@@ -145,6 +150,22 @@ namespace MauiScreenTime.ViewModels
             
 
         }
+
+//        public async Task DisplayLogs()
+//        {
+//            var x = await _userActivityLogDatabase.GetAllActivitiesLogged();
+//            System.Diagnostics.Debug.WriteLine("here items");
+
+//            foreach (var item in x)
+//            {
+//                var xx = System.Text.Json.JsonSerializer.Serialize(item);
+//#if ANDROID
+//                Log.Debug("here", xx);
+//#endif
+//                System.Diagnostics.Debug.WriteLine(xx);
+//            }
+
+//        }
 
         // are these working?
         public Func<List<BarItem>, Color, Color, Task> AnimateBarsAsync { get; set; }
@@ -159,13 +180,13 @@ namespace MauiScreenTime.ViewModels
             
             ScreenTimeData = [.. AppUsageListCO2.Select(obj => new BarItem
             {
-                Label = obj.AppName.Length >= 3 ? obj.AppName[..3] : obj.AppName,
+                Label = obj.AppName.Length >= 3 ? obj.AppName[..2] : obj.AppName,
                 Value = obj.UsageTimeMinutes
             })];
 
             CO2eData = [.. AppUsageListCO2.Select(obj => new BarItem
             {
-                Label = obj.AppName.Length >= 3 ? obj.AppName[..3] : obj.AppName,
+                Label = obj.AppName.Length >= 3 ? obj.AppName[..2] : obj.AppName,
 
                 Value = obj.CO2e
             })];
