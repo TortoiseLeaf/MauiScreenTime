@@ -77,9 +77,11 @@ namespace MauiScreenTime.Services
             {
                 foreach (var appUsage in appUsageList)
                 {
-                    var newData = await CalculateCO2eAsync(appUsage);
+                    var appWithCO2e = await CalculateCO2eAsync(appUsage);
 
-                    CO2Total += newData.CO2e;
+                    // cap total per app at 400g
+                    CO2Total += Math.Min(appWithCO2e.CO2e, 400);
+                    //CO2Total += newData.CO2e;
                 }
 
             }

@@ -113,7 +113,7 @@ namespace MauiScreenTime.ViewModels
             //DEBUG();
             _ = InitialiseAsync();
             _ = ShowScreenTime();
-            //_ = DisplayLogs();
+            _ = DisplayLogs();
 
         }
 
