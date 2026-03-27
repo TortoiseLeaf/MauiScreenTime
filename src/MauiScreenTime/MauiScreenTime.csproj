@@ -27,7 +27,7 @@
 		<ApplicationTitle>MauiScreenTime</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.mauiscreentime</ApplicationId>
+		<ApplicationId>com.uhiteam.mauiscreentime</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
