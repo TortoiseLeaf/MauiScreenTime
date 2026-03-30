@@ -56,8 +56,9 @@ namespace MauiScreenTime.Services
 
                 double CO2e = CO2Mins * appUsageMins;
 
+                // CAP THE CO2e at 300
                 // write to the db or just do on the fly? performance/security 
-                appData.CO2e = CO2e;
+                appData.CO2e = Math.Min(CO2e, 300); ;
                 appData.AppName = conversionTableEntry.AppName;
                 appData.Date = DateTime.UtcNow;
             }
@@ -80,7 +81,7 @@ namespace MauiScreenTime.Services
                     var appWithCO2e = await CalculateCO2eAsync(appUsage);
 
                     // cap total per app at 400g
-                    CO2Total += Math.Min(appWithCO2e.CO2e, 400);
+                    CO2Total += Math.Min(appWithCO2e.CO2e, 300);
                     //CO2Total += newData.CO2e;
                 }
 

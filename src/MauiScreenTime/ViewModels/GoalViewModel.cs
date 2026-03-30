@@ -124,14 +124,16 @@ namespace MauiScreenTime.ViewModels
                 {
                     Co2TotalDayBefore = 0;
                 }
-            }
+        }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", "Unable to get goals data, try refreshing the page.", "OK");
+                System.Diagnostics.Debug.WriteLine("here unable to get goals data in goalpage, possibly none");
 
-            }
+                //await Shell.Current.DisplayAlert("Error", "Unable to get goals data, try refreshing the page.", "OK");
 
-            Co2TotalReduced = await _userActivityLogDatabase.GetCO2TotalReduced();
+    }
+
+    Co2TotalReduced = await _userActivityLogDatabase.GetCO2TotalReduced();
 
         }
     }

@@ -369,8 +369,8 @@ namespace MauiScreenTime.ViewModels
             }
             else
             {
+                YAxisLabels.Add("300g");
                 YAxisLabels.Add("200g");
-                YAxisLabels.Add("150g");
                 YAxisLabels.Add("100g");
                 YAxisLabels.Add("50g");
                 YAxisLabels.Add("0g");
