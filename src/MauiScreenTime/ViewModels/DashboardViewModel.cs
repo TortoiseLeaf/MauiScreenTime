@@ -113,7 +113,7 @@ namespace MauiScreenTime.ViewModels
             //DEBUG();
             _ = InitialiseAsync();
             _ = ShowScreenTime();
-            //_ = DisplayLogs();
+            _ = DisplayLogs();
 
         }
 
@@ -151,21 +151,21 @@ namespace MauiScreenTime.ViewModels
 
         }
 
-//        public async Task DisplayLogs()
-//        {
-//            var x = await _userActivityLogDatabase.GetAllActivitiesLogged();
-//            System.Diagnostics.Debug.WriteLine("here items");
+        public async Task DisplayLogs()
+        {
+            var x = await _userActivityLogDatabase.GetAllActivitiesLogged();
+            System.Diagnostics.Debug.WriteLine("here items");
 
-//            foreach (var item in x)
-//            {
-//                var xx = System.Text.Json.JsonSerializer.Serialize(item);
-//#if ANDROID
-//                Log.Debug("here", xx);
-//#endif
-//                System.Diagnostics.Debug.WriteLine(xx);
-//            }
+            foreach (var item in x)
+            {
+                var xx = System.Text.Json.JsonSerializer.Serialize(item);
+#if ANDROID
+                Log.Debug("here", xx);
+#endif
+                System.Diagnostics.Debug.WriteLine(xx);
+            }
 
-//        }
+        }
 
         // are these working?
         public Func<List<BarItem>, Color, Color, Task> AnimateBarsAsync { get; set; }
@@ -369,8 +369,8 @@ namespace MauiScreenTime.ViewModels
             }
             else
             {
+                YAxisLabels.Add("300g");
                 YAxisLabels.Add("200g");
-                YAxisLabels.Add("150g");
                 YAxisLabels.Add("100g");
                 YAxisLabels.Add("50g");
                 YAxisLabels.Add("0g");
@@ -444,6 +444,7 @@ namespace MauiScreenTime.ViewModels
                 Co2Total = await _co2Service.CalculateCO2TotalAsync(AppUsageList);
                 await _userActivityLogDatabase.AddActivityLog(Co2Total, 0, 0, 0);
 
+
                 var TodayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now);
 
             }
@@ -451,7 +452,7 @@ namespace MauiScreenTime.ViewModels
             {
                 System.Diagnostics.Debug.WriteLine($"Error totalling CO2e in dashboard: {ex}");
 
-                await Shell.Current.DisplayAlert("Error", "Unable to total CO2e.", "OK");
+                await Shell.Current.DisplayAlert("Error", "Unable to total CO2e, try restarting the app.", "OK");
             }
 
 

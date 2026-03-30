@@ -110,14 +110,30 @@ namespace MauiScreenTime.ViewModels
             var TodayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now);
 
 
-            var yesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(yesterday);
-            var dayBeforeYesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(dayBeforeYesterday);
-
+            try
+            {
+                var yesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(yesterday);
+                var dayBeforeYesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(dayBeforeYesterday);
+           
 
             Co2TotalY = yesterdayTotalCO2Obj.CO2Total;
-            Co2TotalDayBefore = dayBeforeYesterdayTotalCO2Obj.CO2Total;
+                if (dayBeforeYesterdayTotalCO2Obj != null)
+                {
+                    Co2TotalDayBefore = dayBeforeYesterdayTotalCO2Obj.CO2Total;
+                } else
+                {
+                    Co2TotalDayBefore = 0;
+                }
+        }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("here unable to get goals data in goalpage, possibly none");
 
-            Co2TotalReduced = await _userActivityLogDatabase.GetCO2TotalReduced();
+                //await Shell.Current.DisplayAlert("Error", "Unable to get goals data, try refreshing the page.", "OK");
+
+    }
+
+    Co2TotalReduced = await _userActivityLogDatabase.GetCO2TotalReduced();
 
         }
     }
