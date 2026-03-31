@@ -103,7 +103,14 @@ namespace MauiScreenTime.Services
 
 
             var yesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now.AddDays(-1));
-            yesterdayCO2Total = yesterdayTotalCO2Obj.CO2Total;
+
+            if (yesterdayTotalCO2Obj != null)
+            {
+                yesterdayCO2Total = yesterdayTotalCO2Obj.CO2Total;
+            } else
+            {
+                yesterdayCO2Total = 0;
+            }
 
             var dayBeforeYesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now.AddDays(-2));
 

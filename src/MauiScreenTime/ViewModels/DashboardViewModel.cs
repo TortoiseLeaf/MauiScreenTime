@@ -441,6 +441,7 @@ namespace MauiScreenTime.ViewModels
 
             try
             {
+                // refactor this to just take the app.CO2e from each in AppUsageListCO2
                 Co2Total = await _co2Service.CalculateCO2TotalAsync(AppUsageList);
                 await _userActivityLogDatabase.AddActivityLog(Co2Total, 0, 0, 0);
 
