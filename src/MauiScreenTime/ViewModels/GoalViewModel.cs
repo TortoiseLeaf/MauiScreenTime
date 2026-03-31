@@ -114,9 +114,13 @@ namespace MauiScreenTime.ViewModels
             {
                 var yesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(yesterday);
                 var dayBeforeYesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(dayBeforeYesterday);
-           
 
-            Co2TotalY = yesterdayTotalCO2Obj.CO2Total;
+                if (yesterdayTotalCO2Obj != null)
+                {
+                    Co2TotalY = yesterdayTotalCO2Obj.CO2Total;
+                } else {
+                    Co2TotalY = 0;
+                }
                 if (dayBeforeYesterdayTotalCO2Obj != null)
                 {
                     Co2TotalDayBefore = dayBeforeYesterdayTotalCO2Obj.CO2Total;
