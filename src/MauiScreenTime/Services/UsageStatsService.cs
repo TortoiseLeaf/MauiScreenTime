@@ -130,6 +130,13 @@ namespace MauiScreenTime.Services
         }
 
 
+        private long GetTodayMidnightMillis()
+        {
+            var localTimeZone = TimeZoneInfo.Local;
+            var midnight = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Unspecified);
+            return new DateTimeOffset(midnight, localTimeZone.GetUtcOffset(midnight))
+                .ToUnixTimeMilliseconds();
+        }
 
         // get app usage data from installed whitelisted apps
         public async Task<List<AppUsageModel>> GetAppUsageAsync()
@@ -144,12 +151,14 @@ namespace MauiScreenTime.Services
                 _context = Android.App.Application.Context;
                 var usageStatsManager = (UsageStatsManager)_context.GetSystemService(Context.UsageStatsService);
 
-                DateTime endTime = DateTime.Now;
+                //long startTimeMillis = GetTodayMidnightMillis();
+                //long endTimeMillis = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+                 DateTime endTime = DateTime.Now;
                 DateTime startTime = DateTime.Today;
 
-                long startTimeMillis = new DateTimeOffset(startTime).ToUnixTimeMilliseconds();
-                long endTimeMillis = new DateTimeOffset(endTime).ToUnixTimeMilliseconds();
-
+                 long startTimeMillis = new DateTimeOffset(startTime.ToUniversalTime()).ToUnixTimeMilliseconds();
+            long endTimeMillis = new DateTimeOffset(endTime.ToUniversalTime()).ToUnixTimeMilliseconds();
 
                  var usageStatsList = usageStatsManager.QueryUsageStats(
                     UsageStatsInterval.Daily,
@@ -165,8 +174,34 @@ namespace MauiScreenTime.Services
                     foreach (var usageObj in usageStatsList)
                     {
 
-                        if (usageObj.TotalTimeInForeground > 0 && installedWhitelistPackageNames.Contains(usageObj.PackageName))
-                        {
+                        if (usageObj.TotalTimeInForeground > 0 &&
+    installedWhitelistPackageNames.Contains(usageObj.PackageName) &&
+    usageObj.LastTimeStamp >= startTimeMillis &&
+    usageObj.FirstTimeStamp >= startTimeMillis)
+{
+
+                        var firstTime = DateTimeOffset.FromUnixTimeMilliseconds(usageObj.FirstTimeStamp).ToLocalTime();
+            var lastTime = DateTimeOffset.FromUnixTimeMilliseconds(usageObj.LastTimeStamp).ToLocalTime();
+            
+            System.Diagnostics.Debug.WriteLine(
+                $"PKG: {usageObj.PackageName} | " +
+                $"First: {firstTime:yyyy-MM-dd HH:mm:ss} | " +
+                $"Last: {lastTime:yyyy-MM-dd HH:mm:ss} | " +
+                $"TotalMs: {usageObj.TotalTimeInForeground} | " +
+                $"StartFilter: {DateTimeOffset.FromUnixTimeMilliseconds(startTimeMillis).ToLocalTime():yyyy-MM-dd HH:mm:ss}"
+            );
+
+
+            var existing = DeviceAppUsageList
+    .FirstOrDefault(x => x.PackageName == usageObj.PackageName);
+
+if (existing != null)
+{
+    existing.UsageTimeMilliseconds += TimeSpan.FromMilliseconds(usageObj.TotalTimeInForeground);
+    existing.UsageTimeMinutes += usageObj.TotalTimeInForeground / 60000;
+}
+else 
+{
                             DeviceAppUsageList.Add(new AppUsageModel
                             {
                                 PackageName = usageObj.PackageName,
@@ -177,6 +212,7 @@ namespace MauiScreenTime.Services
                         }
                     }
                 } 
+                }
                 else
                 {
                     System.Diagnostics.Debug.WriteLine($"Here app usage defaulted");
