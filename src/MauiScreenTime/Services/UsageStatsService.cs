@@ -151,20 +151,19 @@ namespace MauiScreenTime.Services
                 long endTimeMillis = new DateTimeOffset(endTime).ToUnixTimeMilliseconds();
 
 
-                var aggregatedStats = usageStatsManager.QueryAndAggregateUsageStats(
-                startTimeMillis,
-                endTimeMillis
+                 var usageStatsList = usageStatsManager.QueryUsageStats(
+                    UsageStatsInterval.Daily,
+                    startTimeMillis,
+                    endTimeMillis    
+
             );
 
                 var DeviceAppUsageList = new List<AppUsageModel>();
 
-                if (aggregatedStats != null)
+                if (usageStatsList != null)
                 {
-                    foreach (var entry in aggregatedStats)
+                    foreach (var usageObj in usageStatsList)
                     {
-                        var packageName = entry.Key;
-                        var usageObj = entry.Value;
-   
 
                         if (usageObj.TotalTimeInForeground > 0 && installedWhitelistPackageNames.Contains(usageObj.PackageName))
                         {
