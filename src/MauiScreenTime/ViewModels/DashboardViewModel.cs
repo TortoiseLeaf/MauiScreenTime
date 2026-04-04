@@ -109,7 +109,7 @@ namespace MauiScreenTime.ViewModels
             CurrentChart = new ObservableCollection<BarItem>(
             Enumerable.Range(0, 10).Select(_ => new BarItem { Height = 0 })
         );
-
+            //DEBUG1();
             //DEBUG();
             _ = InitialiseAsync();
             _ = ShowScreenTime();
@@ -141,6 +141,8 @@ namespace MauiScreenTime.ViewModels
             //DEBUG();
 
             await GetAndStoreCO2Total();
+
+            await CalculateGoalsAsync();
         }
 
         private async Task PopulateAppCO2ListAsync()
@@ -148,6 +150,41 @@ namespace MauiScreenTime.ViewModels
             await GetUsageData();
             await GetCO2Coversion();
             
+
+        }
+        private async Task CalculateGoalsAsync()
+        {
+            await GetAndUpdateCO2ProgressBar();
+
+            await RunGetAndUpdateCO2OnceADay();
+
+
+        }
+
+        // update Progress bar once a day
+        private async Task RunGetAndUpdateCO2OnceADay()
+        {
+            var lastRun = Preferences.Get("LastRunDate", DateTime.MinValue.ToString());
+            var lastRunDate = DateTime.Parse(lastRun);
+
+            if (lastRunDate.Date < DateTime.Today)
+            {
+                System.Diagnostics.Debug.WriteLine("here progressbar runs");
+
+                await _co2Service.CalculateAndStoreCO2DifferenceAsync();
+
+                await _userActivityLogDatabase.UpdateProgressBar();
+
+                //Co2ReducedProgress = await _userActivityLogDatabase.GetLatestProgressBar();
+                Preferences.Set("LastRunDate", DateTime.Now.ToString());
+            }
+        }
+
+        public async Task GetAndUpdateCO2ProgressBar()
+        {
+
+            await _userActivityLogDatabase.UpdateProgressBar();
+
 
         }
 

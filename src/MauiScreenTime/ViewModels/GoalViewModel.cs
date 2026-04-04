@@ -43,9 +43,9 @@ namespace MauiScreenTime.ViewModels
         {
             //await CalculateAndStoreDifference();
             
-            await GetAndUpdateCO2ProgressBar();
+            //await GetAndUpdateCO2ProgressBar();
 
-            await RunGetAndUpdateCO2OnceADay();
+            //await RunGetAndUpdateCO2OnceADay();
 
             
             await GetTreesPlanted();
@@ -68,32 +68,32 @@ namespace MauiScreenTime.ViewModels
         }
 
 
-        // update Progress bar once a day
-        private async Task RunGetAndUpdateCO2OnceADay()
-        {
-            var lastRun = Preferences.Get("LastRunDate", DateTime.MinValue.ToString());
-            var lastRunDate = DateTime.Parse(lastRun);
+        //// update Progress bar once a day
+        //private async Task RunGetAndUpdateCO2OnceADay()
+        //{
+        //    var lastRun = Preferences.Get("LastRunDate", DateTime.MinValue.ToString());
+        //    var lastRunDate = DateTime.Parse(lastRun);
 
-            if (lastRunDate.Date < DateTime.Today)
-            {
-                System.Diagnostics.Debug.WriteLine("here progressbar runs");
+        //    if (lastRunDate.Date < DateTime.Today)
+        //    {
+        //        System.Diagnostics.Debug.WriteLine("here progressbar runs");
 
-                await _co2Service.CalculateAndStoreCO2DifferenceAsync();
+        //        await _co2Service.CalculateAndStoreCO2DifferenceAsync();
 
-                await _userActivityLogDatabase.UpdateProgressBar();
+        //        await _userActivityLogDatabase.UpdateProgressBar();
 
-                //Co2ReducedProgress = await _userActivityLogDatabase.GetLatestProgressBar();
-                Preferences.Set("LastRunDate", DateTime.Now.ToString());
-            }
-        }
+        //        //Co2ReducedProgress = await _userActivityLogDatabase.GetLatestProgressBar();
+        //        Preferences.Set("LastRunDate", DateTime.Now.ToString());
+        //    }
+        //}
 
-        public async Task GetAndUpdateCO2ProgressBar()
-        {
+        //public async Task GetAndUpdateCO2ProgressBar()
+        //{
 
-            await _userActivityLogDatabase.UpdateProgressBar();
+        //    await _userActivityLogDatabase.UpdateProgressBar();
 
 
-        }
+        //}
 
         public async Task GetTreesPlanted()
         {
