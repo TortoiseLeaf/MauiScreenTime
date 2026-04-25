@@ -19,6 +19,10 @@ namespace MauiScreenTime.ViewModels
             _startupService = startupService;
             NavigateToDashboardCommand = new Command(async () => await NavigateToDashboardPage());
 
+            _ = InitializeConsentCheckAsync();
+            _ = CheckBatteryOptimisationAsync();
+            _ = RequestBatteryOptimisationAsync();
+
         }
 
         public ICommand NavigateToDashboardCommand { get; }
@@ -37,6 +41,35 @@ namespace MauiScreenTime.ViewModels
                 await Shell.Current.DisplayAlert("Error", "Unable to check policy consent. Please try again.", "OK");
             }
 
+        }
+
+        public async Task CheckBatteryOptimisationAsync()
+        {
+#if ANDROID
+            try
+            {
+                _startupService.IsIgnoringBatteryOptimizations();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error checking battery optimization in Main viewModel: {ex}");
+                await Shell.Current.DisplayAlert("Error", "Unable to check battery optimization. Please try again.", "OK");
+            }
+#endif
+        }
+        public async Task RequestBatteryOptimisationAsync()
+        {
+#if ANDROID
+            try
+            {
+                _startupService.RequestIgnoreBatteryOptimizations();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error requesting battery optimization in Main viewModel: {ex}");
+                await Shell.Current.DisplayAlert("Error", "Unable to request battery optimization. Please try again.", "OK");
+            }
+#endif
         }
         private async Task NavigateToDashboardPage()
         {
