@@ -10,5 +10,10 @@ namespace MauiScreenTime.Services.Interfaces
     {
         Task InitializeConsentCheckAsync();
 
+        void RequestIgnoreBatteryOptimizations();
+
+        bool IsIgnoringBatteryOptimizations();
+
+
     }
 }
