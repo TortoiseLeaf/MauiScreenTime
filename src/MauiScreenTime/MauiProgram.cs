@@ -26,8 +26,11 @@ namespace MauiScreenTime
                 });
 
 #if ANDROID
+        builder.Services.AddSingleton<DailyWorker>(); 
+
         DailyWorkerScheduler.Schedule();
 #endif
+
 
             builder.Services.AddSingleton<IConsentDatabase, ConsentDatabase>();
             builder.Services.AddSingleton<IAppUsageDatabase, AppUsageDatabase>();
@@ -39,6 +42,8 @@ namespace MauiScreenTime
             builder.Services.AddSingleton<ICO2Service, CO2Service>();
             builder.Services.AddSingleton<IDatabaseService, DatabaseService>();
             builder.Services.AddSingleton<IUsageStatsService, UsageStatsService>();
+            builder.Services.AddSingleton<IDailyWorkerService, DailyWorkerService>();
+
 
             builder.Services.AddSingleton<App>();
             

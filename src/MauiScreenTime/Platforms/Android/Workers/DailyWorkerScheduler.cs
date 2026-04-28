@@ -57,7 +57,7 @@ namespace MauiScreenTime.Platforms.Android.Workers
         private static long GetDelayUntilNextTarget(int targetHour, int targetMinute)
         {
             var now = DateTime.Now;
-            var target = DateTime.Today.AddHours(targetHour).AddMinutes(targetMinute);
+            var target = DateTime.Today.AddHours(12).AddMinutes(53);
 
             // If 13:00 has already passed today, schedule for tomorrow
             if (now >= target)

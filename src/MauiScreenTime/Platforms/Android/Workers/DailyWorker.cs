@@ -6,41 +6,45 @@ using System.Threading.Tasks;
 using Android.Content;
 using AndroidX.Work;
 using global::Android.Content;
+using MauiScreenTime.Services.Interfaces;
+using Android.Content;
+using AndroidX.Work;
 
 namespace MauiScreenTime.Platforms.Android.Workers
 {
     public class DailyWorker : Worker
     {
-        public DailyWorker(Context context, WorkerParameters workerParams)
-            : base(context, workerParams) { }
+        private readonly IDailyWorkerService _dailyWorkerService;
+
+   
+
+        public DailyWorker(
+            Context context,
+            WorkerParameters workerParams,
+            IDailyWorkerService dailyWorkerService)      // <-- injected by MauiWorkerFactory
+            : base(context, workerParams)
+        {
+            _dailyWorkerService = dailyWorkerService;
+        }
 
         public override Result DoWork()
         {
             try
             {
                 var now = DateTime.Now;
-                if (now.Hour == 13 && now.Minute < 15) // refactor
+                if (now.Hour == 13 && now.Minute < 15)
                 {
-                    RunDailyTask();
+                    _dailyWorkerService.StoreCO2TotalTodayAsync(); // use it normally
                 }
 
-                // Schedule tomorrow's run before exiting
                 DailyWorkerScheduler.ScheduleNext();
-
                 return Result.InvokeSuccess();
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"DailyWorker failed: {ex.Message}");
-                // Retry after 15 minutes on failure
                 return Result.InvokeRetry();
             }
-        }
-
-        private void RunDailyTask()
-        {
-            // Your daily logic here
-            System.Diagnostics.Debug.WriteLine("Daily task executed at 13:00!");
         }
     }
 }
