@@ -19,6 +19,8 @@ namespace MauiScreenTime.Platforms.Android.Workers
         public DailyWorker(Context context, WorkerParameters workerParams)
     : base(context, workerParams)
         {
+            System.Diagnostics.Debug.WriteLine($"Daily first constructor used");
+
             _dailyWorkerService = IPlatformApplication.Current?.Services
                 .GetRequiredService<IDailyWorkerService>();
         }
@@ -29,17 +31,23 @@ namespace MauiScreenTime.Platforms.Android.Workers
             IDailyWorkerService dailyWorkerService)      // <-- injected by MauiWorkerFactory
             : base(context, workerParams)
         {
+            System.Diagnostics.Debug.WriteLine($"daily second constructor used");
+
             _dailyWorkerService = dailyWorkerService;
         }
 
         public override Result DoWork()
         {
+            System.Diagnostics.Debug.WriteLine($"DailyWorker fired");
+
             try
             {
                 var now = DateTime.Now;
                 if (now.Hour == 13 && now.Minute < 15)
                 {
                     _dailyWorkerService.StoreCO2TotalTodayAsync(); // use it normally
+                    System.Diagnostics.Debug.WriteLine($"DailyWorker service method fired");
+
                 }
 
                 DailyWorkerScheduler.ScheduleNext();
