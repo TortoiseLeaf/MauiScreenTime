@@ -16,7 +16,12 @@ namespace MauiScreenTime.Platforms.Android.Workers
     {
         private readonly IDailyWorkerService _dailyWorkerService;
 
-   
+        public DailyWorker(Context context, WorkerParameters workerParams)
+    : base(context, workerParams)
+        {
+            _dailyWorkerService = IPlatformApplication.Current?.Services
+                .GetRequiredService<IDailyWorkerService>();
+        }
 
         public DailyWorker(
             Context context,
