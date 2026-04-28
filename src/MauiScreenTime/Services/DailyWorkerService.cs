@@ -29,6 +29,8 @@ namespace MauiScreenTime.Services
         }
         public async Task StoreCO2TotalTodayAsync()
         {
+            System.Diagnostics.Debug.WriteLine($"DailyWorkerService fired");
+
             List<AppUsageModel>? appUsageList;
             try
             {
