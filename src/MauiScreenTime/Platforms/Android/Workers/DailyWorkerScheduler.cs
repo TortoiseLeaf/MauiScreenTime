@@ -20,10 +20,15 @@ namespace MauiScreenTime.Platforms.Android.Workers
             // Calculate initial delay until next 13:00
             var delay = GetDelayUntilNextTarget(targetHour: 13, targetMinute: 0);
 
+            //var workRequest = new OneTimeWorkRequest.Builder(typeof(DailyWorker))
+            //    .SetInitialDelay(delay, Java.Util.Concurrent.TimeUnit.Milliseconds)
+            //    .AddTag(WorkTag)
+            //    .Build();
+
             var workRequest = new OneTimeWorkRequest.Builder(typeof(DailyWorker))
-                .SetInitialDelay(delay, Java.Util.Concurrent.TimeUnit.Milliseconds)
-                .AddTag(WorkTag)
-                .Build();
+        .SetInitialDelay(2, Java.Util.Concurrent.TimeUnit.Minutes) // Fire in 2 minutes
+        .AddTag(WorkTag)
+        .Build();
 
             WorkManager.GetInstance(context)
                 .EnqueueUniqueWork(
@@ -42,10 +47,14 @@ namespace MauiScreenTime.Platforms.Android.Workers
             var context = global::Android.App.Application.Context;
 
             // Always 24 hours until the same time tomorrow
+            //var workRequest = new OneTimeWorkRequest.Builder(typeof(DailyWorker))
+            //    .SetInitialDelay(24, Java.Util.Concurrent.TimeUnit.Hours)
+            //    .AddTag(WorkTag)
+            //    .Build();
             var workRequest = new OneTimeWorkRequest.Builder(typeof(DailyWorker))
-                .SetInitialDelay(24, Java.Util.Concurrent.TimeUnit.Hours)
-                .AddTag(WorkTag)
-                .Build();
+        .SetInitialDelay(2, Java.Util.Concurrent.TimeUnit.Minutes) // Fire in 2 minutes
+        .AddTag(WorkTag)
+        .Build();
 
             WorkManager.GetInstance(context)
                 .EnqueueUniqueWork(
@@ -57,7 +66,7 @@ namespace MauiScreenTime.Platforms.Android.Workers
         private static long GetDelayUntilNextTarget(int targetHour, int targetMinute)
         {
             var now = DateTime.Now;
-            var target = DateTime.Today.AddHours(13).AddMinutes(07);
+            var target = DateTime.Today.AddHours(18).AddMinutes(31);
 
             // If 13:00 has already passed today, schedule for tomorrow
             if (now >= target)
