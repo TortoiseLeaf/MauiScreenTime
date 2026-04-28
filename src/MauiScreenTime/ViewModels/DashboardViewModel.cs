@@ -140,7 +140,7 @@ namespace MauiScreenTime.ViewModels
             //DEBUG1();
             //DEBUG();
 
-            await GetAndStoreCO2Total();
+            //await GetAndStoreCO2Total();
 
             await CalculateGoalsAsync();
         }
