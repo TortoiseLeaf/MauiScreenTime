@@ -6,7 +6,9 @@ using MauiScreenTime.ViewModels;
 using MauiScreenTime.Pages;
 using MauiScreenTime.Services;
 using MauiScreenTime.Services.Interfaces;
-
+#if ANDROID
+using MauiScreenTime.Platforms.Android.Workers;
+#endif
 
 namespace MauiScreenTime
 {
@@ -22,6 +24,10 @@ namespace MauiScreenTime
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+
+#if ANDROID
+        DailyWorkerScheduler.Schedule();
+#endif
 
             builder.Services.AddSingleton<IConsentDatabase, ConsentDatabase>();
             builder.Services.AddSingleton<IAppUsageDatabase, AppUsageDatabase>();
