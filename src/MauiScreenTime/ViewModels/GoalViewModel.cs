@@ -41,56 +41,60 @@ namespace MauiScreenTime.ViewModels
 
         public async Task InitialiseMethods()
         {
-            await CalculateAndStoreDifference();
+            //await CalculateAndStoreDifference();
             
+            //await GetAndUpdateCO2ProgressBar();
 
-            await RunGetAndUpdateCO2OnceADay();
+            //await RunGetAndUpdateCO2OnceADay();
 
             
             await GetTreesPlanted();
         }
 
-        public async Task CalculateAndStoreDifference()
-        {
-            await _co2Service.CalculateAndStoreCO2DifferenceAsync();
+        //public async Task CalculateAndStoreDifference()
+        //{
+        //    await _co2Service.CalculateAndStoreCO2DifferenceAsync();
 
-        }
+        //}
+
 
 
         public async Task DisplayProgressBar()
         {
-            var reduced = await _userActivityLogDatabase.DisplayLatestProgressBar();
+            var reduced = await _userActivityLogDatabase.GetTotalProgressBar();
             Co2ReducedProgress = reduced;
 
             System.Diagnostics.Debug.WriteLine("here progressbar runs" + Co2ReducedProgress);
         }
 
 
-        // update Progress bar once a day
-        private async Task RunGetAndUpdateCO2OnceADay()
-        {
-            var lastRun = Preferences.Get("LastRunDate", DateTime.MinValue.ToString());
-            var lastRunDate = DateTime.Parse(lastRun);
+        //// update Progress bar once a day
+        //private async Task RunGetAndUpdateCO2OnceADay()
+        //{
+        //    var lastRun = Preferences.Get("LastRunDate", DateTime.MinValue.ToString());
+        //    var lastRunDate = DateTime.Parse(lastRun);
 
-            if (lastRunDate.Date < DateTime.Today)
-            {
-                System.Diagnostics.Debug.WriteLine("here progressbar runs");
+        //    if (lastRunDate.Date < DateTime.Today)
+        //    {
+        //        System.Diagnostics.Debug.WriteLine("here progressbar runs");
 
-                await GetAndUpdateCO2ProgressBar();
+        //        await _co2Service.CalculateAndStoreCO2DifferenceAsync();
 
-                Co2ReducedProgress = await _userActivityLogDatabase.GetLatestProgressBar();
-                Preferences.Set("LastRunDate", DateTime.Now.ToString());
-            }
-        }
+        //        await _userActivityLogDatabase.UpdateProgressBar();
 
-        public async Task GetAndUpdateCO2ProgressBar()
-        {
-            
-                await _userActivityLogDatabase.UpdateProgressBar();
-            
+        //        //Co2ReducedProgress = await _userActivityLogDatabase.GetLatestProgressBar();
+        //        Preferences.Set("LastRunDate", DateTime.Now.ToString());
+        //    }
+        //}
 
-        }
-        
+        //public async Task GetAndUpdateCO2ProgressBar()
+        //{
+
+        //    await _userActivityLogDatabase.UpdateProgressBar();
+
+
+        //}
+
         public async Task GetTreesPlanted()
         {
 
@@ -106,14 +110,34 @@ namespace MauiScreenTime.ViewModels
             var TodayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now);
 
 
-            var yesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(yesterday);
-            var dayBeforeYesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(dayBeforeYesterday);
+            try
+            {
+                var yesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(yesterday);
+                var dayBeforeYesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(dayBeforeYesterday);
 
+                if (yesterdayTotalCO2Obj != null)
+                {
+                    Co2TotalY = yesterdayTotalCO2Obj.CO2Total;
+                } else {
+                    Co2TotalY = 0;
+                }
+                if (dayBeforeYesterdayTotalCO2Obj != null)
+                {
+                    Co2TotalDayBefore = dayBeforeYesterdayTotalCO2Obj.CO2Total;
+                } else
+                {
+                    Co2TotalDayBefore = 0;
+                }
+        }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("here unable to get goals data in goalpage, possibly none");
 
-            Co2TotalY = yesterdayTotalCO2Obj.CO2Total;
-            Co2TotalDayBefore = dayBeforeYesterdayTotalCO2Obj.CO2Total;
+                //await Shell.Current.DisplayAlert("Error", "Unable to get goals data, try refreshing the page.", "OK");
 
-            Co2TotalReduced = await _userActivityLogDatabase.GetCO2TotalReduced();
+    }
+
+    Co2TotalReduced = await _userActivityLogDatabase.GetCO2TotalReduced();
 
         }
     }

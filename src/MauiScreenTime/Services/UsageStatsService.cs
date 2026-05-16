@@ -28,7 +28,7 @@ namespace MauiScreenTime.Services
 {
     public class UsageStatsService : IUsageStatsService
     {
-        public List<string> appWhiteList = ["com.zhiliaoapp.musically", "com.reddit.frontpage", "com.facebook.katana", "com.instagram.android", "com.twitter.android", "tv.twitch.android.app", "com.snapchat.android", "com.pinterest", "com.google.android.youtube", "package.android.youtube"];
+        public List<string> appWhiteList = ["com.zhiliaoapp.musically", "com.reddit.frontpage", "com.facebook.katana", "com.instagram.android", "com.twitter.android", "tv.twitch.android.app", "com.snapchat.android", "com.pinterest", "com.linkedin.android"]; //"com.google.android.youtube", "package.android.youtube"];
         private Task<List<AppUsageModel>>? usageData;
 
 #if ANDROID
@@ -134,65 +134,104 @@ namespace MauiScreenTime.Services
         // get app usage data from installed whitelisted apps
         public async Task<List<AppUsageModel>> GetAppUsageAsync()
         {
-
             IList<string> installedWhitelistPackageNames = GetInstalledPackages();
 
             return await Task.Run(() =>
-
             {
 #if ANDROID
-                _context = Android.App.Application.Context;
-                var usageStatsManager = (UsageStatsManager)_context.GetSystemService(Context.UsageStatsService);
+        _context = Android.App.Application.Context;
+        var usageStatsManager = (UsageStatsManager)_context.GetSystemService(Context.UsageStatsService);
 
-                // interval starts at midnight today, ends with right now
-                DateTime endTime = DateTime.Now;
-                DateTime startTime = DateTime.Today;
+        DateTime endTime = DateTime.Now;
+        DateTime startTime = DateTime.Today;
 
-                long startTimeMillis = new DateTimeOffset(startTime).ToUnixTimeMilliseconds();
-                long endTimeMillis = new DateTimeOffset(endTime).ToUnixTimeMilliseconds();
+        long startTimeMillis = new DateTimeOffset(startTime).ToUnixTimeMilliseconds();
+        long endTimeMillis = new DateTimeOffset(endTime).ToUnixTimeMilliseconds();
 
-                //var usageStatsList = usageStatsManager.QueryUsageStats(
-                //    UsageStatsInterval.Daily,
-                //    startTimeMillis,
-                //    endTimeMillis
-                //);
+        // Query events instead of usage stats
+        var events = usageStatsManager.QueryEvents(startTimeMillis, endTimeMillis);
+        var usageEvent = new UsageEvents.Event();
 
-                var aggregatedStats = usageStatsManager.QueryAndAggregateUsageStats(
-                startTimeMillis,
-                endTimeMillis
-            );
+        // Track foreground time per app
+        var appUsageTime = new Dictionary<string, long>();
+        var appStartTimes = new Dictionary<string, long>();
 
-                var DeviceAppUsageList = new List<AppUsageModel>();
+        // Process all events
+        while (events.HasNextEvent)
+        {
+            events.GetNextEvent(usageEvent);
 
-                if (aggregatedStats != null)
-                {
-                    foreach (var entry in aggregatedStats)
+            string packageName = usageEvent.PackageName;
+            long timestamp = usageEvent.TimeStamp;
+
+            // Only track whitelisted apps
+            if (!installedWhitelistPackageNames.Contains(packageName))
+                continue;
+
+            switch (usageEvent.EventType)
+            {
+                case UsageEventType.ActivityResumed: // App came to foreground
+                    appStartTimes[packageName] = timestamp;
+                    break;
+
+                case UsageEventType.ActivityPaused: // App went to background
+                    if (appStartTimes.ContainsKey(packageName))
                     {
-                        var packageName = entry.Key;
-                        var usageObj = entry.Value;
+                        long duration = timestamp - appStartTimes[packageName];
 
-                        //    if (usageStatsList != null)
-                        //{
-                        //    foreach (var usageObj in usageStatsList)
-                        //    {    
+                        if (!appUsageTime.ContainsKey(packageName))
+                            appUsageTime[packageName] = 0;
 
-                        if (usageObj.TotalTimeInForeground > 0 && installedWhitelistPackageNames.Contains(usageObj.PackageName))
-                        {
-                            DeviceAppUsageList.Add(new AppUsageModel
-                            {
-                                PackageName = usageObj.PackageName,
-                                UsageTimeMilliseconds = TimeSpan.FromMilliseconds(usageObj.TotalTimeInForeground),
-                                UsageTimeMinutes = usageObj.TotalTimeInForeground / 60000,
-
-                            });
-                        }
+                        appUsageTime[packageName] += duration;
+                        appStartTimes.Remove(packageName);
                     }
-                }
+                    break;
+            }
+        }
 
-                var usageData = DeviceAppUsageList.OrderByDescending(a => a.UsageTimeMinutes).ToList();
+        // Handle apps still in foreground
+        foreach (var kvp in appStartTimes)
+        {
+            long duration = endTimeMillis - kvp.Value;
+
+            if (!appUsageTime.ContainsKey(kvp.Key))
+                appUsageTime[kvp.Key] = 0;
+
+            appUsageTime[kvp.Key] += duration;
+        }
+
+        var DeviceAppUsageList = new List<AppUsageModel>();
+
+        if (appUsageTime.Count > 0)
+        {
+            foreach (var app in appUsageTime)
+            {
+                if (app.Value > 0) // Only include apps with actual usage time
+                {
+                    DeviceAppUsageList.Add(new AppUsageModel
+                    {
+                        PackageName = app.Key,
+                        UsageTimeMilliseconds = TimeSpan.FromMilliseconds(app.Value),
+                        UsageTimeMinutes = app.Value / 60000,
+                    });
+                }
+            }
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine($"Here app usage defaulted");
+
+            DeviceAppUsageList.Add(new AppUsageModel
+            {
+                PackageName = "Default",
+                UsageTimeMilliseconds = TimeSpan.FromMilliseconds(0),
+                UsageTimeMinutes = 0,
+            });
+        }
+
+        var usageData = DeviceAppUsageList.OrderByDescending(a => a.UsageTimeMinutes).ToList();
 #endif
                 return usageData;
-
             });
         }
     }

@@ -15,35 +15,26 @@
                    FontAttributes="Bold" />
 
             <!-- Analytics Consent -->
-            <Border Grid.Row="1"
+        <Border Grid.Row="1"
                     Stroke="Gray"
                     StrokeThickness="1"                      
                     >
-                
+
             <ScrollView >
                 <VerticalStackLayout Spacing="10">
 
                     <Label Text="Terms and Conditions" FontSize="18" FontAttributes="Bold" />
-                    <Label Text="Cliffnotes for a scrollwindow of actual terms and conditions for data consent" />
-                    
-                    
+
                     <Label Text= "{Binding TermsText}" 
                            LineBreakMode="WordWrap"
                            Padding="10"/>
 
-                   
+
                 </VerticalStackLayout>
             </ScrollView>
         </Border>
 
-            <HorizontalStackLayout Grid.Row="2" Spacing="10">
-                <Label Text="Status:" VerticalOptions="Center" />
-                <Label Text="{Binding HasConsent, StringFormat='Granted: {0}'}" 
-            VerticalOptions="Center"
-            FontAttributes="Bold" />
-            </HorizontalStackLayout>
-
-            <HorizontalStackLayout Grid.Row="3" Spacing="10">
+        <HorizontalStackLayout Grid.Row="3" Spacing="10">
                 <Button Text="Grant" 
              Command="{Binding GrantConsentCommand}"
              BackgroundColor="ForestGreen" />

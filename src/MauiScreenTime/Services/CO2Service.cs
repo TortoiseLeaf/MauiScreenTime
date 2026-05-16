@@ -56,8 +56,9 @@ namespace MauiScreenTime.Services
 
                 double CO2e = CO2Mins * appUsageMins;
 
+                // CAP THE CO2e at 300
                 // write to the db or just do on the fly? performance/security 
-                appData.CO2e = CO2e;
+                appData.CO2e = Math.Min(CO2e, 300); ;
                 appData.AppName = conversionTableEntry.AppName;
                 appData.Date = DateTime.UtcNow;
             }
@@ -77,9 +78,11 @@ namespace MauiScreenTime.Services
             {
                 foreach (var appUsage in appUsageList)
                 {
-                    var newData = await CalculateCO2eAsync(appUsage);
+                    var appWithCO2e = await CalculateCO2eAsync(appUsage);
 
-                    CO2Total += newData.CO2e;
+                    // cap total per app at 400g
+                    CO2Total += Math.Min(appWithCO2e.CO2e, 300);
+                    //CO2Total += newData.CO2e;
                 }
 
             }
@@ -100,10 +103,24 @@ namespace MauiScreenTime.Services
 
 
             var yesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now.AddDays(-1));
-            yesterdayCO2Total = yesterdayTotalCO2Obj.CO2Total;
+
+            if (yesterdayTotalCO2Obj != null)
+            {
+                yesterdayCO2Total = yesterdayTotalCO2Obj.CO2Total;
+            } else
+            {
+                yesterdayCO2Total = 0;
+            }
 
             var dayBeforeYesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now.AddDays(-2));
-            dayBeforeYesterdayCO2Total = dayBeforeYesterdayTotalCO2Obj.CO2Total;
+
+            if (dayBeforeYesterdayTotalCO2Obj != null)
+            {
+                dayBeforeYesterdayCO2Total = dayBeforeYesterdayTotalCO2Obj.CO2Total;
+            } else
+            {
+                dayBeforeYesterdayCO2Total = 0;
+            }
 
             if (yesterdayCO2Total > 0)
             {

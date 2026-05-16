@@ -105,35 +105,44 @@ namespace MauiScreenTime.ViewModels
             _userActivityLogDatabase = userActivityLogDatabase;
             _co2Service = co2Service;
 
+
             CurrentChart = new ObservableCollection<BarItem>(
             Enumerable.Range(0, 10).Select(_ => new BarItem { Height = 0 })
         );
-
+            //DEBUG1();
             //DEBUG();
             _ = InitialiseAsync();
-            _ = ShowScreenTime();
-            //GetDataSoFar();
+            //_ = ShowScreenTime();
+            //_ = DisplayLogs();
 
         }
 
-        public async Task DEBUG()
-        {
-            await _userActivityLogDatabase.DEBUG(30, 0, 0, 0);
-            await _userActivityLogDatabase.DEBUG2(250, 0, 0, 0); // 200 TOTAL DAY BEFORE AND 100 TOTAL TODAY
-            
+        //public async Task DEBUG()
+        //{
+        //    await _userActivityLogDatabase.DEBUG(200, 0, 0, 0);
+        //    await _userActivityLogDatabase.DEBUG2(350, 0, 0, 0); // 200 TOTAL DAY BEFORE AND 100 TOTAL TODAY 
+        //}
 
-        }
+        //public async Task DEBUG1()
+        //{
+        //    await _userActivityLogDatabase.AddActivityLog(0, 0, 66, 0);
+
+        //}
 
         public async Task InitialiseAsync()
         {
             await PopulateAppCO2ListAsync();
             await LoadData();
             await CalculateTotals();
-            await ShowScreenTime();
             await ShowCO2e();
+            await ShowScreenTime();
 
+            //DEBUG1();
+            //DEBUG();
 
             await GetAndStoreCO2Total();
+
+            await CalculateGoalsAsync();
         }
 
         private async Task PopulateAppCO2ListAsync()
@@ -141,6 +150,57 @@ namespace MauiScreenTime.ViewModels
             await GetUsageData();
             await GetCO2Coversion();
             
+
+        }
+        private async Task CalculateGoalsAsync()
+        {
+            await GetAndUpdateCO2ProgressBar();
+
+            await RunGetAndUpdateCO2OnceADay();
+
+
+        }
+
+        // update Progress bar once a day
+        private async Task RunGetAndUpdateCO2OnceADay()
+        {
+            var lastRun = Preferences.Get("LastRunDate", DateTime.MinValue.ToString());
+            var lastRunDate = DateTime.Parse(lastRun);
+
+            if (lastRunDate.Date < DateTime.Today)
+            {
+                System.Diagnostics.Debug.WriteLine("here progressbar runs");
+
+                await _co2Service.CalculateAndStoreCO2DifferenceAsync();
+
+                await _userActivityLogDatabase.UpdateProgressBar();
+
+                //Co2ReducedProgress = await _userActivityLogDatabase.GetLatestProgressBar();
+                Preferences.Set("LastRunDate", DateTime.Now.ToString());
+            }
+        }
+
+        public async Task GetAndUpdateCO2ProgressBar()
+        {
+
+            await _userActivityLogDatabase.UpdateProgressBar();
+
+
+        }
+
+        public async Task DisplayLogs()
+        {
+            var x = await _userActivityLogDatabase.GetAllActivitiesLogged();
+            System.Diagnostics.Debug.WriteLine("here items");
+
+            foreach (var item in x)
+            {
+                var xx = System.Text.Json.JsonSerializer.Serialize(item);
+#if ANDROID
+                Log.Debug("here", xx);
+#endif
+                System.Diagnostics.Debug.WriteLine(xx);
+            }
 
         }
 
@@ -157,13 +217,13 @@ namespace MauiScreenTime.ViewModels
             
             ScreenTimeData = [.. AppUsageListCO2.Select(obj => new BarItem
             {
-                Label = obj.AppName.Length >= 3 ? obj.AppName[..3] : obj.AppName,
+                Label = obj.AppName.Length >= 3 ? obj.AppName[..2] : obj.AppName,
                 Value = obj.UsageTimeMinutes
             })];
 
             CO2eData = [.. AppUsageListCO2.Select(obj => new BarItem
             {
-                Label = obj.AppName.Length >= 3 ? obj.AppName[..3] : obj.AppName,
+                Label = obj.AppName.Length >= 3 ? obj.AppName[..2] : obj.AppName,
 
                 Value = obj.CO2e
             })];
@@ -283,16 +343,25 @@ namespace MauiScreenTime.ViewModels
 
             UpdateYAxis();
 
-            var scaled = ScaleData(ScreenTimeData, ScreenTimeBarColor, ScreenTimeAxisMax);
+            try {
+                
+                    var scaled = ScaleData(ScreenTimeData, ScreenTimeBarColor, ScreenTimeAxisMax);
 
-            // Animate from current state ? new state
-            //await AnimateBarsAsync(scaled, isFirstLoad ? ScreenTimeBarColor : CO2eBarColor, ScreenTimeBarColor);
+                    // Animate from current state ? new state
+                    //await AnimateBarsAsync(scaled, isFirstLoad ? ScreenTimeBarColor : CO2eBarColor, ScreenTimeBarColor);
 
-            // Update binding source after animation
-            CurrentChart = new ObservableCollection<BarItem>(scaled);
-            OnPropertyChanged(nameof(CurrentChart));
+                    // Update binding source after animation
+                    CurrentChart = new ObservableCollection<BarItem>(scaled);
+                    OnPropertyChanged(nameof(CurrentChart));
 
-            UpdateButton(true);
+                    UpdateButton(true);
+                
+            } catch (Exception ex)
+            {
+
+                System.Diagnostics.Debug.WriteLine($"Error getting usage data, possibly none: {ex}");
+
+            }
         }
 
 
@@ -303,16 +372,23 @@ namespace MauiScreenTime.ViewModels
 
             UpdateYAxis();
 
-            var scaled = ScaleData(CO2eData, CO2eBarColor, CO2AxisMax);
+            try { 
+                var scaled = ScaleData(CO2eData, CO2eBarColor, CO2AxisMax);
 
-            // Animate from current state ? new state
-            //await AnimateBarsAsync(scaled, ScreenTimeBarColor, CO2eBarColor);
+                // Animate from current state ? new state
+                //await AnimateBarsAsync(scaled, ScreenTimeBarColor, CO2eBarColor);
 
-            // Update binding source after animation
-            CurrentChart = new ObservableCollection<BarItem>(scaled);
-            OnPropertyChanged(nameof(CurrentChart));
+                // Update binding source after animation
+                CurrentChart = new ObservableCollection<BarItem>(scaled);
+                OnPropertyChanged(nameof(CurrentChart));
 
-            UpdateButton(false);
+                UpdateButton(false);
+            } catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error getting usage data, possibly none: {ex}");
+
+            }
+
         }
 
         // Alternate Y axis values depending on which chart is displayed
@@ -330,8 +406,8 @@ namespace MauiScreenTime.ViewModels
             }
             else
             {
+                YAxisLabels.Add("300g");
                 YAxisLabels.Add("200g");
-                YAxisLabels.Add("150g");
                 YAxisLabels.Add("100g");
                 YAxisLabels.Add("50g");
                 YAxisLabels.Add("0g");
@@ -361,6 +437,13 @@ namespace MauiScreenTime.ViewModels
                         {
                             AppUsageList.Add(app);
                         }
+                    } 
+                    else
+                    {
+                        AppUsageList =
+                        [
+                            new() { UsageTimeMinutes = 0 },
+                        ];
                     }
                 }
                 catch (Exception ex)
@@ -395,8 +478,10 @@ namespace MauiScreenTime.ViewModels
 
             try
             {
+                // refactor this to just take the app.CO2e from each in AppUsageListCO2
                 Co2Total = await _co2Service.CalculateCO2TotalAsync(AppUsageList);
                 await _userActivityLogDatabase.AddActivityLog(Co2Total, 0, 0, 0);
+
 
                 var TodayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now);
 
@@ -405,7 +490,7 @@ namespace MauiScreenTime.ViewModels
             {
                 System.Diagnostics.Debug.WriteLine($"Error totalling CO2e in dashboard: {ex}");
 
-                await Shell.Current.DisplayAlert("Error", "Unable to total CO2e.", "OK");
+                await Shell.Current.DisplayAlert("Error", "Unable to total CO2e, try restarting the app.", "OK");
             }
 
 

@@ -336,6 +336,8 @@
             TextColor="White"
             FontAttributes="Bold"
             FontSize="28"/>
+        
+        
             <CollectionView ItemsSource="{Binding AppUsageListCO2}" x:DataType="vm:DashboardViewModel" Margin="20">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="{x:Type x:String}">
