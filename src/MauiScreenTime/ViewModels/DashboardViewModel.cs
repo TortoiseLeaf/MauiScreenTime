@@ -112,8 +112,8 @@ namespace MauiScreenTime.ViewModels
             //DEBUG1();
             //DEBUG();
             _ = InitialiseAsync();
-            _ = ShowScreenTime();
-            _ = DisplayLogs();
+            //_ = ShowScreenTime();
+            //_ = DisplayLogs();
 
         }
 
@@ -134,8 +134,8 @@ namespace MauiScreenTime.ViewModels
             await PopulateAppCO2ListAsync();
             await LoadData();
             await CalculateTotals();
-            await ShowScreenTime();
             await ShowCO2e();
+            await ShowScreenTime();
 
             //DEBUG1();
             //DEBUG();
