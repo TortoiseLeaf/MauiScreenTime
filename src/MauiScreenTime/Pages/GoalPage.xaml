@@ -5,67 +5,18 @@
              x:Class="MauiScreenTime.Pages.GoalPage"
              x:DataType="vm:GoalViewModel"
              Title="GoalPage">
-    <VerticalStackLayout>
+    <VerticalStackLayout Padding="60,0"
+Spacing="25">
+       
+        <Image
+    Source="dotnet_bot.png"
+    HeightRequest="185"
+    Aspect="AspectFit"
+    SemanticProperties.Description="dot net bot in a hovercraft number nine" />
         <Label 
-            Text="Welcome to GoalPage!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-
-        <Label Text="{Binding Co2ReducedProgress}"
-               FontSize="20"
-TextColor="Gray"
-HorizontalTextAlignment="Center"
+Text="Coming soon!"
+FontSize="24"
+VerticalOptions="Center" 
 HorizontalOptions="Center" />
-        <Label Text="/ 200g"
-               FontSize="20"
-TextColor="Gray"
-HorizontalTextAlignment="Center"
-HorizontalOptions="Center" />
-        <Label Text="Trees Planted:"
-               FontSize="20"
-TextColor="Gray"
-HorizontalTextAlignment="Center"
-HorizontalOptions="Center" />
-        <Label Text="{Binding TreesTotal}"
-               FontSize="20"
-TextColor="Gray"
-HorizontalTextAlignment="Center"
-HorizontalOptions="Center" />
-
-        <Label Text="Co2 total yesterday:" 
-FontSize="20"
-        HorizontalTextAlignment="Center"
-TextColor="Gray"/>
-        <Label Text="{Binding Co2TotalY}" 
-FontSize="30"
-TextColor="Gray"
-HorizontalTextAlignment="Center"
-HorizontalOptions="Center" />
-        
-
-        <Label Text="CO2 total day before yesterday:" 
-FontSize="20"
-        HorizontalTextAlignment="Center"
-TextColor="Gray"/>
-        <Label Text="{Binding Co2TotalDayBefore}" 
-FontSize="30"
-TextColor="Gray"
-HorizontalTextAlignment="Center"
-HorizontalOptions="Center" />
-        <Label Text="Total Reduced to date:" 
-FontSize="20"
-        HorizontalTextAlignment="Center"
-TextColor="Gray"/>
-        
-        
-        <Label Text="{Binding Co2TotalReduced}" 
-FontSize="30"
-TextColor="Gray"
-HorizontalTextAlignment="Center"
-HorizontalOptions="Center" />
-
-
-        
-
     </VerticalStackLayout>
 </ContentPage>
