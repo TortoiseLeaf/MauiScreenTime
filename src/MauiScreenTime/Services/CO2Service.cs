@@ -52,7 +52,7 @@ namespace MauiScreenTime.Services
                                 
                 var CO2Mins = conversionTableEntry.CO2Mins;
                 
-                double appUsageMins = appData.UsageTimeMinutes;
+                double appUsageMins = (double)appData.UsageTimeMinutes;
 
                 double CO2e = CO2Mins * appUsageMins;
 
@@ -81,7 +81,7 @@ namespace MauiScreenTime.Services
                     var appWithCO2e = await CalculateCO2eAsync(appUsage);
 
                     // cap total per app at 400g
-                    CO2Total += Math.Min(appWithCO2e.CO2e, 300);
+                    CO2Total += Math.Min((double)appWithCO2e.CO2e, 300);
                     //CO2Total += newData.CO2e;
                 }
 

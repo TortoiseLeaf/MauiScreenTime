@@ -218,14 +218,14 @@ namespace MauiScreenTime.ViewModels
             ScreenTimeData = [.. AppUsageListCO2.Select(obj => new BarItem
             {
                 Label = obj.AppName.Length >= 3 ? obj.AppName[..2] : obj.AppName,
-                Value = obj.UsageTimeMinutes
+                Value = (double)obj.UsageTimeMinutes
             })];
 
             CO2eData = [.. AppUsageListCO2.Select(obj => new BarItem
             {
                 Label = obj.AppName.Length >= 3 ? obj.AppName[..2] : obj.AppName,
 
-                Value = obj.CO2e
+                Value = (double)obj.CO2e
             })];
 
 

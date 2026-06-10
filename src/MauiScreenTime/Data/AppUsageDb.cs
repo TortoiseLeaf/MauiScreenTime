@@ -10,13 +10,13 @@ namespace MauiScreenTime.Data
 {
     public class AppUsageModel
     {
-        public int Id {  get; set; }
-        public string PackageName { get; set; }
-        public string AppName { get; set; }
-        public DateTime Date {  get; set; }
-        public TimeSpan UsageTimeMilliseconds { get; set; }
-        public long UsageTimeMinutes { get; set; }
-        public double CO2e { get; set; }
+        public int? Id { get; set; } = 0;
+        public string? PackageName { get; set; } = string.Empty;
+        public string? AppName { get; set; } = string.Empty;
+        public DateTime? Date { get; set; } = new DateTime();
+        public TimeSpan? UsageTimeMilliseconds { get; set; } = new TimeSpan();
+        public long? UsageTimeMinutes { get; set; } = 0;
+        public double? CO2e { get; set; } = 0;
 
     }
 
