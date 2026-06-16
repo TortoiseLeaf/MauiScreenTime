@@ -275,16 +275,3 @@ namespace MauiScreenTime.Data
 
     }
 }
-
-
-//possibly needed methods
-/*
-         public async Task<List<UserActivityLogModel>> GetActivitiesByDateRange(DateTime startDate, DateTime endDate) 
-        { 
-            var connection = await GetConnectionAsync();
-            return await connection.Table<UserActivityLogModel>()
-                .Where(a => a.Date >= startDate && a.Date <= endDate)
-                .OrderByDescending(a => a.Date)
-                .ToListAsync();
-        }
- */
