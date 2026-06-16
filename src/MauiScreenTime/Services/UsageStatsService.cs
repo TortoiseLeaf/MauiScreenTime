@@ -168,25 +168,42 @@ namespace MauiScreenTime.Services
             if (!installedWhitelistPackageNames.Contains(packageName))
                 continue;
 
-            switch (usageEvent.EventType)
+
+            if (UsageEventType.ActivityResumed == usageEvent.EventType) // App came to foreground
             {
-                case UsageEventType.ActivityResumed: // App came to foreground
-                    appStartTimes[packageName] = timestamp;
-                    break;
-
-                case UsageEventType.ActivityPaused: // App went to background
-                    if (appStartTimes.ContainsKey(packageName))
-                    {
-                        long duration = timestamp - appStartTimes[packageName];
-
-                        if (!appUsageTime.ContainsKey(packageName))
-                            appUsageTime[packageName] = 0;
-
-                        appUsageTime[packageName] += duration;
-                        appStartTimes.Remove(packageName);
-                    }
-                    break;
+                appStartTimes[packageName] = timestamp;
             }
+            else if (UsageEventType.ActivityPaused == usageEvent.EventType) // App went to background
+            {
+                if (appStartTimes.ContainsKey(packageName))
+                {
+                    long duration = timestamp - appStartTimes[packageName];
+                    if (!appUsageTime.ContainsKey(packageName))
+                        appUsageTime[packageName] = 0;
+                    appUsageTime[packageName] += duration;
+                    appStartTimes.Remove(packageName);
+                }
+            }
+
+            //switch (usageEvent.EventType)
+            //{
+            //    case UsageEventType.ActivityResumed: // App came to foreground
+            //        appStartTimes[packageName] = timestamp;
+            //        break;
+
+            //    case UsageEventType.ActivityPaused: // App went to background
+            //        if (appStartTimes.ContainsKey(packageName))
+            //        {
+            //            long duration = timestamp - appStartTimes[packageName];
+
+            //            if (!appUsageTime.ContainsKey(packageName))
+            //                appUsageTime[packageName] = 0;
+
+            //            appUsageTime[packageName] += duration;
+            //            appStartTimes.Remove(packageName);
+            //        }
+            //        break;
+            //}
         }
 
         // Handle apps still in foreground
