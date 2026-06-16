@@ -18,7 +18,7 @@ namespace MauiScreenTime.Data
 
     }
 
-    public class DailyCO2DataBase : IDailyCO2Database
+    public class DailyCO2Database : IDailyCO2Database
     {
         private const string DB_NAME = "daily_co2_database.db3";
         private SQLiteAsyncConnection _connection;

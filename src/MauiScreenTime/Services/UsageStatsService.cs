@@ -135,6 +135,7 @@ namespace MauiScreenTime.Services
         public async Task<List<AppUsageModel>> GetAppUsageAsync()
         {
             IList<string> installedWhitelistPackageNames = GetInstalledPackages();
+            System.Diagnostics.Debug.WriteLine($"[DBG] installed={installedWhitelistPackageNames.Count}: {string.Join(",", installedWhitelistPackageNames)}");
 
             return await Task.Run(() =>
             {
@@ -199,7 +200,7 @@ namespace MauiScreenTime.Services
 
             appUsageTime[kvp.Key] += duration;
         }
-
+        System.Diagnostics.Debug.WriteLine($"[DBG] appUsageTime={appUsageTime.Count}: {string.Join(",", appUsageTime.Keys)}");
         var DeviceAppUsageList = new List<AppUsageModel>();
 
         if (appUsageTime.Count > 0)
