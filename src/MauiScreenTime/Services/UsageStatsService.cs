@@ -162,6 +162,11 @@ namespace MauiScreenTime.Services
         {
             events.GetNextEvent(usageEvent);
 
+            System.Diagnostics.Debug.WriteLine(
+                $"[DBG]Package={usageEvent.PackageName}, " +
+                $"Type={usageEvent.EventType}, " +
+                $"Time={DateTimeOffset.FromUnixTimeMilliseconds(usageEvent.TimeStamp)}");
+
             string packageName = usageEvent.PackageName;
             long timestamp = usageEvent.TimeStamp;
 

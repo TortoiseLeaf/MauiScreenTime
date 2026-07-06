@@ -40,11 +40,11 @@ namespace MauiScreenTime.Data
         {
             var con = await GetConnectionAsync();
             var today = DateTime.Now.Date;
-
+            //checks if a record for today already exists first
             var existing = await con.Table<DailyCO2Model>()
                 .Where(d => d.Date == today)
                 .FirstOrDefaultAsync();
-
+            //if it doesn't exist it adds a new record for today
             if (existing == null)
             {
                 await con.InsertAsync(new DailyCO2Model
@@ -53,6 +53,7 @@ namespace MauiScreenTime.Data
                     CO2Total = co2Total
                 });
             }
+            //if it does exist it updates the existing record
             else
             {
                 existing.CO2Total = co2Total;
