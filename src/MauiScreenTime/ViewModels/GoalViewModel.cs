@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using MauiScreenTime.Data;
 using MauiScreenTime.Data.Interfaces;
 using MauiScreenTime.Services.Interfaces;
 using System;
@@ -7,138 +8,84 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace MauiScreenTime.ViewModels
 {
     public partial class GoalViewModel : ObservableObject
     {
-        private readonly IUserActivityLogDatabase _userActivityLogDatabase;
-        private readonly ICO2Service _co2Service;
+        private readonly IDailyCO2Database _dailyCO2Database;  
+        private readonly IUserGoalsDatabase _userGoalsDatabase;
 
         [ObservableProperty]
-        private double _co2TotalReduced = new();
+        private double _totalSaved = new(); //sum of each reduction since start day
         [ObservableProperty]
-        private double _co2ReducedProgress = new();
+        private double _progress = new(); //current progress towards next level       
         [ObservableProperty]
-        private int _treesTotal = new();
+        private double _latestDailyCO2 = new(); //last daily total
         [ObservableProperty]
-        private double _co2TotalDayBefore = new();
+        private double _previousDailyCO2 = new(); //second to last daily total
         [ObservableProperty]
-        private double _co2TotalY = new();
- 
+        private double _latestReduction = new(); //difference between last and second to last elements
+        
+        private const int _levelStep = 200; //grams to save to reach next level, in future this can change based on level
 
-        public GoalViewModel(ICO2Service co2Service, IUserActivityLogDatabase userActivityLogDatabase)
+        /// <summary>
+        /// these variables are for the progress bar section using the ProgressBar element from .NET MAUI
+        /// </summary>
+        [ObservableProperty]
+        private int _level; //this can be calculated from total saved
+        [ObservableProperty]
+        private double _progressPercentage; //this is to normalise the bar, ProgressBar wants values between 0.0 and 1.0
+
+        public GoalViewModel(IDailyCO2Database dailyCO2Database, IUserGoalsDatabase userGoalsDatabase)
         {
-
-            _userActivityLogDatabase = userActivityLogDatabase;
-            _co2Service = co2Service;
-
-
-            _ = InitialiseMethods();
-
-            _ = GetDataSoFar();
-            _ = DisplayProgressBar();
+            _dailyCO2Database = dailyCO2Database;
+            _userGoalsDatabase = userGoalsDatabase;
         }
 
-        public async Task InitialiseMethods()
+        public async Task GetAllAsync()
         {
-            //await CalculateAndStoreDifference();
+            List<DailyCO2Model> allDaily;
+
+/*#if DEBUG
+            allDaily = new List<DailyCO2Model>
+                {
+                    new() { CO2Total = 1000 },
+                    new() { CO2Total = 900 },
+                    new() { CO2Total = 810 },
+                };
+#else*/
+            allDaily = await _dailyCO2Database.GetAllOrderedByDateAsync();
+//#endif
+            LatestDailyCO2 = allDaily.Count >= 1 ? allDaily[^1].CO2Total : 0;
+            PreviousDailyCO2 = allDaily.Count >= 2 ? allDaily[^2].CO2Total : 0;
             
-            //await GetAndUpdateCO2ProgressBar();
-
-            //await RunGetAndUpdateCO2OnceADay();
-
-            
-            await GetTreesPlanted();
-        }
-
-        //public async Task CalculateAndStoreDifference()
-        //{
-        //    await _co2Service.CalculateAndStoreCO2DifferenceAsync();
-
-        //}
-
-
-
-        public async Task DisplayProgressBar()
-        {
-            var reduced = await _userActivityLogDatabase.GetTotalProgressBar();
-            Co2ReducedProgress = reduced;
-
-            System.Diagnostics.Debug.WriteLine("here progressbar runs" + Co2ReducedProgress);
-        }
-
-
-        //// update Progress bar once a day
-        //private async Task RunGetAndUpdateCO2OnceADay()
-        //{
-        //    var lastRun = Preferences.Get("LastRunDate", DateTime.MinValue.ToString());
-        //    var lastRunDate = DateTime.Parse(lastRun);
-
-        //    if (lastRunDate.Date < DateTime.Today)
-        //    {
-        //        System.Diagnostics.Debug.WriteLine("here progressbar runs");
-
-        //        await _co2Service.CalculateAndStoreCO2DifferenceAsync();
-
-        //        await _userActivityLogDatabase.UpdateProgressBar();
-
-        //        //Co2ReducedProgress = await _userActivityLogDatabase.GetLatestProgressBar();
-        //        Preferences.Set("LastRunDate", DateTime.Now.ToString());
-        //    }
-        //}
-
-        //public async Task GetAndUpdateCO2ProgressBar()
-        //{
-
-        //    await _userActivityLogDatabase.UpdateProgressBar();
-
-
-        //}
-
-        public async Task GetTreesPlanted()
-        {
-
-            TreesTotal = await _userActivityLogDatabase.GetLatestTreesByDate(DateTime.Now);
-
-        }
-
-        public async Task GetDataSoFar()
-        {
-            var yesterday = DateTime.Now.Date.AddDays(-1);
-            var dayBeforeYesterday = DateTime.Now.Date.AddDays(-2);
-
-            var TodayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now);
-
-
-            try
+            if (PreviousDailyCO2 - LatestDailyCO2 > 0)
             {
-                var yesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(yesterday);
-                var dayBeforeYesterdayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(dayBeforeYesterday);
-
-                if (yesterdayTotalCO2Obj != null)
-                {
-                    Co2TotalY = yesterdayTotalCO2Obj.CO2Total;
-                } else {
-                    Co2TotalY = 0;
-                }
-                if (dayBeforeYesterdayTotalCO2Obj != null)
-                {
-                    Co2TotalDayBefore = dayBeforeYesterdayTotalCO2Obj.CO2Total;
-                } else
-                {
-                    Co2TotalDayBefore = 0;
-                }
-        }
-            catch (Exception ex)
+                LatestReduction = PreviousDailyCO2 - LatestDailyCO2;
+            }
+            else
             {
-                System.Diagnostics.Debug.WriteLine("here unable to get goals data in goalpage, possibly none");
+                LatestReduction = 0;
+            }
 
-                //await Shell.Current.DisplayAlert("Error", "Unable to get goals data, try refreshing the page.", "OK");
+            double totalSaved = CalculateTotalSaved(allDaily);
+            TotalSaved = totalSaved;
+            Progress = totalSaved % _levelStep;
+            ProgressPercentage = Progress / _levelStep; //this is needed for the ProgressBar element in the view
+            Level = (int)(TotalSaved / _levelStep) + 1;
 
-    }
-
-    Co2TotalReduced = await _userActivityLogDatabase.GetCO2TotalReduced();
-
+            await _userGoalsDatabase.SaveTodayGoals((int)Level, TotalSaved, Progress);
         }
+        public static double CalculateTotalSaved(IReadOnlyList<DailyCO2Model> days)
+        {
+            double totalSaved = 0;
+            for (int i = 1;  i < days.Count; i++)
+            {
+                var reduction = days[i - 1].CO2Total - days[i].CO2Total;
+                if (reduction > 0) totalSaved += reduction;
+            }
+            return totalSaved;
+        }        
     }
 }

@@ -11,7 +11,6 @@ namespace MauiScreenTime.Services.Interfaces
     {
         Task<AppUsageModel> CalculateCO2eAsync(AppUsageModel appData);
 
-        Task<double> CalculateCO2TotalAsync(List<AppUsageModel> appUsageList);
-        Task<double> CalculateAndStoreCO2DifferenceAsync();
+        Task<double> CalculateCO2TotalAsync(List<AppUsageModel> appUsageList);        
     }
 }

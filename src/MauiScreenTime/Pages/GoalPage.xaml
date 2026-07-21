@@ -6,17 +6,42 @@
              x:DataType="vm:GoalViewModel"
              Title="GoalPage">
     <VerticalStackLayout Padding="60,0"
-Spacing="25">
-       
-        <Image
-    Source="dotnet_bot.png"
-    HeightRequest="185"
-    Aspect="AspectFit"
-    SemanticProperties.Description="dot net bot in a hovercraft number nine" />
-        <Label 
-Text="Coming soon!"
-FontSize="24"
-VerticalOptions="Center" 
-HorizontalOptions="Center" />
+                         Spacing="25">
+
+        <Label Text="Goals"
+               FontSize="30"
+               HorizontalOptions="Center" />
+
+        <VerticalStackLayout Padding="30" Spacing="15">
+
+            <Label Text="Next Goal"
+                   FontSize="24"
+                   HorizontalOptions="Center" />
+
+            <Label Text="{Binding TotalSaved, StringFormat='Total saved: {0:F1} g CO₂'}"
+                   HorizontalOptions="Center" />
+
+            <ProgressBar
+                Progress="{Binding ProgressPercentage}"
+                HeightRequest="12" />
+
+            <Label
+                Text="{Binding Progress, StringFormat='{0:F1} / 200 g'}"
+                HorizontalOptions="Center" />
+            <Label
+                Text="{Binding Level, StringFormat='Level {0}'}"
+                FontSize="20"
+                HorizontalOptions="Center" />
+
+        </VerticalStackLayout>
+
+        <Label Text="Latest Daily CO2:" />
+        <Label Text="{Binding LatestDailyCO2, StringFormat='{0:F2} g'}" />
+
+        <Label Text="Previous Daily CO2:" />
+        <Label Text="{Binding PreviousDailyCO2, StringFormat='{0:F2} g'}" />
+
+        <Label Text="Latest Reduction:" />
+        <Label Text="{Binding LatestReduction, StringFormat='{0:F2} g'}" />        
     </VerticalStackLayout>
 </ContentPage>

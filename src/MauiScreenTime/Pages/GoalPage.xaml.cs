@@ -14,4 +14,10 @@ public partial class GoalPage : ContentPage
         BindingContext = viewModel;
     }
 
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await _viewModel.GetAllAsync();
+    }
+
 }

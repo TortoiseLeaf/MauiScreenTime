@@ -37,8 +37,8 @@ namespace MauiScreenTime.ViewModels
 
 
         private readonly IUsageStatsService _usageStatsService;
-        private readonly IUserActivityLogDatabase _userActivityLogDatabase;
         private readonly ICO2Service _co2Service;
+        private IDailyCO2Database _dailyCO2Database;
         public bool hasPermission;
 
         [ObservableProperty]
@@ -98,13 +98,12 @@ namespace MauiScreenTime.ViewModels
             }
         }
 
-        public DashboardViewModel(IUsageStatsService usageStatsService, ICO2Service co2Service, IUserActivityLogDatabase userActivityLogDatabase)
+        public DashboardViewModel(IUsageStatsService usageStatsService, ICO2Service co2Service, IDailyCO2Database dailyCO2Datanase)
         {
 
-            _usageStatsService = usageStatsService;
-            _userActivityLogDatabase = userActivityLogDatabase;
+            _usageStatsService = usageStatsService;            
             _co2Service = co2Service;
-
+            _dailyCO2Database = dailyCO2Datanase;
 
             CurrentChart = new ObservableCollection<BarItem>(
             Enumerable.Range(0, 10).Select(_ => new BarItem { Height = 0 })
@@ -112,8 +111,7 @@ namespace MauiScreenTime.ViewModels
             //DEBUG1();
             //DEBUG();
             _ = InitialiseAsync();
-            //_ = ShowScreenTime();
-            //_ = DisplayLogs();
+
 
         }
 
@@ -142,67 +140,18 @@ namespace MauiScreenTime.ViewModels
 
             await GetAndStoreCO2Total();
 
-            await CalculateGoalsAsync();
+            
         }
 
         private async Task PopulateAppCO2ListAsync()
         {
             await GetUsageData();
-            await GetCO2Coversion();
-            
-
-        }
-        private async Task CalculateGoalsAsync()
-        {
-            await GetAndUpdateCO2ProgressBar();
-
-            await RunGetAndUpdateCO2OnceADay();
-
+            await GetCO2Coversion();        
 
         }
 
-        // update Progress bar once a day
-        private async Task RunGetAndUpdateCO2OnceADay()
-        {
-            var lastRun = Preferences.Get("LastRunDate", DateTime.MinValue.ToString());
-            var lastRunDate = DateTime.Parse(lastRun);
-
-            if (lastRunDate.Date < DateTime.Today)
-            {
-                System.Diagnostics.Debug.WriteLine("here progressbar runs");
-
-                await _co2Service.CalculateAndStoreCO2DifferenceAsync();
-
-                await _userActivityLogDatabase.UpdateProgressBar();
-
-                //Co2ReducedProgress = await _userActivityLogDatabase.GetLatestProgressBar();
-                Preferences.Set("LastRunDate", DateTime.Now.ToString());
-            }
-        }
-
-        public async Task GetAndUpdateCO2ProgressBar()
-        {
-
-            await _userActivityLogDatabase.UpdateProgressBar();
 
 
-        }
-
-        public async Task DisplayLogs()
-        {
-            var x = await _userActivityLogDatabase.GetAllActivitiesLogged();
-            System.Diagnostics.Debug.WriteLine("here items");
-
-            foreach (var item in x)
-            {
-                var xx = System.Text.Json.JsonSerializer.Serialize(item);
-#if ANDROID
-                Log.Debug("here", xx);
-#endif
-                System.Diagnostics.Debug.WriteLine(xx);
-            }
-
-        }
 
         // are these working?
         public Func<List<BarItem>, Color, Color, Task> AnimateBarsAsync { get; set; }
@@ -452,8 +401,6 @@ namespace MauiScreenTime.ViewModels
 #if ANDROID
                     Log.Debug("DashboardVM", "Error calling get usage data in dashboard");
 #endif
-
-
                     await Shell.Current.DisplayAlert("Error", "Unable to load data. Please try again.", "OK");
                 }
             }
@@ -465,25 +412,18 @@ namespace MauiScreenTime.ViewModels
 
             foreach (var app in AppUsageList)
             {
-                // try/catch
                 var appData = await _co2Service.CalculateCO2eAsync(app);
-
                 AppUsageListCO2.Add(appData);
-
             }
         }
 
         public async Task GetAndStoreCO2Total()
         {
-
             try
             {
                 // refactor this to just take the app.CO2e from each in AppUsageListCO2
                 Co2Total = await _co2Service.CalculateCO2TotalAsync(AppUsageList);
-                await _userActivityLogDatabase.AddActivityLog(Co2Total, 0, 0, 0);
-
-
-                var TodayTotalCO2Obj = await _userActivityLogDatabase.GetHighestCO2DailyTotalByDate(DateTime.Now);
+                await _dailyCO2Database.SaveTodayTotalAsync(Co2Total);
 
             }
             catch(Exception ex)
@@ -492,10 +432,6 @@ namespace MauiScreenTime.ViewModels
 
                 await Shell.Current.DisplayAlert("Error", "Unable to total CO2e, try restarting the app.", "OK");
             }
-
-
         }
-
-
     }
 }
