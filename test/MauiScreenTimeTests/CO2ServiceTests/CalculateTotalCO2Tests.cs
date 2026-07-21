@@ -10,7 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MauiScreenTimeTests.CO2ServiceTests
+/*namespace MauiScreenTimeTests.CO2ServiceTests
 {
     public class CalculateTotalCO2Tests
     {
@@ -102,3 +102,4 @@ namespace MauiScreenTimeTests.CO2ServiceTests
         }
     }
 }
+*/

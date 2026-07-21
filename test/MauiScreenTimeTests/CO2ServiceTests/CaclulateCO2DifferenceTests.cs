@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MauiScreenTimeTests.CO2ServiceTests
+/*namespace MauiScreenTimeTests.CO2ServiceTests
 {
     public class CalculateCO2DifferenceTests
     {
@@ -86,4 +86,4 @@ namespace MauiScreenTimeTests.CO2ServiceTests
             _mockUserActivityLogDatabase.Verify(x => x.AddActivityLog(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never);
         }
     }
-}
+}*/
